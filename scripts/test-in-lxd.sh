@@ -10,8 +10,7 @@ lxc config device add tester code disk source=`pwd` path=/subiquity
 # copy is allowed to fail, in case the subiquity directory being tested
 # includes some uncopyable stuff
 lxc exec tester -- sh -ec "
-    cd ~
-    sudo cp -a /subiquity . || true
+    cp -a /subiquity ~ || true
     [ -d ~/subiquity ]
     "
 
