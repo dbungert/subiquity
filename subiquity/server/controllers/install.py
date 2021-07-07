@@ -190,6 +190,10 @@ class InstallController(SubiquityController):
         curtin_cmd = self._get_curtin_command()
 
         log.debug('curtin install cmd: {}'.format(curtin_cmd))
+        log.debug('environ dump begin')
+        for key, value in os.environ.items():
+            log.debug(f'{key}={value}')
+        log.debug('environ dump end')
 
         cp = await arun_command(self.logged_command(curtin_cmd), check=True)
 
