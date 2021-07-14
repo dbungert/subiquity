@@ -28,6 +28,9 @@ tty=$(tty) || tty=/dev/console
 
 export SUBIQUITY_REPLAY_TIMESCALE=100
 for answers in examples/answers*.yaml; do
+    if [ "$answers" != "examples/answers-imsm.yaml" ] ; then
+        continue
+    fi
     clean
     config=$(sed -n 's/^#machine-config: \(.*\)/\1/p' $answers || true)
     if [ -z "$config" ]; then
