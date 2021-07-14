@@ -4,7 +4,7 @@ set -eux
 testschema=.subiquity/test-autoinstall-schema.json
 
 validate () {
-    python3 scripts/validate-yaml.py .subiquity/subiquity-curtin-install.conf
+    python3 -m trace -t scripts/validate-yaml.py .subiquity/subiquity-curtin-install.conf
     if [ ! -e .subiquity/subiquity-client-debug.log ] || [ ! -e .subiquity/subiquity-server-debug.log ]; then
         echo "log file not created"
         exit 1
