@@ -22,6 +22,7 @@ from curtin.commands.apt_config import (
     get_mirror,
     PRIMARY_ARCHES,
     )
+from curtin.config import merge_config
 try:
     from curtin.distro import get_architecture
 except ImportError:
@@ -75,7 +76,20 @@ class MirrorModel(object):
     def set_components(self, components):
         self.components = components
 
-    def render(self):
+    def components_config(self):
+        if not self.components:
+            return {}
+        components = ' '.join(self.components)
         return {
-             'apt': copy.deepcopy(self.config)
+            'sources_list': f'''
+                deb $MIRROR $RELEASE {components}
+                deb $SECURITY $RELEASE-security {components}
+                '''
+        }
+
+    def render(self):
+        config = copy.deepcopy(self.config)
+        merge_config(config, self.components_config())
+        return {
+             'apt': config
             }

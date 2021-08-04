@@ -281,6 +281,9 @@
                 },
                 "sources": {
                     "type": "object"
+                },
+                "components": {
+                    "type": "array"
                 }
             }
         },

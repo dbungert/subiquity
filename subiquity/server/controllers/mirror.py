@@ -39,6 +39,7 @@ class MirrorController(SubiquityController):
             'primary': {'type': 'array'},
             'geoip':  {'type': 'boolean'},
             'sources': {'type': 'object'},
+            'components': {'type': 'array'},
             },
         }
     model_name = "mirror"
@@ -53,6 +54,7 @@ class MirrorController(SubiquityController):
         if data is None:
             return
         geoip = data.pop('geoip', True)
+        self.model.set_components(data.pop('components', []))
         merge_config(self.model.config, data)
         self.geoip_enabled = geoip and self.model.mirror_is_default()
 
