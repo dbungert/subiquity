@@ -51,6 +51,7 @@ class MirrorModel(object):
         self.config = copy.deepcopy(DEFAULT)
         self.architecture = get_architecture()
         self.default_mirror = self.get_mirror()
+        self.components = []
 
     def mirror_is_default(self):
         return self.get_mirror() == self.default_mirror
@@ -70,6 +71,9 @@ class MirrorModel(object):
         config = get_arch_mirrorconfig(
             self.config, "primary", self.architecture)
         config["uri"] = mirror
+
+    def set_components(self, components):
+        self.components = components
 
     def render(self):
         return {

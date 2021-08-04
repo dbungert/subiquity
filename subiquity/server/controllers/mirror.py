@@ -15,6 +15,7 @@
 
 import asyncio
 import logging
+from typing import List
 
 from curtin.config import merge_config
 
@@ -89,7 +90,7 @@ class MirrorController(SubiquityController):
         self.configured()
 
     async def components_GET(self) -> List[str]:
-        return []
+        return self.model.components
 
     async def components_POST(self, data: List[str]):
-        pass
+        self.model.set_components(data)
