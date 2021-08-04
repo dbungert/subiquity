@@ -45,6 +45,12 @@ DEFAULT = {
         ],
 }
 
+# whitespace will flow thru to the final file
+SOURCES_LIST = '''\
+deb $MIRROR $RELEASE {components}
+deb $SECURITY $RELEASE-security {components}
+'''
+
 
 class MirrorModel(object):
 
@@ -79,13 +85,9 @@ class MirrorModel(object):
     def components_config(self):
         if not self.components:
             return {}
-        components = ' '.join(self.components)
-        return {
-            'sources_list': f'''
-                deb $MIRROR $RELEASE {components}
-                deb $SECURITY $RELEASE-security {components}
-                '''
-        }
+        # components = ' '.join(self.components)
+        # return {'sources_list': SOURCES_LIST.format(components)}
+        return {'sources_list': SOURCES_LIST.format(' '.join(self.components))}
 
     def render(self):
         config = copy.deepcopy(self.config)
