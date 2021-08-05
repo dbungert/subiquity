@@ -56,6 +56,7 @@ class MirrorModel(object):
         self.architecture = get_architecture()
         self.default_mirror = self.get_mirror()
         self.components = []
+        self.template = template
 
     def mirror_is_default(self):
         return self.get_mirror() == self.default_mirror
@@ -82,40 +83,42 @@ class MirrorModel(object):
     def components_config(self):
         if not self.components:
             return {}
+
+        def add(body, components, comment):
+            if not components:
+                return []
+            to_add = ' '.join(components)
+            prefix = '# ' if comment else ''
+            return [prefix + body + to_add]
+
         output = []
-        for line in template.splitlines():
-            # the template contains commented and uncommented lines
-            # * commented lines stay that way and can be ignored
-            # * uncommented lines may become commented if they contain
-            #   an affected component
-            # * some lines will be split into commented and uncommeted,
-            #   to address cases where some of the listed components are
-            #   enabled but not all
-            p = re.compile('^(deb \$(?:MIRROR|SECURITY) \$RELEASE(?:-\w+)? )([ \w]+)$')
-            m = p.match(line)
-            if not m:
+        pattern = re.compile('^(deb \$(?:MIRROR|SECURITY) \$RELEASE(?:-\w+)? )'
+                             + '([ \w]+)$')
+        for line in self.template.splitlines():
+            # The template contains commented lines, and config lines in
+            # the format Curtin expects.  This updates that template to
+            # adjust for only the components we want.  Config lines
+            # containing one or more unwanted components are output
+            # twice - once with the unwanted components commented out,
+            # and another time with the wanted components, not commented.
+            match = pattern.match(line)
+            if not match:
                 output.append(line)
                 continue
-            # components actually found in line
-            components_of_line = m.groups()[1].split(' ')
-            # components in line that we want
-            desired_components_of_line = []
-            comment_added = False
-            for comp in components_of_line:
+
+            desired = []
+            undesired = []
+            for comp in match.groups()[1].split(' '):
                 if comp in self.components:
-                    # this component is one of the ones we want
-                    desired_components_of_line.append(comp)
-                elif not comment_added:
-                    # this one isn't, so comment out the line
-                    output.append('# ' + line)
-                    comment_added = True
-            if desired_components_of_line:
-                # one+ components we want were detected, so output a
-                # possibly modified line reflecting that
-                to_add = ' '.join(desired_components_of_line)
-                output.append(m.groups()[0] + to_add)
-        print('\n'.join(output) + '\n')
-        return {'sources_list': template}
+                    desired.append(comp)
+                else:
+                    undesired.append(comp)
+
+            output += add(match.groups()[0], undesired, True)
+            output += add(match.groups()[0], desired, False)
+
+        modified_template = '\n'.join(output) + '\n'
+        return {'sources_list': modified_template}
 
     def render(self):
         config = copy.deepcopy(self.config)

@@ -13,6 +13,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import mock
 import unittest
 
 from subiquity.models.mirror import (
@@ -46,10 +47,7 @@ class TestMirrorModel(unittest.TestCase):
     def test_render(self):
         model = MirrorModel()
         model.set_components(('main',))
-#         expected = '''\
-# deb $MIRROR $RELEASE main
-# deb $SECURITY $RELEASE-security main
-# '''
+        model.template = 'deb $MIRROR $RELEASE main\n'
+        expected = 'deb $MIRROR $RELEASE main\n'
         cfg = model.render()
-        # print(cfg['apt']['sources_list'])
-        # self.assertEqual(expected, cfg['apt']['sources_list'])
+        self.assertEqual(expected, cfg['apt']['sources_list'])
