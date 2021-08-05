@@ -15,6 +15,7 @@
 
 import copy
 import logging
+import re
 from urllib import parse
 
 from curtin.commands.apt_config import (
@@ -27,6 +28,8 @@ try:
     from curtin.distro import get_architecture
 except ImportError:
     from curtin.util import get_architecture
+
+from subiquity.templates.sources_list import template
 
 log = logging.getLogger('subiquitycore.models.mirror')
 
@@ -44,12 +47,6 @@ DEFAULT = {
         },
         ],
 }
-
-# whitespace will flow thru to the final file
-SOURCES_LIST = '''\
-deb $MIRROR $RELEASE {components}
-deb $SECURITY $RELEASE-security {components}
-'''
 
 
 class MirrorModel(object):
@@ -85,12 +82,42 @@ class MirrorModel(object):
     def components_config(self):
         if not self.components:
             return {}
-        components = ' '.join(self.components)
-        return {'sources_list': SOURCES_LIST.format(components=components)}
+        output = []
+        for line in template.splitlines():
+            # the template contains commented and uncommented lines
+            # * commented lines stay that way and can be ignored
+            # * uncommented lines may become commented if they contain
+            #   an affected component
+            # * some lines will be split into commented and uncommeted,
+            #   to address cases where some of the listed components are
+            #   enabled but not all
+            p = re.compile('^(deb \$(?:MIRROR|SECURITY) \$RELEASE(?:-\w+)? )([ \w]+)$')
+            m = p.match(line)
+            if not m:
+                output.append(line)
+                continue
+            # components actually found in line
+            components_of_line = m.groups()[1].split(' ')
+            # components in line that we want
+            desired_components_of_line = []
+            comment_added = False
+            for comp in components_of_line:
+                if comp in self.components:
+                    # this component is one of the ones we want
+                    desired_components_of_line.append(comp)
+                elif not comment_added:
+                    # this one isn't, so comment out the line
+                    output.append('# ' + line)
+                    comment_added = True
+            if desired_components_of_line:
+                # one+ components we want were detected, so output a
+                # possibly modified line reflecting that
+                to_add = ' '.join(desired_components_of_line)
+                output.append(m.groups()[0] + to_add)
+        print('\n'.join(output) + '\n')
+        return {'sources_list': template}
 
     def render(self):
         config = copy.deepcopy(self.config)
         merge_config(config, self.components_config())
-        return {
-             'apt': config
-            }
+        return {'apt': config}
