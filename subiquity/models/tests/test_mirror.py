@@ -13,7 +13,6 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import mock
 import unittest
 
 from subiquity.models.mirror import (
@@ -47,7 +46,31 @@ class TestMirrorModel(unittest.TestCase):
     def test_render(self):
         model = MirrorModel()
         model.set_components(('main',))
-        model.template = 'deb $MIRROR $RELEASE main\n'
-        expected = 'deb $MIRROR $RELEASE main\n'
-        cfg = model.render()
-        self.assertEqual(expected, cfg['apt']['sources_list'])
+        tests = [('deb $MIRROR $RELEASE main\n', ),
+                 ('deb $MIRROR $RELEASE universe\n',
+                  '# deb $MIRROR $RELEASE universe\n'),
+                 ('deb $MIRROR $RELEASE a b c\n',
+                  '# deb $MIRROR $RELEASE a b c\n'),
+                 ('# comment\n', ),
+                 ('# deb $MIRROR $RELEASE main\n', ),
+                 ('# deb $MIRROR $RELEASE universe\n', ),
+                 ('deb-src $MIRROR $RELEASE main\n', ),
+                 ('deb $SECURITY $RELEASE main\n', ),
+                 ('''\
+# unrelated comment
+deb $MIRROR $RELEASE main universe
+# deb $MIRROR $RELEASE main universe
+# stuff things
+''',
+                  '''\
+# unrelated comment
+# deb $MIRROR $RELEASE universe
+deb $MIRROR $RELEASE main
+# deb $MIRROR $RELEASE main universe
+# stuff things
+''')]
+        for test in tests:
+            model.template = test[0]
+            expected = test[1] if len(test) > 1 else test[0]
+            cfg = model.render()
+            self.assertEqual(expected, cfg['apt']['sources_list'])

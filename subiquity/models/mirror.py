@@ -91,7 +91,7 @@ class MirrorModel(object):
             prefix = '# ' if comment else ''
             return [prefix + body + to_add]
 
-        output = []
+        out_lines = []
         pattern = re.compile('^(deb \$(?:MIRROR|SECURITY) \$RELEASE(?:-\w+)? )'
                              + '([ \w]+)$')
         for line in self.template.splitlines():
@@ -103,7 +103,7 @@ class MirrorModel(object):
             # and another time with the wanted components, not commented.
             match = pattern.match(line)
             if not match:
-                output.append(line)
+                out_lines.append(line)
                 continue
 
             desired = []
@@ -114,10 +114,10 @@ class MirrorModel(object):
                 else:
                     undesired.append(comp)
 
-            output += add(match.groups()[0], undesired, True)
-            output += add(match.groups()[0], desired, False)
+            out_lines += add(match.groups()[0], undesired, True)
+            out_lines += add(match.groups()[0], desired, False)
 
-        modified_template = '\n'.join(output) + '\n'
+        modified_template = '\n'.join(out_lines) + '\n'
         return {'sources_list': modified_template}
 
     def render(self):
