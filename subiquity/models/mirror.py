@@ -48,6 +48,8 @@ DEFAULT = {
         ],
 }
 
+SRC_PATTERN = '^(deb \\$(?:MIRROR|SECURITY) \\$RELEASE(?:-\\w+)? )([ \\w]+)$'
+
 
 class MirrorModel(object):
 
@@ -92,8 +94,7 @@ class MirrorModel(object):
             return [prefix + body + to_add]
 
         out_lines = []
-        pattern = re.compile('^(deb \$(?:MIRROR|SECURITY) \$RELEASE(?:-\w+)? )'
-                             + '([ \w]+)$')
+        pattern = re.compile(SRC_PATTERN)
         for line in self.template.splitlines():
             # The template contains commented lines, and config lines in
             # the format Curtin expects.  This updates that template to
@@ -114,8 +115,9 @@ class MirrorModel(object):
                 else:
                     undesired.append(comp)
 
-            out_lines += add(match.groups()[0], undesired, True)
-            out_lines += add(match.groups()[0], desired, False)
+            body = match.groups()[0]
+            out_lines += add(body, undesired, True)
+            out_lines += add(body, desired, False)
 
         modified_template = '\n'.join(out_lines) + '\n'
         return {'sources_list': modified_template}
