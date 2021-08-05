@@ -85,9 +85,8 @@ class MirrorModel(object):
     def components_config(self):
         if not self.components:
             return {}
-        # components = ' '.join(self.components)
-        # return {'sources_list': SOURCES_LIST.format(components)}
-        return {'sources_list': SOURCES_LIST.format(' '.join(self.components))}
+        components = ' '.join(self.components)
+        return {'sources_list': SOURCES_LIST.format(components=components)}
 
     def render(self):
         config = copy.deepcopy(self.config)

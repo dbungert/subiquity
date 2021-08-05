@@ -42,3 +42,13 @@ class TestMirrorModel(unittest.TestCase):
         model.set_mirror("http://mymirror.invalid/")
         model.set_country("CC")
         self.assertEqual(model.get_mirror(), "http://mymirror.invalid/")
+
+    def test_render(self):
+        model = MirrorModel()
+        model.set_components(('main',))
+        expected = '''\
+deb $MIRROR $RELEASE main
+deb $SECURITY $RELEASE-security main
+'''
+        cfg = model.render()
+        self.assertEqual(expected, cfg['apt']['sources_list'])
