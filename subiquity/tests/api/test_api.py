@@ -91,10 +91,11 @@ class Server:
         except aiohttp.client_exceptions.ServerDisconnectedError:
             return
 
-    async def spawn(self, machine_config):
+    async def spawn(self, machine_config, bootloader='uefi'):
         env = os.environ.copy()
         env['SUBIQUITY_REPLAY_TIMESCALE'] = '100'
-        cmd = 'python3 -m subiquity.cmd.server --dry-run --bootloader uefi' \
+        cmd = 'python3 -m subiquity.cmd.server --dry-run' \
+              + ' --bootloader ' + bootloader \
               + ' --machine-config ' + machine_config
         cmd = cmd.split(' ')
         self.proc = await astart_command(cmd, env=env)
@@ -114,12 +115,12 @@ class TestAPI(unittest.IsolatedAsyncioTestCase):
 
 
 @contextlib.asynccontextmanager
-async def start_server(machine_config):
+async def start_server(*args, **kwargs):
     conn = aiohttp.UnixConnector(path=socket_path)
     async with aiohttp.ClientSession(connector=conn) as session:
         server = Server(session)
         try:
-            await server.spawn(machine_config)
+            await server.spawn(*args, **kwargs)
             await server.poll_startup()
             yield server
         finally:
@@ -279,6 +280,15 @@ class TestAdd(TestAPI):
                                 disk_id=disk_id)
 
     @timeout(5)
+    async def test_v2_deny_multiple_add_boot_partition_BIOS(self):
+        async with start_server('examples/simple.json', 'bios') as inst:
+            disk_id = 'disk-sda'
+            await inst.post('/storage/v2/add_boot_partition', disk_id=disk_id)
+            with self.assertRaises(ClientResponseError):
+                await inst.post('/storage/v2/add_boot_partition',
+                                disk_id=disk_id)
+
+    @timeout(5)
     async def test_v2_free_for_partitions(self):
         async with start_server('examples/simple.json') as inst:
             disk_id = 'disk-sda'
@@ -335,6 +345,16 @@ class TestAdd(TestAPI):
             sda1 = first(sda['partitions'], 'number', 1)
             sda2 = first(sda['partitions'], 'number', 2)
             self.assertEqual(expected_total, sda1['size'] + sda2['size'])
+
+    @timeout(5)
+    async def test_v2_add_boot_BIOS(self):
+        async with start_server('examples/simple.json', 'bios') as inst:
+            disk_id = 'disk-sda'
+            resp = await inst.post('/storage/v2/add_boot_partition',
+                                   disk_id=disk_id)
+            sda = first(resp['disks'], 'id', disk_id)
+            sda1 = first(sda['partitions'], 'number', 1)
+            self.assertTrue(sda1['grub_device'])
 
 
 class TestDelete(TestAPI):

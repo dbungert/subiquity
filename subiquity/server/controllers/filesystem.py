@@ -328,6 +328,19 @@ class FilesystemController(SubiquityController, FilesystemManipulator):
         self.reformat(self.model._one(id=disk_id))
         return await self.v2_GET()
 
+    # FIXME hosed
+    # def disk_has_bootloader(self, disk):
+    #     if self.bootloader == Bootloader.NONE:
+    #         return True
+    #     elif self.bootloader == Bootloader.BIOS:
+    #         return disk.grub_device
+    #     elif self.bootloader == Bootloader.UEFI:
+    #         for esp in self._all(type='partition', grub_device=True):
+    #             if esp.fs() and esp.fs().mount():
+    #                 if esp.fs().mount().path == '/boot/efi':
+    #                     return False
+    #         return True
+
     async def v2_add_boot_partition_POST(self, disk_id: str) \
             -> StorageResponseV2:
         if not self.model.needs_bootloader_partition():
