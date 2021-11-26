@@ -235,10 +235,6 @@ class AptConfigurer:
             await self.unmount(m.mountpoint, remove=False)
         for d in self._tdirs:
             shutil.rmtree(d)
-        if self.app.base_model.network.has_network:
-            await run_curtin_command(
-                self.app, context, "in-target", "-t", target,
-                "--", "apt-get", "update")
 
     async def deconfigure(self, context, target):
         target = Mountpoint(mountpoint=target)
