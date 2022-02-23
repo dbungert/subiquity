@@ -20,6 +20,8 @@ import os
 import shutil
 import tempfile
 
+import attr
+
 from curtin.config import merge_config
 
 from subiquitycore.file_util import write_file, generate_config_yaml
@@ -44,9 +46,9 @@ class _MountBase:
             fp.write(content)
 
 
+@attr.s(auto_attribs=True, kw_only=True)
 class Mountpoint(_MountBase):
-    def __init__(self, *, mountpoint):
-        self.mountpoint = mountpoint
+    mountpoint: str
 
 
 class OverlayMountpoint(_MountBase):
@@ -145,10 +147,10 @@ class AptConfigurer:
         self._mounts.append(m)
         return m
 
-    async def unmount(self, mountpoint, remove=True):
+    async def unmount(self, mountpoint: Mountpoint, remove=True):
         if remove:
             self._mounts.remove(mountpoint)
-        await self.app.command_runner.run(['umount', mountpoint])
+        await self.app.command_runner.run(['umount', mountpoint.mountpoint])
 
     async def setup_overlay(self, lowers):
         tdir = self.tdir()
@@ -228,11 +230,17 @@ class AptConfigurer:
         try:
             yield overlay
         finally:
-            await self.unmount(overlay.mountpoint)
+            # TODO self.unmount expects a Mountpoint object. Unfortunately, the
+            # one we created in setup_overlay was discarded and replaced by an
+            # OverlayMountPoint object instead. Here we re-create a new
+            # Mountpoint object and (thanks to attr.s) make sure that it
+            # compares equal to the one we discarded earlier.
+            # But really, there should be better ways to handle this.
+            await self.unmount(Mountpoint(mountpoint=overlay.mountpoint))
 
     async def cleanup(self):
         for m in reversed(self._mounts):
-            await self.unmount(m.mountpoint, remove=False)
+            await self.unmount(m, remove=False)
         for d in self._tdirs:
             shutil.rmtree(d)
 
@@ -245,7 +253,9 @@ class AptConfigurer:
                 'cp', '-aT', self.configured_tree.p(dir), target.p(dir),
                 ])
 
-        await self.unmount(target.p('cdrom'), remove=False)
+        await self.unmount(
+                Mountpoint(mountpoint=target.p('cdrom')),
+                remove=False)
         os.rmdir(target.p('cdrom'))
 
         await _restore_dir('etc/apt')
