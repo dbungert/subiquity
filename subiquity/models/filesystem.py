@@ -1296,7 +1296,7 @@ class FilesystemModel(object):
     def render(self):
         config = {
             'storage': {
-                'version': 1,
+                'version': 2,
                 'config': self._render_actions(),
                 },
             }
