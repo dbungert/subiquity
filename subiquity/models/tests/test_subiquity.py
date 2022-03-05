@@ -155,7 +155,7 @@ class TestSubiquityModel(unittest.TestCase):
     def test_storage_version(self):
         model = self.make_model()
         config = model.render()
-        self.assertConfigHasVal(config, 'storage.version', 1)
+        self.assertConfigHasVal(config, 'storage.version', 2)
 
     def test_write_netplan(self):
         model = self.make_model()
