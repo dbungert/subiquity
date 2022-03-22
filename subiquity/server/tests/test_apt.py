@@ -18,7 +18,16 @@ from unittest.mock import Mock, patch, AsyncMock
 from subiquitycore.tests import SubiTestCase
 from subiquitycore.tests.mocks import make_app
 from subiquitycore.tests.util import run_coro
+<<<<<<< HEAD
 from subiquity.server.apt import AptConfigurer, OverlayMountpoint
+=======
+from subiquity.server.apt import (
+    AptConfigurer,
+    Mountpoint,
+    OverlayMountpoint,
+    lowerdir_for,
+)
+>>>>>>> ogayot/FR-2077
 from subiquity.models.mirror import MirrorModel, DEFAULT
 from subiquity.models.proxy import ProxyModel
 
@@ -73,3 +82,59 @@ class TestAptConfigurer(SubiTestCase):
         with patch.object(self.app, "command_runner",
                           create=True, new_callable=AsyncMock):
             run_coro(coro())
+
+
+class TestLowerDirFor(SubiTestCase):
+    def test_lowerdir_for_str(self):
+        self.assertEqual(
+                lowerdir_for("/tmp/lower1"),
+                "/tmp/lower1")
+
+    def test_lowerdir_for_str_list(self):
+        self.assertEqual(
+                lowerdir_for(["/tmp/lower1", "/tmp/lower2"]),
+                "/tmp/lower2:/tmp/lower1")
+
+    def test_lowerdir_for_mountpoint(self):
+        self.assertEqual(
+                lowerdir_for(Mountpoint(mountpoint="/mnt")),
+                "/mnt")
+
+    def test_lowerdir_for_simple_overlay(self):
+        overlay = OverlayMountpoint(
+                lowers=["/tmp/lower1"],
+                upperdir="/tmp/upper1",
+                mountpoint="/mnt",
+        )
+        self.assertEqual(lowerdir_for(overlay), "/tmp/upper1:/tmp/lower1")
+
+    def test_lowerdir_for_overlay(self):
+        overlay = OverlayMountpoint(
+                lowers=["/tmp/lower1", "/tmp/lower2"],
+                upperdir="/tmp/upper1",
+                mountpoint="/mnt",
+        )
+        self.assertEqual(
+                lowerdir_for(overlay),
+                "/tmp/upper1:/tmp/lower2:/tmp/lower1")
+
+    def test_lowerdir_for_list(self):
+        overlay = OverlayMountpoint(
+                lowers=["/tmp/overlaylower1", "/tmp/overlaylower2"],
+                upperdir="/tmp/overlayupper1",
+                mountpoint="/mnt/overlay",
+        )
+        mountpoint = Mountpoint(mountpoint="/mnt/mountpoint")
+        lowers = ["/tmp/lower1", "/tmp/lower2"]
+        self.assertEqual(
+                lowerdir_for([overlay, mountpoint, lowers]),
+                "/tmp/lower2:/tmp/lower1" +
+                ":/mnt/mountpoint" +
+                ":/tmp/overlayupper1:/tmp/overlaylower2:/tmp/overlaylower1")
+
+    def test_lowerdir_for_other(self):
+        with self.assertRaises(NotImplementedError):
+            lowerdir_for(None)
+
+        with self.assertRaises(NotImplementedError):
+            lowerdir_for(10)

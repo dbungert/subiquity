@@ -161,6 +161,8 @@ class InstallController(SubiquityController):
 
             await self.app.hub.abroadcast(InstallerChannels.APT_CONFIGURED)
 
+            await self.app.hub.abroadcast(InstallerChannels.APT_CONFIGURED)
+
             if os.path.exists(self.model.target):
                 await self.unmount_target(
                     context=context, target=self.model.target)

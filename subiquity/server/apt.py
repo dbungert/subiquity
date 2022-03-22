@@ -263,9 +263,9 @@ class AptConfigurer:
                 ])
 
         await self.unmount(
-                Mountpoint(mountpoint=target.p('cdrom')),
+                Mountpoint(mountpoint=target_mnt.p('cdrom')),
                 remove=False)
-        os.rmdir(target.p('cdrom'))
+        os.rmdir(target_mnt.p('cdrom'))
 
         await _restore_dir('etc/apt')
 
@@ -285,9 +285,17 @@ class DryRunAptConfigurer(AptConfigurer):
         if remove:
             self._mounts.remove(mountpoint)
 
-    async def setup_overlay(self, source):
-        if isinstance(source, OverlayMountpoint):
-            source = source.lowers[0]
+    async def setup_overlay(self, lowers: List[Lower]) -> OverlayMountpoint:
+        # XXX This implementation expects that:
+        # - on first invocation, the lowers list contains a single string
+        # element.
+        # - on second invocation, the lowers list contains the
+        # OverlayMountPoint returned by the first invocation.
+        lowerdir = lowers[0]
+        if isinstance(lowerdir, OverlayMountpoint):
+            source = lowerdir.lowers[0]
+        else:
+            source = lowerdir
         target = self.tdir()
         os.mkdir(f'{target}/etc')
         await arun_command([

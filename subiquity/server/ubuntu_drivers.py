@@ -108,8 +108,8 @@ class UbuntuDriversClientInterface(UbuntuDriversInterface):
 class UbuntuDriversHasDriversInterface(UbuntuDriversInterface):
     """ A dry-run implementation of ubuntu-drivers that returns a hard-coded
     list of drivers. """
-    gpgpu_drivers = ["nvidia-driver-470-server"]
-    not_gpgpu_drivers = ["nvidia-driver-510"]
+    gpgpu_drivers: List[str] = ["nvidia-driver-470-server"]
+    not_gpgpu_drivers: List[str] = ["nvidia-driver-510"]
 
     def __init__(self, app, gpgpu: bool) -> None:
         super().__init__(app, gpgpu)
@@ -126,8 +126,8 @@ class UbuntuDriversNoDriversInterface(UbuntuDriversHasDriversInterface):
     """ A dry-run implementation of ubuntu-drivers that returns a hard-coded
     empty list of drivers. """
 
-    gpgpu_drivers = []
-    not_gpgpu_drivers = []
+    gpgpu_drivers: List[str] = []
+    not_gpgpu_drivers: List[str] = []
 
 
 class UbuntuDriversRunDriversInterface(UbuntuDriversInterface):
@@ -137,9 +137,7 @@ class UbuntuDriversRunDriversInterface(UbuntuDriversInterface):
         # TODO This does not tell us if the "--recommended" option is
         # available.
         try:
-            await arun_command(
-                    ["sh", "-c", "command -v ubuntu-driver"],
-                    check=True)
+            await arun_command(["command", "-v", "ubuntu-drivers"])
         except subprocess.CalledProcessError:
             raise CommandNotFoundError(
                     "Command ubuntu-drivers is not available in this system")
