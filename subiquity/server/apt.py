@@ -13,12 +13,15 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import contextlib
 import functools
 import logging
 import os
 import shutil
 import tempfile
 from typing import List, Optional, Union
+
+import attr
 
 import attr
 
@@ -153,9 +156,10 @@ class AptConfigurer:
         self._mounts.append(m)
         return m
 
-    async def unmount(self, mountpoint: str):
-        await self.app.command_runner.run(['umount', mountpoint],
-                                          private_mounts=False)
+    async def unmount(self, mountpoint: Mountpoint, remove=True):
+        if remove:
+            self._mounts.remove(mountpoint)
+        await self.app.command_runner.run(['umount', mountpoint.mountpoint])
 
     async def setup_overlay(self, lowers: List[Lower]) -> OverlayMountpoint:
         tdir = self.tdir()
@@ -225,9 +229,27 @@ class AptConfigurer:
 
         return self.install_tree.p()
 
+    @contextlib.asynccontextmanager
+    async def overlay(self):
+        overlay = await self.setup_overlay([
+                self.install_tree.upperdir,
+                self.configured_tree.upperdir,
+                self.source
+            ])
+        try:
+            yield overlay
+        finally:
+            # TODO self.unmount expects a Mountpoint object. Unfortunately, the
+            # one we created in setup_overlay was discarded and replaced by an
+            # OverlayMountPoint object instead. Here we re-create a new
+            # Mountpoint object and (thanks to attr.s) make sure that it
+            # compares equal to the one we discarded earlier.
+            # But really, there should be better ways to handle this.
+            await self.unmount(Mountpoint(mountpoint=overlay.mountpoint))
+
     async def cleanup(self):
         for m in reversed(self._mounts):
-            await self.unmount(m.mountpoint)
+            await self.unmount(m, remove=False)
         for d in self._tdirs:
             shutil.rmtree(d)
 
@@ -240,8 +262,10 @@ class AptConfigurer:
                 'cp', '-aT', self.configured_tree.p(dir), target_mnt.p(dir),
                 ])
 
-        await self.unmount(target_mnt.p('cdrom'))
-        os.rmdir(target_mnt.p('cdrom'))
+        await self.unmount(
+                Mountpoint(mountpoint=target.p('cdrom')),
+                remove=False)
+        os.rmdir(target.p('cdrom'))
 
         await _restore_dir('etc/apt')
 
@@ -254,25 +278,16 @@ class AptConfigurer:
 
         await self.cleanup()
 
-        if self.app.base_model.network.has_network:
-            await run_curtin_command(
-                self.app, context, "in-target", "-t", target_mnt.p(),
-                "--", "apt-get", "update", private_mounts=True)
-
 
 class DryRunAptConfigurer(AptConfigurer):
 
-    async def setup_overlay(self, lowers: List[Lower]) -> OverlayMountpoint:
-        # XXX This implementation expects that:
-        # - on first invocation, the lowers list contains a single string
-        # element.
-        # - on second invocation, the lowers list contains the
-        # OverlayMountPoint returned by the first invocation.
-        lowerdir = lowers[0]
-        if isinstance(lowerdir, OverlayMountpoint):
-            source = lowerdir.lowers[0]
-        else:
-            source = lowerdir
+    async def unmount(self, mountpoint: Mountpoint, remove=True):
+        if remove:
+            self._mounts.remove(mountpoint)
+
+    async def setup_overlay(self, source):
+        if isinstance(source, OverlayMountpoint):
+            source = source.lowers[0]
         target = self.tdir()
         os.mkdir(f'{target}/etc')
         await arun_command([
@@ -286,8 +301,12 @@ class DryRunAptConfigurer(AptConfigurer):
             mountpoint=target,
             upperdir=None)
 
+    @contextlib.asynccontextmanager
+    async def overlay(self):
+        yield await self.setup_overlay(self.install_tree.mountpoint)
+
     async def deconfigure(self, context, target):
-        return
+        await self.cleanup()
 
 
 def get_apt_configurer(app, source: str):
