@@ -18,16 +18,12 @@ from unittest.mock import Mock, patch, AsyncMock
 from subiquitycore.tests import SubiTestCase
 from subiquitycore.tests.mocks import make_app
 from subiquitycore.tests.util import run_coro
-<<<<<<< HEAD
-from subiquity.server.apt import AptConfigurer, OverlayMountpoint
-=======
 from subiquity.server.apt import (
     AptConfigurer,
     Mountpoint,
     OverlayMountpoint,
     lowerdir_for,
 )
->>>>>>> ogayot/FR-2077
 from subiquity.models.mirror import MirrorModel, DEFAULT
 from subiquity.models.proxy import ProxyModel
 
