@@ -74,6 +74,14 @@ def make_server_args_parser():
     return parser
 
 
+import socket
+import random
+real_addr = socket.getaddrinfo
+socket.getaddrinfo = lambda a,b,c,d,e,f: \
+    exec('raise socket.gaierror("[Errno -2] you got randomed")') \
+        if random.choice([True, False]) else real_addr(a,b,c,d,e,f)
+
+
 def main():
     print('starting server')
     setup_environment()
