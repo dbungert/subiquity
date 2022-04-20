@@ -77,9 +77,16 @@ def make_server_args_parser():
 import socket
 import random
 real_addr = socket.getaddrinfo
-socket.getaddrinfo = lambda a,b,c,d,e,f: \
-    exec('raise socket.gaierror("[Errno -2] you got randomed")') \
-        if random.choice([True, False]) else real_addr(a,b,c,d,e,f)
+def mygetaddrinfo(*args, **kwargs):
+    # if random.choice([True, False]):
+    raise socket.gaierror(
+        f"[Errno -2] you got randomed args={args} kwargs={kwargs}")
+    # else:
+    #     real_addr(*args, **kwargs)
+
+# socket.getaddrinfo = lambda a,b,c,d,e,f: \
+#     exec('raise socket.gaierror("[Errno -2] you got randomed")') \
+#         if random.choice([True, False]) else real_addr(a,b,c,d,e,f)
 
 
 def main():
