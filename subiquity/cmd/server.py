@@ -83,6 +83,7 @@ def mygetaddrinfo(*args, **kwargs):
         f"[Errno -2] you got randomed args={args} kwargs={kwargs}")
     # else:
     #     real_addr(*args, **kwargs)
+socket.getaddrinfo = mygetaddrinfo
 
 # socket.getaddrinfo = lambda a,b,c,d,e,f: \
 #     exec('raise socket.gaierror("[Errno -2] you got randomed")') \
