@@ -15,6 +15,7 @@
 
 import asyncio
 import logging
+import socket
 
 import aiohttp
 
@@ -46,7 +47,7 @@ class RefreshController(SubiquityTuiController):
         while True:
             try:
                 return await self.endpoint.progress.GET(change_id=change)
-            except aiohttp.ClientError:
+            except (aiohttp.ClientError, socket.gaierror):
                 # Probably the server is restarting.
                 await asyncio.sleep(1)
 

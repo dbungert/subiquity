@@ -16,6 +16,7 @@
 import asyncio
 import logging
 import os
+import socket
 from typing import List, Optional
 
 import aiohttp
@@ -323,7 +324,7 @@ class NetworkController(BaseNetworkController, SubiquityController):
                 return
             try:
                 await getattr(client, meth_name).POST(*args)
-            except aiohttp.ClientError:
+            except (aiohttp.ClientError, socket.gaierror):
                 log.exception("call to %s on %s failed", meth_name, conn.path)
 
     def _call_clients(self, meth_name, *args):

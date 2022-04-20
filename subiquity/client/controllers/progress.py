@@ -15,6 +15,7 @@
 
 import asyncio
 import logging
+import socket
 
 import aiohttp
 
@@ -69,7 +70,7 @@ class ProgressController(SubiquityTuiController):
     async def send_reboot_and_wait(self):
         try:
             await self.app.client.shutdown.POST(mode=ShutdownMode.REBOOT)
-        except aiohttp.ClientError:
+        except (aiohttp.ClientError, socket.gaierror):
             pass
         self.app.exit()
 
@@ -80,7 +81,7 @@ class ProgressController(SubiquityTuiController):
             try:
                 app_status = await self.app.client.meta.status.GET(
                     cur=self.app_state)
-            except aiohttp.ClientError:
+            except (aiohttp.ClientError, socket.gaierror):
                 await asyncio.sleep(1)
                 continue
             self.app_state = app_status.state

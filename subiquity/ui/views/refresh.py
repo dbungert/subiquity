@@ -16,6 +16,7 @@
 import asyncio
 import json
 import logging
+import socket
 
 import aiohttp
 
@@ -249,6 +250,9 @@ class RefreshView(BaseView):
         try:
             change_id = await self.controller.start_update()
         except aiohttp.ClientError as e:
+            self.update_failed(exc_message(e))
+            return
+        except socket.gaierror as e:
             self.update_failed(exc_message(e))
             return
         while True:

@@ -19,6 +19,7 @@ import inspect
 import logging
 import os
 import signal
+import socket
 import sys
 import traceback
 from typing import Optional
@@ -222,7 +223,7 @@ class SubiquityClient(TuiApplication):
             raise Abort(ref)
         try:
             response.raise_for_status()
-        except aiohttp.ClientError:
+        except (aiohttp.ClientError, socket.gaierror):
             report = self.error_reporter.make_apport_report(
                 ErrorReportKind.SERVER_REQUEST_FAIL,
                 "request to {}".format(response.url.path))
@@ -248,7 +249,7 @@ class SubiquityClient(TuiApplication):
         while True:
             try:
                 return await self.client.meta.status.GET(cur=cur)
-            except aiohttp.ClientError:
+            except (aiohttp.ClientError, socket.gaierror):
                 try:
                     fp = open(self.state_path("server-state"))
                 except FileNotFoundError:

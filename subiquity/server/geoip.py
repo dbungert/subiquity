@@ -17,6 +17,7 @@ from abc import ABC, abstractmethod
 import aiohttp
 import logging
 import enum
+import socket
 from xml.etree import ElementTree
 
 from subiquitycore.async_helpers import (
@@ -82,6 +83,8 @@ class HTTPGeoIPStrategy(GeoIPStrategy):
                     response.raise_for_status()
                     return await response.text()
         except aiohttp.ClientError as e:
+            raise LookupError from e
+        except socket.gaierror as e:
             raise LookupError from e
 
 
