@@ -17,16 +17,6 @@ from subiquitycore.utils import astart_command
 default_timeout = 10
 
 
-def find(items, key, value):
-    for item in items:
-        if key in item and item[key] == value:
-            yield item
-
-
-def first(items, key, value):
-    return next(find(items, key, value))
-
-
 def match(items, **kwargs):
     return [item for item in items
             if all(item.get(k) == v for k, v in kwargs.items())]
@@ -265,12 +255,12 @@ class TestFlow(TestAPI):
         async with start_server('examples/win10.json') as inst:
             disk_id = 'disk-sda'
             orig_resp = await inst.get('/storage/v2')
-            sda = first(orig_resp['disks'], 'id', disk_id)
+            [sda] = match(orig_resp['disks'], id=disk_id)
             self.assertTrue(len(sda['partitions']) > 0)
 
             data = {'disk_id': disk_id}
             resp = await inst.post('/storage/v2/reformat_disk', data)
-            sda = first(resp['disks'], 'id', disk_id)
+            [sda] = match(resp['disks'], id=disk_id)
             [gap] = sda['partitions']
             self.assertEqual('Gap', gap['$type'])
 
@@ -283,8 +273,8 @@ class TestFlow(TestAPI):
                 }
             }
             add_resp = await inst.post('/storage/v2/add_partition', data)
-            sda = first(add_resp['disks'], 'id', disk_id)
-            sda2 = first(sda['partitions'], 'number', 2)
+            [sda] = match(add_resp['disks'], id=disk_id)
+            [sda2] = match(sda['partitions'], number=2)
             self.assertEqual('ext3', sda2['format'])
 
             data = {
@@ -296,18 +286,18 @@ class TestFlow(TestAPI):
             }
             edit_resp = await inst.post('/storage/v2/edit_partition', data)
 
-            add_sda = first(add_resp['disks'], 'id', disk_id)
-            add_sda2 = first(add_sda['partitions'], 'number', 2)
+            [add_sda] = match(add_resp['disks'], id=disk_id)
+            [add_sda2] = match(add_sda['partitions'], number=2)
 
-            edit_sda = first(edit_resp['disks'], 'id', disk_id)
-            edit_sda2 = first(edit_sda['partitions'], 'number', 2)
+            [edit_sda] = match(edit_resp['disks'], id=disk_id)
+            [edit_sda2] = match(edit_sda['partitions'], number=2)
 
             for key in 'size', 'number', 'mount', 'boot':
                 self.assertEqual(add_sda2[key], edit_sda2[key], key)
             self.assertEqual('ext4', edit_sda2['format'])
 
             del_resp = await inst.post('/storage/v2/delete_partition', data)
-            sda = first(del_resp['disks'], 'id', disk_id)
+            [sda] = match(del_resp['disks'], id=disk_id)
             self.assertEqual(2, len(sda['partitions']))
 
             for type in 'Partition', 'Gap':
@@ -341,7 +331,7 @@ class TestAdd(TestAPI):
             disk_id = 'disk-sda'
 
             resp = await inst.post('/storage/v2')
-            sda = first(resp['disks'], 'id', disk_id)
+            [sda] = match(resp['disks'], id=disk_id)
             [gap] = match_type(sda['partitions'], 'Gap')
 
             data = {
@@ -362,7 +352,7 @@ class TestAdd(TestAPI):
             # the single partition and getting the automatic boot partition
             resp = await inst.post(
                 '/storage/v2/add_boot_partition', disk_id=disk_id)
-            sda = first(resp['disks'], 'id', disk_id)
+            [sda] = match(resp['disks'], id=disk_id)
             gap = first(sda['partitions'], '$type', 'Gap')
             data = {
                 'disk_id': disk_id,
@@ -413,7 +403,7 @@ class TestAdd(TestAPI):
         async with start_server('examples/simple.json') as inst:
             disk_id = 'disk-sda'
             resp = await inst.get('/storage/v2')
-            sda = first(resp['disks'], 'id', disk_id)
+            [sda] = match(resp['disks'], id=disk_id)
             [gap] = sda['partitions']
 
             data = {
@@ -425,9 +415,9 @@ class TestAdd(TestAPI):
                 }
             }
             resp = await inst.post('/storage/v2/add_partition', data)
-            sda = first(resp['disks'], 'id', disk_id)
-            sda1 = first(sda['partitions'], 'number', 1)
-            sda2 = first(sda['partitions'], 'number', 2)
+            [sda] = match(resp['disks'], id=disk_id)
+            [sda1] = match(sda['partitions'], number=1)
+            [sda2] = match(sda['partitions'], number=2)
             self.assertEqual(gap['size'], sda1['size'] + sda2['size'])
 
     @timeout()
@@ -436,8 +426,8 @@ class TestAdd(TestAPI):
             disk_id = 'disk-sda'
             resp = await inst.post('/storage/v2/add_boot_partition',
                                    disk_id=disk_id)
-            sda = first(resp['disks'], 'id', disk_id)
-            sda1 = first(sda['partitions'], 'number', 1)
+            [sda] = match(resp['disks'], id=disk_id)
+            [sda1] = match(sda['partitions'], number=1)
             self.assertTrue(sda['boot_device'])
             self.assertTrue(sda1['boot'])
 
@@ -446,15 +436,15 @@ class TestAdd(TestAPI):
         async with start_server('examples/simple.json', 'bios') as inst:
             disk_id = 'disk-sda'
             resp = await inst.get('/storage/v2')
-            sda = first(resp['disks'], 'id', disk_id)
+            [sda] = match(resp['disks'], id=disk_id)
             self.assertFalse(sda['boot_device'])
 
     @timeout()
     async def test_v2_multi_disk_multi_boot(self):
         async with start_server('examples/many-nics-and-disks.json') as inst:
             resp = await inst.get('/storage/v2')
-            vda = first(resp['disks'], 'id', 'disk-vda')
-            vdb = first(resp['disks'], 'id', 'disk-vdb')
+            [vda] = match(resp['disks'], id='disk-vda')
+            [vdb] = match(resp['disks'], id='disk-vdb')
             await inst.post('/storage/v2/reformat_disk',
                             {'disk_id': vda['id']})
             await inst.post('/storage/v2/reformat_disk',
@@ -533,8 +523,8 @@ class TestEdit(TestAPI):
             disk_id = 'disk-sda'
             resp = await inst.get('/storage/v2')
 
-            sda = first(resp['disks'], 'id', disk_id)
-            sda3 = first(sda['partitions'], 'number', 3)
+            [sda] = match(resp['disks'], id=disk_id)
+            [sda3] = match(sda['partitions'], number=3)
             data = {
                 'disk_id': disk_id,
                 'partition': {
@@ -572,8 +562,8 @@ class TestEdit(TestAPI):
             }
             resp = await inst.post('/storage/v2/edit_partition', data)
 
-            sda = first(resp['disks'], 'id', disk_id)
-            sda3 = first(sda['partitions'], 'number', 3)
+            [sda] = match(resp['disks'], id=disk_id)
+            [sda3] = match(sda['partitions'], number=3)
             self.assertEqual('btrfs', sda3['format'])
 
     @timeout()
@@ -589,8 +579,8 @@ class TestEdit(TestAPI):
             }
             resp = await inst.post('/storage/v2/edit_partition', data)
 
-            sda = first(resp['disks'], 'id', disk_id)
-            sda3 = first(sda['partitions'], 'number', 3)
+            [sda] = match(resp['disks'], id=disk_id)
+            [sda3] = match(sda['partitions'], number=3)
             self.assertEqual('/', sda3['mount'])
 
     @timeout()
@@ -607,8 +597,8 @@ class TestEdit(TestAPI):
             }
             resp = await inst.post('/storage/v2/edit_partition', data)
 
-            sda = first(resp['disks'], 'id', disk_id)
-            sda3 = first(sda['partitions'], 'number', 3)
+            [sda] = match(resp['disks'], id=disk_id)
+            [sda3] = match(sda['partitions'], number=3)
             self.assertEqual('btrfs', sda3['format'])
             self.assertEqual('/', sda3['mount'])
 
@@ -617,7 +607,7 @@ class TestEdit(TestAPI):
         async with start_server('examples/win10.json') as inst:
             disk_id = 'disk-sda'
             resp = await inst.get('/storage/v2')
-            orig_sda = first(resp['disks'], 'id', disk_id)
+            [orig_sda] = match(resp['disks'], id=disk_id)
 
             data = {
                 'disk_id': disk_id,
@@ -628,25 +618,25 @@ class TestEdit(TestAPI):
                 }
             }
             resp = await inst.post('/storage/v2/edit_partition', data)
-            sda = first(resp['disks'], 'id', disk_id)
-            sda1 = first(sda['partitions'], 'number', 1)
+            [sda] = match(resp['disks'], id=disk_id)
+            [sda1] = match(sda['partitions'], number=1)
             self.assertIsNone(sda1['wipe'])
             self.assertEqual('/boot/efi', sda1['mount'])
             self.assertEqual('vfat', sda1['format'])
             self.assertTrue(sda1['boot'])
 
-            sda2 = first(sda['partitions'], 'number', 2)
-            orig_sda2 = first(orig_sda['partitions'], 'number', 2)
+            [sda2] = match(sda['partitions'], number=2)
+            [orig_sda2] = match(orig_sda['partitions'], number=2)
             self.assertEqual(orig_sda2, sda2)
 
-            sda3 = first(sda['partitions'], 'number', 3)
+            [sda3] = match(sda['partitions'], number=3)
             self.assertEqual('superblock', sda3['wipe'])
             self.assertEqual('/', sda3['mount'])
             self.assertEqual('ext4', sda3['format'])
             self.assertFalse(sda3['boot'])
 
-            sda4 = first(sda['partitions'], 'number', 4)
-            orig_sda4 = first(orig_sda['partitions'], 'number', 4)
+            [sda4] = match(sda['partitions'], number=4)
+            [orig_sda4] = match(orig_sda['partitions'], number=4)
             self.assertEqual(orig_sda4, sda4)
 
 
@@ -669,21 +659,21 @@ class TestPartitionTableTypes(TestAPI):
     async def test_ptable_gpt(self):
         async with start_server('examples/win10.json') as inst:
             resp = await inst.get('/storage/v2')
-            sda = first(resp['disks'], 'id', 'disk-sda')
+            [sda] = match(resp['disks'], id='disk-sda')
             self.assertEqual('gpt', sda['ptable'])
 
     @timeout()
     async def test_ptable_msdos(self):
         async with start_server('examples/many-nics-and-disks.json') as inst:
             resp = await inst.get('/storage/v2')
-            sda = first(resp['disks'], 'id', 'disk-sda')
+            [sda] = match(resp['disks'], id='disk-sda')
             self.assertEqual('msdos', sda['ptable'])
 
     @timeout()
     async def test_ptable_none(self):
         async with start_server('examples/simple.json') as inst:
             resp = await inst.get('/storage/v2')
-            sda = first(resp['disks'], 'id', 'disk-sda')
+            [sda] = match(resp['disks'], id='disk-sda')
             self.assertEqual(None, sda['ptable'])
 
 
@@ -760,14 +750,14 @@ class TestInfo(TestAPI):
         async with start_server('examples/simple.json') as inst:
             disk_id = 'disk-sda'
             resp = await inst.get('/storage/v2')
-            sda = first(resp['disks'], 'id', disk_id)
+            [sda] = match(resp['disks'], id=disk_id)
             self.assertEqual('/dev/sda', sda['path'])
 
     async def test_model_and_vendor(self):
         async with start_server('examples/simple.json') as inst:
             disk_id = 'disk-sda'
             resp = await inst.get('/storage/v2')
-            sda = first(resp['disks'], 'id', disk_id)
+            [sda] = match(resp['disks'], id=disk_id)
             self.assertEqual('QEMU HARDDISK', sda['model'])
             self.assertEqual('ATA', sda['vendor'])
 
@@ -775,7 +765,7 @@ class TestInfo(TestAPI):
         async with start_server('examples/many-nics-and-disks.json') as inst:
             disk_id = 'disk-sda'
             resp = await inst.get('/storage/v2')
-            sda = first(resp['disks'], 'id', disk_id)
+            [sda] = match(resp['disks'], id=disk_id)
             self.assertEqual('QEMU HARDDISK', sda['model'])
             self.assertEqual(None, sda['vendor'])
 
@@ -804,8 +794,8 @@ class TestOSProbe(TestAPI):
     async def test_win10(self):
         async with start_server('examples/win10.json') as inst:
             resp = await inst.get('/storage/v2')
-            sda = first(resp['disks'], 'id', 'disk-sda')
-            sda1 = first(sda['partitions'], 'number', 1)
+            [sda] = match(resp['disks'], id='disk-sda')
+            [sda1] = match(sda['partitions'], number=1)
             expected = {
                 'label': 'Windows',
                 'long': 'Windows Boot Manager',
@@ -932,8 +922,8 @@ class TestGap(TestAPI):
     async def test_blank_disk_is_one_big_gap(self):
         async with start_server('examples/simple.json') as inst:
             resp = await inst.get('/storage/v2')
-            sda = first(resp['disks'], 'id', 'disk-sda')
-            gap = sda['partitions'][0]
+            [sda] = match(resp['disks'], id='disk-sda')
+            [gap] = sda['partitions']
             expected = (10 << 30) - (2 << 20)
             self.assertEqual(expected, gap['size'])
 
@@ -952,8 +942,8 @@ class TestGap(TestAPI):
                 }
             }
             resp = await inst.post('/storage/v2/add_partition', data)
-            sda = first(resp['disks'], 'id', 'disk-sda')
-            boot = first(sda['partitions'], 'number', 1)
+            [sda] = match(resp['disks'], id='disk-sda')
+            [boot] = match(sda['partitions'], number=1)
             gap = sda['partitions'][2]
             expected = (10 << 30) - boot['size'] - (4 << 30) - (2 << 20)
             self.assertEqual(expected, gap['size'])
@@ -980,7 +970,7 @@ class TestGap(TestAPI):
                 'partition': {'number': 1}
             }
             resp = await inst.post('/storage/v2/delete_partition', data)
-            sda = first(resp['disks'], 'id', disk_id)
+            [sda] = match(resp['disks'], id=disk_id)
             self.assertEqual(3, len(sda['partitions']))
 
             boot_gap = sda['partitions'][0]
@@ -1014,8 +1004,8 @@ class TestRegression(TestAPI):
                 }
             }
             resp = await inst.post('/storage/v2/add_partition', data)
-            sda = first(resp['disks'], 'id', disk_id)
-            sda2 = first(sda['partitions'], 'number', 2)
+            [sda] = match(resp['disks'], id=disk_id)
+            [sda2] = match(sda['partitions'], number=2)
             sda2.update({'format': 'ext3', 'mount': '/bar'})
             data['partition'] = sda2
             data.pop('gap')
