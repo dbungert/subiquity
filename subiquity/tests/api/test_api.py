@@ -32,6 +32,11 @@ def match(items, **kwargs):
             if all(item.get(k) == v for k, v in kwargs.items())]
 
 
+def match_type(items, value):
+    """special case to matching items for key = '$type'"""
+    return [item for item in items if item.get('$type') == value]
+
+
 def timeout(multiplier=1):
     def wrapper(coro):
         @wraps(coro)
@@ -337,7 +342,7 @@ class TestAdd(TestAPI):
 
             resp = await inst.post('/storage/v2')
             sda = first(resp['disks'], 'id', disk_id)
-            gap = first(sda['partitions'], '$type', 'Gap')
+            [gap] = match_type(sda['partitions'], 'Gap')
 
             data = {
                 'disk_id': disk_id,
