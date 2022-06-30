@@ -166,7 +166,7 @@ class TestGuidedV2(IsolatedAsyncioTestCase):
     async def test_used_half_disk(self, bootloader):
         self._setup(bootloader)
         d = make_disk(self.model)
-        p1 = make_partition(self.model, d)
+        p1 = make_partition(self.model, d, preserve=True)
         self.fs_probe[p1._path()] = {'ESTIMATED_MIN_SIZE': 1 << 20}
         resp = await self.fsc.v2_guided_GET()
         reformat = resp.possible[0]
@@ -185,7 +185,8 @@ class TestGuidedV2(IsolatedAsyncioTestCase):
     async def test_used_full_disk(self, bootloader):
         self._setup(bootloader)
         d = make_disk(self.model)
-        p1 = make_partition(self.model, d, size=gaps.largest_gap_size(d))
+        p1 = make_partition(self.model, d, preserve=True,
+                            size=gaps.largest_gap_size(d))
         self.fs_probe[p1._path()] = {'ESTIMATED_MIN_SIZE': 1 << 20}
         resp = await self.fsc.v2_guided_GET()
         reformat = resp.possible[0]
@@ -200,9 +201,9 @@ class TestGuidedV2(IsolatedAsyncioTestCase):
     async def test_weighted_split(self, bootloader):
         self._setup(bootloader)
         d = make_disk(self.model, size=250 << 30)
-        p1 = make_partition(self.model, d, size=240 << 30)
+        p1 = make_partition(self.model, d, preserve=True, size=240 << 30)
         # add a second, filler, partition so that there is no use_gap result
-        make_partition(self.model, d, size=9 << 30)
+        make_partition(self.model, d, preserve=True, size=9 << 30)
         self.fs_probe[p1._path()] = {'ESTIMATED_MIN_SIZE': 40 << 30}
         self.fsc.calculate_suggested_install_min.return_value = 10 << 30
         resp = await self.fsc.v2_guided_GET()
@@ -210,13 +211,11 @@ class TestGuidedV2(IsolatedAsyncioTestCase):
         self.assertEqual(GuidedStorageTargetReformat(disk_id=d.id), reformat)
         if bootloader != Bootloader.BIOS:
             resize = resp.possible[1]
-            self.assertEqual(
-                GuidedStorageTargetResize(
+            expected = GuidedStorageTargetResize(
                     disk_id=d.id,
                     partition_number=p1.number,
                     new_size=200 << 30,
                     minimum=50 << 30,
                     recommended=200 << 30,
-                    maximum=230 << 30,
-                    ),
-                resize)
+                    maximum=230 << 30)
+            self.assertEqual(expected, resize)

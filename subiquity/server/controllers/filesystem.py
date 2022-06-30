@@ -287,22 +287,22 @@ class FilesystemController(SubiquityController, FilesystemManipulator):
             config, self.model._probe_data['blockdev'], is_probe_data=False)
         await self.configured()
 
-    def get_guided_disks(self, with_reformatting=False):
+    def get_guided_disks(self, check_boot=True, with_reformatting=False):
         disks = []
         for raid in self.model._all(type='raid'):
-            if not boot.can_be_boot_device(
+            if check_boot and not boot.can_be_boot_device(
                     raid, with_reformatting=with_reformatting):
                 continue
             disks.append(raid)
         for disk in self.model._all(type='disk'):
-            if not boot.can_be_boot_device(
+            if check_boot and not boot.can_be_boot_device(
                     disk, with_reformatting=with_reformatting):
                 continue
             cd = disk.constructed_device()
             if isinstance(cd, Raid):
                 can_be_boot = False
                 for v in cd._subvolumes:
-                    if boot.can_be_boot_device(
+                    if check_boot and boot.can_be_boot_device(
                             v, with_reformatting=with_reformatting):
                         can_be_boot = True
                 if can_be_boot:
@@ -411,6 +411,7 @@ class FilesystemController(SubiquityController, FilesystemManipulator):
                 use_gap = GuidedStorageTargetUseGap(disk_id=disk.id, gap=gap)
                 scenarios.append((gap.size, use_gap))
 
+        for disk in self.get_guided_disks(check_boot=False):
             part_align = disk.alignment_data().part_align
             for partition in disk.partitions():
                 vals = sizes.calculate_guided_resize(
