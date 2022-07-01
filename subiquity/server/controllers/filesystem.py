@@ -148,7 +148,7 @@ class FilesystemController(SubiquityController, FilesystemManipulator):
         if mode is None or mode == 'reformat_disk':
             self.reformat(disk, wipe='superblock-recursive')
         if DeviceAction.TOGGLE_BOOT in DeviceAction.supported(disk):
-            self.add_boot_disk(target)
+            self.add_boot_disk(disk)
         if gap is None:
             return disk, gaps.largest_gap(disk)
         else:
@@ -217,16 +217,17 @@ class FilesystemController(SubiquityController, FilesystemManipulator):
             target = disk
         elif isinstance(choice.target, GuidedStorageTargetUseGap):
             mode = 'use_gap'
-            target = gaps.at_offset(choice.target.gap.offset)
+            target = gaps.at_offset(disk, choice.target.gap.offset)
         elif isinstance(choice.target, GuidedStorageTargetResize):
             partition = self.get_partition(
                     disk, choice.target.partition_number)
             part_align = disk.alignment_data().part_align
             new_size = align_up(choice.target.new_size, part_align)
             if new_size > partition.size:
-                raise Exception(f'Requested size {new_size} too large')
+                raise Exception(f'Aligned requested size {new_size} too large')
             gap_offset = partition.offset + new_size
             partition.size = new_size
+            partition.resize = True
             mode = 'use_gap'
             target = gaps.at_offset(disk, gap_offset)
         else:
@@ -408,7 +409,10 @@ class FilesystemController(SubiquityController, FilesystemManipulator):
         for disk in self.get_guided_disks(with_reformatting=False):
             gap = gaps.largest_gap(disk)
             if gap is not None and gap.size >= install_min:
-                use_gap = GuidedStorageTargetUseGap(disk_id=disk.id, gap=gap)
+                api_gap = labels.for_client(gap)
+                use_gap = GuidedStorageTargetUseGap(
+                        disk_id=disk.id,
+                        gap=api_gap)
                 scenarios.append((gap.size, use_gap))
 
         for disk in self.get_guided_disks(check_boot=False):
@@ -419,17 +423,22 @@ class FilesystemController(SubiquityController, FilesystemManipulator):
                         install_min, part_align=part_align)
                 if vals is None:
                     continue
+                if not boot.can_be_boot_device(
+                        disk, resize_partition=partition,
+                        with_reformatting=False):
+                    continue
                 offset = partition.offset + partition.size - install_min
                 gap = gaps.Gap(device=disk, offset=offset, size=install_min)
                 resize = GuidedStorageTargetResize.from_recommendations(
-                            partition, vals)
+                        partition, vals)
                 scenarios.append((vals.install_max, resize))
 
+        # Sort the results according to how much space the install could
+        # theoretically have.
         scenarios.sort(reverse=True, key=lambda x: x[0])
-        possible = [s[1] for s in scenarios]
         return GuidedStorageResponseV2(
                 configured=self.model.guided_configuration,
-                possible=possible)
+                possible=[s[1] for s in scenarios])
 
     async def v2_guided_POST(self, data: GuidedChoiceV2) \
             -> GuidedStorageResponseV2:
