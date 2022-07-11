@@ -223,11 +223,14 @@ class FilesystemController(SubiquityController, FilesystemManipulator):
             new_size = align_up(choice.target.new_size, part_align)
             if new_size > partition.size:
                 raise Exception(f'Aligned requested size {new_size} too large')
-            gap_offset = partition.offset + new_size
+            gap = gaps.Gap(disk, offset=partition.offset, size=partition.size)
             partition.size = new_size
             partition.resize = True
             mode = 'use_gap'
-            target = gaps.at_offset(disk, gap_offset)
+            target = gaps.within(disk, gap)
+            if target is None:
+                pgs = gaps.parts_and_gaps(disk)
+                raise Exception(f'gap not found after resize, pgs={pgs}')
         else:
             raise Exception(f'Unknown guided target {choice.target}')
 

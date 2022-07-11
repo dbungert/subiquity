@@ -396,6 +396,21 @@ class TestGuided(TestAPI):
             }
             self.assertDictSubset(expected_p2, p2)
 
+    # @timeout()
+    async def test_guided_v2_jp(self):
+        # cfg = 'examples/jp.json'
+        # extra = ['--storage-version', '2']
+        # async with start_server(cfg, extra_args=extra) as inst:
+        async with connect_server() as inst:
+            resp = await inst.get('/storage/v2/guided')
+            json_print(resp)
+            # breakpoint()
+            [resize_six] = match(resp['possible'], partition_number=6)
+            data = {'target': resize_six}
+            resp = await inst.post('/storage/v2/guided', data)
+            breakpoint()
+            print()
+
     @timeout()
     async def test_guided_v2_resize(self):
         cfg = 'examples/win10-along-ubuntu.json'
