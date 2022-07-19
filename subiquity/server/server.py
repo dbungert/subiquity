@@ -141,6 +141,9 @@ class MetaController:
     async def client_variant_GET(self) -> str:
         return self.app.variant
 
+    async def dry_run_GET(self) -> bool:
+        return self.opts.dry_run
+
     async def ssh_info_GET(self) -> Optional[LiveSessionSSHInfo]:
         ips: List[str] = []
         if self.app.base_model.network:
