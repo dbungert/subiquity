@@ -23,7 +23,7 @@ from typing import List, Optional
 
 from aiohttp import web
 
-from cloudinit import safeyaml
+from cloudinit import safeyaml, stages
 from cloudinit.config.cc_set_passwords import rand_user_password
 from cloudinit.distros import ug_util
 
@@ -538,9 +538,22 @@ class SubiquityServer(Application):
             with open(cloud_init_instance_data_path) as stream:
                 cloud_init_instance_data = json.loads(stream.read())
             cfg = cloud_init_instance_data["merged_cfg"].get("autoinstall")
+            log.debug(f"cfg from instance data {cfg}")
+
+            init = stages.Init()
+            init.read_cfg()
+            init.fetch(existing="trust")
+            self.cloud = init.cloudify()
+            if 'autoinstall' in self.cloud.cfg:
+                existing_method_cfg = self.cloud.cfg['autoinstall']
+                log.debug(f"cfg from existing method {existing_method_cfg}")
+            else:
+                log.debug("autoinstall not found in self.cloud.cfg")
+
             if cfg:
                 target = self.base_relative(cloud_autoinstall_path)
                 write_file(target, safeyaml.dumps(cfg))
+                log.debug(f'wrote autoinstall results to {target}')
         else:
             log.debug(
                 "cloud-init status: %r, assumed disabled",
