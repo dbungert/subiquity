@@ -682,6 +682,21 @@ class TestFilesystemManipulator(unittest.TestCase):
         make_partition(m, d1, flag='logical', size=size)
         self.assertFalse(boot.can_be_boot_device(d1))
 
+    @parameterized.expand([
+        [bl, pt, sv]
+        for bl in list(Bootloader)
+        for pt in ('gpt', 'msdos', 'vtoc')
+        for sv in (1, 2)
+    ])
+    def test_boot_primaries_creation(self, bl, pt, sv):
+        m = make_model(bootloader=bl, storage_version=sv)
+        d1 = make_disk(m, ptable=pt)
+        plan = boot.get_boot_device_plan(d1)
+        expected = 1
+        if bl == Bootloader.NONE or (bl == Bootloader.BIOS and pt == 'msdos'):
+            expected = 0
+        self.assertEqual(expected, plan.primaries_required())
+
 
 class TestReformat(unittest.TestCase):
     def setUp(self):
