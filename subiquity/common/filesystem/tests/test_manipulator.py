@@ -696,6 +696,8 @@ class TestFilesystemManipulator(unittest.TestCase):
             expected = 0
         plan = boot.get_boot_device_plan(d1)
         self.assertEqual(expected, plan.primaries_required())
+        self.assertEqual(
+                expected, boot.primaries_required(d1, with_reformatting=True))
 
     @parameterized.expand([
         [bl, pt, sv]
@@ -718,6 +720,8 @@ class TestFilesystemManipulator(unittest.TestCase):
                 }
         plan = boot.get_boot_device_plan(d1)
         self.assertEqual(0, plan.primaries_required())
+        self.assertEqual(
+                0, boot.primaries_required(d1, with_reformatting=False))
 
 
 class TestReformat(unittest.TestCase):

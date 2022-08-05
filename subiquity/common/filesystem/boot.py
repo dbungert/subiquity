@@ -402,3 +402,14 @@ def is_bootloader_partition(partition):
         return partition.flag == "prep"
     else:
         return False
+
+
+def primaries_required(device, with_reformatting=False):
+    if not with_reformatting:
+        plan = get_boot_device_plan(device)
+        return plan.primaries_required()
+    if device._m.bootloader == Bootloader.NONE:
+        return 0
+    if device._m.bootloader == Bootloader.BIOS and device.ptable == 'msdos':
+        return 0
+    return 1
