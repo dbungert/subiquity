@@ -70,6 +70,9 @@ class MakeBootDevicePlan(abc.ABC):
     def apply(self, manipulator):
         pass
 
+    def primaries_required(self):
+        return 0
+
 
 @attr.s(auto_attribs=True)
 class CreatePartPlan(MakeBootDevicePlan):
@@ -83,6 +86,9 @@ class CreatePartPlan(MakeBootDevicePlan):
     def apply(self, manipulator):
         manipulator.create_partition(
             self.gap.device, self.gap, self.spec, **self.args)
+
+    def primaries_required(self):
+        return 1
 
 
 def _can_resize_part(inst, field, part):
@@ -159,6 +165,9 @@ class MultiStepPlan(MakeBootDevicePlan):
     def apply(self, manipulator):
         for plan in self.plans:
             plan.apply(manipulator)
+
+    def primaries_required(self):
+        return sum(plan.primaries_required() for plan in self.plans)
 
 
 def get_boot_device_plan_bios(device) -> Optional[MakeBootDevicePlan]:
