@@ -425,7 +425,7 @@ class FilesystemController(SubiquityController, FilesystemManipulator):
                 max_primaries = disk.alignment_data().primary_part_limit
                 content_primaries = 1 if not gap.in_extended else 0
                 spare_primaries = max_primaries - len(primaries) \
-                        - boot_needed - content_primaries
+                    - boot_needed - content_primaries
                 if spare_primaries < 0:
                     continue
                 api_gap = labels.for_client(gap)
@@ -437,6 +437,8 @@ class FilesystemController(SubiquityController, FilesystemManipulator):
         for disk in self.get_guided_disks(check_boot=False):
             part_align = disk.alignment_data().part_align
             for partition in disk.partitions():
+                # FIXME what happens with an extended
+                # FIXME replicate gap primary code from above
                 vals = sizes.calculate_guided_resize(
                         partition.estimated_min_size, partition.size,
                         install_min, part_align=part_align)
