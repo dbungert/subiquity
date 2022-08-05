@@ -407,6 +407,8 @@ class FilesystemController(SubiquityController, FilesystemManipulator):
         install_min = self.calculate_suggested_install_min()
 
         for disk in self.get_guided_disks(with_reformatting=True):
+            # we could check # of primaries, but the max number required is 2
+            # and all ptable types support at least 3
             if disk.size >= install_min:
                 reformat = GuidedStorageTargetReformat(disk_id=disk.id)
                 scenarios.append((disk.size, reformat))
@@ -418,6 +420,14 @@ class FilesystemController(SubiquityController, FilesystemManipulator):
                 continue
             gap = gaps.largest_gap(disk)
             if gap is not None and gap.size >= install_min:
+                primaries = [p for p in disk.partitions() if not p.is_logical]
+                boot_needed = boot.primaries_required(disk)
+                max_primaries = disk.alignment_data().primary_part_limit
+                content_primaries = 1 if not gap.in_extended else 0
+                spare_primaries = max_primaries - len(primaries) \
+                        - boot_needed - content_primaries
+                if spare_primaries < 0:
+                    continue
                 api_gap = labels.for_client(gap)
                 use_gap = GuidedStorageTargetUseGap(
                         disk_id=disk.id,
