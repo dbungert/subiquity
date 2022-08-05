@@ -691,11 +691,33 @@ class TestFilesystemManipulator(unittest.TestCase):
     def test_boot_primaries_creation(self, bl, pt, sv):
         m = make_model(bootloader=bl, storage_version=sv)
         d1 = make_disk(m, ptable=pt)
-        plan = boot.get_boot_device_plan(d1)
         expected = 1
         if bl == Bootloader.NONE or (bl == Bootloader.BIOS and pt == 'msdos'):
             expected = 0
+        plan = boot.get_boot_device_plan(d1)
         self.assertEqual(expected, plan.primaries_required())
+
+    @parameterized.expand([
+        [bl, pt, sv]
+        for bl in list(Bootloader)
+        for pt in ('gpt', 'msdos', 'vtoc')
+        for sv in (1, 2)
+    ])
+    def test_boot_primaries_already_bootable(self, bl, pt, sv):
+        manipulator = make_manipulator(bootloader=bl, storage_version=sv)
+        m = manipulator.model
+        m._probe_data.setdefault('blockdev', {})
+        d1 = make_disk(m, ptable=pt)
+        boot.get_boot_device_plan(d1).apply(manipulator)
+        for p in d1._partitions:
+            p.preserve = True
+            if bl == Bootloader.UEFI:
+                # let it pass the is_esp check
+                m._probe_data['blockdev'][p._path()] = {
+                    "ID_PART_ENTRY_TYPE": str(0xef)
+                }
+        plan = boot.get_boot_device_plan(d1)
+        self.assertEqual(0, plan.primaries_required())
 
 
 class TestReformat(unittest.TestCase):
