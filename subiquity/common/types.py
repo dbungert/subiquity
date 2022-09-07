@@ -339,6 +339,11 @@ class StorageResponse:
     storage_version: int = 1
 
 
+class LVMSizePolicy(enum.Enum):
+    GUIDED = enum.auto()
+    ALL = enum.auto()
+
+
 @attr.s(auto_attribs=True)
 class StorageResponseV2:
     status: ProbeStatus
@@ -401,6 +406,7 @@ class GuidedChoiceV2:
     target: GuidedStorageTarget
     use_lvm: bool = False
     password: Optional[str] = attr.ib(default=None, repr=False)
+    lvm_size_policy: Optional[LVMSizePolicy] = None
 
     @staticmethod
     def from_guided_choice(choice: GuidedChoice):

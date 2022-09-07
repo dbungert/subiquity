@@ -150,7 +150,32 @@ class FilesystemController(SubiquityController, FilesystemManipulator):
         spec = dict(fstype="ext4", mount="/")
         self.create_partition(device=gap.device, gap=gap, spec=spec)
 
-    def guided_lvm(self, gap, lvm_options=None):
+    def choose_lv_size(self, vg: LVM_VolGroup,
+                       size_policy: Optional[LVMSizePolicy]) -> int:
+        if size_policy is None or size_policy == LVMSizePolicy.GUIDED:
+            # There's no point using LVM and unconditionally filling the
+            # VG with a single LV, but we should use more of a smaller
+            # disk to avoid the user running into out of space errors
+            # earlier than they probably expect to.
+            if vg.size < 10 * (1 << 30):
+                # Use all of a small (<10G) disk.
+                lv_size = vg.size
+            elif vg.size < 20 * (1 << 30):
+                # Use 10G of a smallish (<20G) disk.
+                lv_size = 10 * (1 << 30)
+            elif vg.size < 200 * (1 << 30):
+                # Use half of a larger (<200G) disk.
+                lv_size = vg.size // 2
+            else:
+                # Use at most 100G of a large disk.
+                lv_size = 100 * (1 << 30)
+        elif size_policy == LVMSizePolicy.ALL:
+            lv_size = vg.size
+        else:
+            raise Exception(f'unknown LVM guided size policy {size_policy}')
+        return align_down(lv_size, LVM_CHUNK_SIZE)
+
+    def guided_lvm(self, gap: gaps.Gap, choice: GuidedChoiceV2):
         gap_boot, gap_rest = gap.split(sizes.get_bootfs_size(gap.size))
         spec = dict(fstype="ext4", mount='/boot')
         device = gap.device
@@ -163,26 +188,10 @@ class FilesystemController(SubiquityController, FilesystemManipulator):
             i += 1
             vg_name = 'ubuntu-vg-{}'.format(i)
         spec = dict(name=vg_name, devices=set([part]))
-        if lvm_options and lvm_options['encrypt']:
-            spec['password'] = lvm_options['luks_options']['password']
+        if choice.password:
+            spec['password'] = choice.password
         vg = self.create_volgroup(spec)
-        # There's no point using LVM and unconditionally filling the
-        # VG with a single LV, but we should use more of a smaller
-        # disk to avoid the user running into out of space errors
-        # earlier than they probably expect to.
-        if vg.size < 10 * (1 << 30):
-            # Use all of a small (<10G) disk.
-            lv_size = vg.size
-        elif vg.size < 20 * (1 << 30):
-            # Use 10G of a smallish (<20G) disk.
-            lv_size = 10 * (1 << 30)
-        elif vg.size < 200 * (1 << 30):
-            # Use half of a larger (<200G) disk.
-            lv_size = vg.size // 2
-        else:
-            # Use at most 100G of a large disk.
-            lv_size = 100 * (1 << 30)
-        lv_size = align_down(lv_size, LVM_CHUNK_SIZE)
+        lv_size = self.choose_lv_size(vg, choice.lvm_size_policy)
         self.create_logical_volume(
             vg=vg, spec=dict(
                 size=lv_size,
@@ -232,17 +241,6 @@ class FilesystemController(SubiquityController, FilesystemManipulator):
             raise Exception(f'gap not found after resize, pgs={pgs}')
         return gap
 
-    def build_lvm_options(self, password):
-        if password is None:
-            return None
-        else:
-            return {
-                'encrypt': True,
-                'luks_options': {
-                    'password': password,
-                    },
-                }
-
     def guided(self, choice: GuidedChoiceV2):
         self.model.guided_configuration = choice
 
@@ -256,8 +254,7 @@ class FilesystemController(SubiquityController, FilesystemManipulator):
             raise Exception('failed to locate gap after adding boot')
 
         if choice.use_lvm:
-            lvm_options = self.build_lvm_options(choice.password)
-            self.guided_lvm(gap, lvm_options=lvm_options)
+            self.guided_lvm(gap, choice)
         else:
             self.guided_direct(gap)
 
