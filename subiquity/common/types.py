@@ -629,8 +629,9 @@ class UbuntuProCheckTokenAnswer:
 
 
 class ShutdownMode(enum.Enum):
-    REBOOT = enum.auto()
-    POWEROFF = enum.auto()
+    REBOOT = 'reboot'
+    POWEROFF = 'poweroff'
+    WAIT = 'wait'
 
 
 @attr.s(auto_attribs=True)
