@@ -481,6 +481,9 @@ def install(ctx):
         if ctx.args.cloud_config is not None or ctx.args.cloud_config_default:
             if ctx.args.cloud_config is not None:
                 ctx.cloudconfig = ctx.args.cloud_config.read()
+                first_line = ctx.cloudconfig.splitlines()[0]
+                if not first_line.startswith('#cloud-config'):
+                    raise Exception('file not in cloud-config format')
             kvm.extend(drive(create_seed(ctx.cloudconfig, tempdir), 'raw'))
             if ctx.args.autoinstall is None:
                 # Let's inspect the yaml and check if there is an autoinstall
