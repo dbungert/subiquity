@@ -57,7 +57,9 @@ class Context:
         self.config = self.load_config()
         self.args = args
         self.release = args.release
-        self.default_mem = self.config.get('default_mem', '8G')
+        self.memory = self.getarg('memory', '8G')
+        self.disksize = self.getarg('size', '12G')
+        self.overwrite = self.getarg('overwrite', True)
         if not self.release:
             self.release = self.config["iso"]["default"]
         iso = self.config["iso"]
@@ -85,6 +87,12 @@ autoinstall:
         password: "{self.password}"
         username: ubuntu
 '''
+
+    def getarg(self, name, default_val):
+        v = getattr(self.args, name, None)
+        if v is Not None:
+            return v
+        return self.config.get(name, default_val)
 
     def merge(self, a, b):
         '''Take a pair of dictionaries, and provide the merged result.
@@ -145,7 +153,7 @@ parser.add_argument('-c', '--channel', action='store',
                     help='build iso with snap from channel')
 parser.add_argument('-d', '--disksize', default='12G', action='store',
                     help='size of disk to create (12G default)')
-parser.add_argument('-i', '--img', action='store', help='use this img')
+parser.add_argument('--img', '--image', action='store', help='use this image')
 parser.add_argument('-n', '--nets', action='store', default=1, type=int,
                     help='''number of network interfaces.
                     0=no network, -1=deadnet''')
@@ -166,14 +174,14 @@ parser.add_argument('-o', '--overwrite', default=False, action='store_true',
 parser.add_argument('-q', '--quick', default=False, action='store_true',
                     help='build iso with quick-test-this-branch')
 parser.add_argument('-r', '--release', action='store', help='target release')
-parser.add_argument('-s', '--serial', default=False, action='store_true',
+parser.add_argument('--serial', default=False, action='store_true',
                     help='attach to serial console')
-parser.add_argument('-S', '--sound', default=False, action='store_true',
+parser.add_argument('--sound', default=False, action='store_true',
                     help='enable sound')
 parser.add_argument('--iso', action='store', help='use this iso')
-parser.add_argument('-u', '--update', action='store',
+parser.add_argument('--update', action='store',
                     help='subiquity-channel argument')
-parser.add_argument('-m', '--memory', action='store',
+parser.add_argument('-m', '--memory', action='store', default=None,
                     help='memory for VM')
 parser.add_argument('--save', action='store_true',
                     help='preserve built snap')
@@ -434,7 +442,7 @@ def bios(ctx):
 
 
 def memory(ctx):
-    return ['-m', ctx.args.memory or ctx.default_mem]
+    return ['-m', ctx.memory]
 
 
 def kvm_common(ctx):
@@ -507,7 +515,7 @@ def install(ctx):
 
         kvm.extend(drive(ctx.target))
         if not os.path.exists(ctx.target) or ctx.args.overwrite:
-            run(f'qemu-img create -f qcow2 {ctx.target} {ctx.args.disksize}')
+            run(f'qemu-img create -f qcow2 {ctx.target} {ctx.disksize}')
 
         if len(appends) > 0:
             with mounter(iso, mntdir):
