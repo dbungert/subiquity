@@ -116,12 +116,12 @@ class GeoIP:
         try:
             self.response_text = await self.strategy.get_response()
         except LookupError:
-            log.exception("geoip lookup failed")
+            log.debug("geoip lookup failed")
             return False
         try:
             self.element = ElementTree.fromstring(self.response_text)
         except ElementTree.ParseError:
-            log.exception("parsing %r failed", self.response_text)
+            log.debug("parsing %r failed", self.response_text)
             return False
 
         changed = False
