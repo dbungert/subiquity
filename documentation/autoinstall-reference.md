@@ -489,6 +489,14 @@ The flavor of the kernel, e.g., `generic` or `hwe`.
 
 The timezone to configure on the system. The special value "geoip" can be used to query the timezone automatically over the network.
 
+### geoip
+
+type: boolean
+**default:** `yes`
+**can be interactive:** no
+
+Today, two features potentially use geoip, timezone and apt.  Setting this to false disables all geoip features.
+
 ### updates
 
 **type:** string (enumeration)

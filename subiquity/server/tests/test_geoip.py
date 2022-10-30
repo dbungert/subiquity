@@ -50,6 +50,7 @@ class TestGeoIP(SubiTestCase):
     async def asyncSetUp(self):
         strategy = HTTPGeoIPStrategy()
         self.geoip = GeoIP(make_app(), strategy)
+        self.geoip.enable(True)
 
         with aioresponses() as mocked:
             mocked.get("https://geoip.ubuntu.com/lookup", body=xml)
@@ -62,10 +63,24 @@ class TestGeoIP(SubiTestCase):
         self.assertEqual("America/Los_Angeles", self.geoip.timezone)
 
 
+class TestGeoDisabled(SubiTestCase):
+    async def asyncSetUp(self):
+        strategy = HTTPGeoIPStrategy()
+        self.geoip = GeoIP(make_app(), strategy)
+        self.geoip.enable(False)
+
+    async def test_countrycode(self):
+        with aioresponses() as mocked:
+            self.assertFalse(await self.geoip.lookup())
+            self.assertEqual(None, self.geoip.countrycode)
+            self.assertEqual({}, mocked.requests)
+
+
 class TestGeoIPBadData(SubiTestCase):
     def setUp(self):
         strategy = HTTPGeoIPStrategy()
         self.geoip = GeoIP(make_app(), strategy)
+        self.geoip.enable(True)
 
     async def test_partial_reponse(self):
         with aioresponses() as mocked:

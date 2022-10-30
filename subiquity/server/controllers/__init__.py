@@ -17,6 +17,7 @@ from .cmdlist import EarlyController, LateController, ErrorController
 from .debconf import DebconfController
 from .drivers import DriversController
 from .filesystem import FilesystemController
+from .geoip import GeoipController
 from .identity import IdentityController
 from .install import InstallController
 from .keyboard import KeyboardController
@@ -44,6 +45,7 @@ __all__ = [
     'EarlyController',
     'ErrorController',
     'FilesystemController',
+    'GeoipController',
     'IdentityController',
     'InstallController',
     'KernelController',

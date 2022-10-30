@@ -45,6 +45,9 @@
                 }
             }
         },
+        "geoip": {
+            "type": "boolean"
+        },
         "user-data": {
             "type": "object"
         },

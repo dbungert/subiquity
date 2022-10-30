@@ -15,6 +15,7 @@
 
 from abc import ABC, abstractmethod
 import aiohttp
+import asyncio
 import logging
 import enum
 from xml.etree import ElementTree
@@ -91,6 +92,8 @@ class GeoIP:
         self.element = None
         self.cc = None
         self.tz = None
+        self.enabled = None
+        self.enabled_event = asyncio.Event()
         self.check_state = CheckState.NOT_STARTED
         self.lookup_task = SingleInstanceTask(self.lookup)
         self.app.hub.subscribe(InstallerChannels.NETWORK_UP,
@@ -99,12 +102,22 @@ class GeoIP:
                                self.maybe_start_check)
         self.strategy = strategy
 
+    def enable(self, enabled):
+        self.enabled = enabled
+        self.enabled_event.set()
+
     def maybe_start_check(self):
         if self.check_state != CheckState.DONE:
             self.check_state = CheckState.CHECKING
             self.lookup_task.start_sync()
 
     async def lookup(self):
+        await self.enabled_event.wait()
+        if not self.enabled:
+            log.info('Skipping GeoIP: not enabled')
+            self.check_state = CheckState.DONE
+            return False
+
         rv = await self._lookup()
         if rv:
             self.check_state = CheckState.DONE

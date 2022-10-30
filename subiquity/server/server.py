@@ -59,6 +59,7 @@ from subiquity.common.serialize import to_json
 from subiquity.common.types import (
     ApplicationState,
     ApplicationStatus,
+    AutoinstallValue,
     ErrorReportRef,
     KeyFingerprint,
     LiveSessionSSHInfo,
@@ -243,6 +244,7 @@ class SubiquityServer(Application):
         "Early",
         "Reporting",
         "Error",
+        "Geoip",
         "Userdata",
         "Package",
         "Debconf",
@@ -695,7 +697,12 @@ class SubiquityServer(Application):
     def make_autoinstall(self):
         config = {'version': 1}
         for controller in self.controllers.instances:
-            controller_conf = controller.make_autoinstall()
-            if controller_conf:
-                config[controller.autoinstall_key] = controller_conf
+            data = controller.make_autoinstall()
+            if isinstance(data, AutoinstallValue):
+                if data.ok:
+                    # add the section, even if it has a falsey value
+                    config[controller.autoinstall_key] = data.value
+            elif data:
+                # only add the section if truthy
+                config[controller.autoinstall_key] = data
         return config

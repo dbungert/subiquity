@@ -660,3 +660,9 @@ class Change:
     ready: bool
     err: Optional[str] = None
     data: Any = None
+
+
+@attr.s(auto_attribs=True)
+class AutoinstallValue:
+    ok: bool
+    value: any
