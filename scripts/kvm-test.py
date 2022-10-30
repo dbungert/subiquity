@@ -133,14 +133,14 @@ packages from a cache.
 
 See 'cfg' in script for expected layout of iso files,
 which can be managed with ~/.kvm-test.yaml''')
+
+parser.set_defaults(bios='uefi')
 parser.add_argument('-b', '--base', default=False, action='store_true',
                     help='use base iso')
 parser.add_argument('--basesnap', default=None, action='store',
                     help='use slimy-update-snap on this snap')
 parser.add_argument('--snap', default=None, action='store',
                     help='inject this snap into the ISO')
-parser.add_argument('-B', '--bios', action='store_true', default=False,
-                    help='boot in BIOS mode (default mode is UEFI)')
 parser.add_argument('-c', '--channel', action='store',
                     help='build iso with snap from channel')
 parser.add_argument('-d', '--disksize', default='12G', action='store',
@@ -202,6 +202,12 @@ cc_group.add_argument('--cloud-config', action='store',
 cc_group.add_argument('--cloud-config-default',
                       action="store_true",
                       help='use hardcoded cloud-config template')
+
+bios_group = parser.add_mutually_exclusive_group()
+bios_group.add_argument('--bios', dest='bios', action='store_const',
+                        const='bios', help='boot in BIOS mode')
+bios_group.add_argument('--uefi', dest='bios', action='store_const',
+                        const='uefi', help='boot in UEFI mode')
 
 def parse_args():
     ctx = Context(parser.parse_args())
