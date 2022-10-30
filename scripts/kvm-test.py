@@ -154,21 +154,19 @@ parser.add_argument('-c', '--channel', action='store',
 parser.add_argument('-d', '--disksize', default='12G', action='store',
                     help='size of disk to create (12G default)')
 parser.add_argument('--img', '--image', action='store', help='use this image')
-parser.add_argument('-n', '--nets', action='store', default=1, type=int,
-                    help='''number of network interfaces.
-                    0=no network, -1=deadnet''')
+parser.add_argument('--nic-deadnet', action="store_const", dest="nics",
+                    const='deadnet', help='simulate a deadnet')
+parser.add_argument('--nic-disable', action="store_const", dest="nics",
+                    const='disable', help='simulate fully offline')
 parser.add_argument('--nic-user', action="append_const", dest="nics",
                     const=None,
-                    help='pass user host -nic to QEMU'
-                         ' - overrides --nets')
+                    help='pass user host -nic to QEMU')
 parser.add_argument('--nic-tap', action="append", dest="nics", type=Tap,
                     metavar="ifname",
-                    help='TAP interface to be passed as -nic to QEMU'
-                         ' - overrides --nets')
+                    help='TAP interface to be passed as -nic to QEMU')
 parser.add_argument('--nic', action="append", dest="nics",
                     metavar="argument",
-                    help='pass custom -nic argument to QEMU'
-                         ' - overrides --nets')
+                    help='pass custom -nic argument to QEMU')
 parser.add_argument('-o', '--overwrite', default=False, action='store_true',
                     help='allow overwrite of the target image')
 parser.add_argument('-q', '--quick', default=False, action='store_true',
@@ -421,15 +419,12 @@ def nets(ctx) -> List[str]:
                 nics.extend(factory.user())
             elif isinstance(nic, Tap):
                 nics.extend(factory.tap(nic.ifname))
+            elif nic == 'deadnet':
+                nics.extend(factory.deadnet())
+            elif nic == 'disable':
+                nics.extend(factory.nonet())
             else:
                 nics.extend(('-nic', nic))
-    elif ctx.args.nets > 0:
-        for _ in range(ctx.args.nets):
-            nics.extend(factory.user())
-    elif ctx.args.nets == 0:
-        nics.extend(factory.nonet())
-    else:
-        nics.extend(factory.deadnet())
     return nics
 
 
