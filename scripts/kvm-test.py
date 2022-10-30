@@ -181,10 +181,8 @@ parser.add_argument('--update', action='store',
                     help='subiquity-channel argument')
 parser.add_argument('-m', '--memory', action='store', default=None,
                     help='memory for VM')
-parser.add_argument('--save', action='store_true',
-                    help='preserve built snap')
 parser.add_argument('--reuse', action='store_true',
-                    help='reuse previously saved snap.  Implies --save')
+                    help='reuse previously saved snap')
 parser.add_argument('--build', default=False, action='store_true',
                     help='build test iso')
 parser.add_argument('--install', default=False, action='store_true',
