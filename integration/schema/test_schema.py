@@ -18,7 +18,6 @@ from unittest import mock
 import sys
 
 from subiquitycore.tests import SubiTestCase
-import subiquity.cmd.schema
 
 
 class TestSchema(SubiTestCase):
@@ -30,8 +29,24 @@ class TestSchema(SubiTestCase):
         generated_schema_file = self.tmp_path('schema.json')
         with open(generated_schema_file, 'w') as fp:
             with mock.patch('sys.stdout', fp):
+                import subiquity.cmd.schema
                 subiquity.cmd.schema.main()
 
         expected = load('autoinstall-schema.json')
+        actual = load(generated_schema_file)
+        self.assertEqual(expected, actual)
+
+    def test_system_setup_schema(self):
+        def load(filepath):
+            with open(filepath) as fp:
+                return json.load(fp)
+
+        generated_schema_file = self.tmp_path('schema.json')
+        with open(generated_schema_file, 'w') as fp:
+            with mock.patch('sys.stdout', fp):
+                import system_setup.cmd.schema
+                system_setup.cmd.schema.main()
+
+        expected = load('autoinstall-system-setup-schema.json')
         actual = load(generated_schema_file)
         self.assertEqual(expected, actual)
