@@ -71,7 +71,9 @@ class ShutdownController(SubiquityController):
         await self.shuttingdown_event.wait()
 
     def interactive(self):
-        return self.app.interactive
+        # Under normal conditions there is no matching client controller.
+        # When we're DONE, the client may be inquiring about shutdown state.
+        return True
 
     def start(self):
         self.app.aio_loop.create_task(self._wait_install())
