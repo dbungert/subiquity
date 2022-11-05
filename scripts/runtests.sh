@@ -282,9 +282,6 @@ if [ "${RELEASE%.*}" -ge 20 ]; then
             --autoinstall "examples/autoinstall-system-setup${mode}.yaml"
         validate "system_setup" "autoinstall${mode}"
     done
-
-    python3 -m system_setup.cmd.schema > $tmpdir/test-schema.json
-    diff -u "autoinstall-system-setup-schema.json" $tmpdir/test-schema.json
 fi
 
 clean
