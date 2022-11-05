@@ -118,6 +118,11 @@ class ShutdownController(SubiquityController):
 
     @with_context(description='mode={self.mode.name}')
     def shutdown(self, context):
+        if self.mode == ShutdownMode.WAIT:
+            log.debug('Not shutting down yet due to shutdown mode "wait"')
+            self.server_reboot_event.clear()
+            self.app.aio_loop.create_task(self._run())
+            return
         self.shuttingdown_event.set()
         if self.opts.dry_run:
             self.app.exit()
