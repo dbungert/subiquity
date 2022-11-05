@@ -87,13 +87,17 @@ unit: gitdeps
 api: gitdeps
 	$(PYTHON) -m pytest -n auto integration/api
 
+.PHONY: pyintegration
+pyintegration: gitdeps
+	$(PYTHON) -m pytest -n auto integration
+
 .PHONY: integration
 integration: gitdeps
 	echo "Running integration tests..."
 	./scripts/runtests.sh
 
 .PHONY: check
-check: unit integration api
+check: unit integration pyintegration
 
 curtin: snapcraft.yaml
 	./scripts/update-part.py curtin
