@@ -454,8 +454,7 @@
             "type": "string",
             "enum": [
                 "reboot",
-                "poweroff",
-                "wait"
+                "poweroff"
             ]
         }
     },

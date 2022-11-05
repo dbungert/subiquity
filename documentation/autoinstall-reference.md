@@ -507,13 +507,11 @@ Supported values are:
 **default:** `reboot`
 **can be interactive:** no
 
-Request the system to poweroff or reboot automatically after the installation has finished. Wait means that after install is complete, no powerstate change occurs and instead it waits indefinitely.
-
+Request the system to poweroff or reboot automatically after the installation has finished.
 Supported values are:
 
  * `reboot`
  * `poweroff`
- * `wait`
 
 <a name="late-commands"></a>
 
