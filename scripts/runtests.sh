@@ -287,7 +287,4 @@ if [ "${RELEASE%.*}" -ge 20 ]; then
     diff -u "autoinstall-system-setup-schema.json" $tmpdir/test-schema.json
 fi
 
-python3 -m subiquity.cmd.schema > $tmpdir/test-schema.json
-diff -u "autoinstall-schema.json" $tmpdir/test-schema.json
-
 clean
