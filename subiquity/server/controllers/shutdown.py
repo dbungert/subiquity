@@ -40,7 +40,7 @@ class ShutdownController(SubiquityController):
     autoinstall_key = 'shutdown'
     autoinstall_schema = {
         'type': 'string',
-        'enum': ['reboot', 'poweroff']
+        'enum': [m.value for m in ShutdownMode],
     }
 
     def __init__(self, app):
@@ -56,10 +56,11 @@ class ShutdownController(SubiquityController):
         self.mode = ShutdownMode.REBOOT
 
     def load_autoinstall_data(self, data):
-        if data == 'reboot':
-            self.mode = ShutdownMode.REBOOT
-        elif data == 'poweroff':
-            self.mode = ShutdownMode.POWEROFF
+        if data is not None:
+            self.mode = ShutdownMode(data)
+
+    async def GET(self) -> ShutdownMode:
+        return self.mode
 
     async def POST(self, mode: ShutdownMode, immediate: bool = False):
         self.mode = mode
