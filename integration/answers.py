@@ -219,4 +219,17 @@ class TestAnswers(SubiTestCase):
         self.assertEqual("errors=remount-ro",
                          curthooks['storage']['config'][-1]['options'])
 
+        cloud_cfg = self.cur_tmpdir / \
+                'etc/cloud/cloud.cfg.d/99-installer.cfg'
+        ccdata = self.loadYaml(cloud_cfg)
+        userdata_raw = ccdata['datasource']['None']['userdata_raw']
+        # FIXME load the string, it's taking a filename
+        userdata = self.loadYaml(userdata_raw)
+        self.assertEqual('en_GB.UTF-8', userdata['locale'])
+        self.assertEqual('Pacific/Guam', userdata['timezone'])
+        self.assertEqual('C1NWcZTHLteJXGVMM6YhvHDpGrhyy7',
+                         userdata['ubuntu_advantage']['token'])
+        self.assertEqual(['snap install --channel=3.2/stable etcd'],
+                         userdata['snap']['commands'])
+
         # FIXME system-setup
