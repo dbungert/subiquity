@@ -81,12 +81,11 @@ unit: gitdeps
 	$(PYTHON) -m pytest \
 		--ignore curtin \
 		--ignore probert \
-		--ignore integration \
-		--ignore subiquity/tests/api
+		--ignore integration
 
 .PHONY: api
 api: gitdeps
-	$(PYTHON) -m pytest -n auto subiquity/tests/api
+	$(PYTHON) -m pytest -n auto integration/api
 
 .PHONY: integration
 integration: gitdeps
