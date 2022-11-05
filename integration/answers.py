@@ -18,6 +18,7 @@ import glob
 import os
 from pathlib import Path
 import subprocess
+import yaml
 
 from parameterized import parameterized
 
@@ -95,6 +96,10 @@ class TestAnswers(SubiTestCase):
     def assertExists(self, filepath):
         if not os.path.exists(filepath):
             raise AssertionError(f'expected file {filepath} not found')
+
+    def loadYaml(self, filepath):
+        with open(filepath) as fp:
+            return yaml.safe_load(fp)
 
     def validate(self, mode='install'):
         if glob.glob(str(self.cur_tmpdir / 'var/crash/*')):
@@ -197,15 +202,19 @@ class TestAnswers(SubiTestCase):
         })
         subprocess.run(args, env=env, check=True, timeout=60)
         self.validate()
+        s_c_a_conf = self.cur_tmpdir / \
+                'var/log/installer/subiquity-curtin-apt.conf'
+        curtin_apt_yaml = self.loadYaml(s_c_a_conf)
+        apt = curtin_apt_yaml['apt']
+        self.assertEqual(['non-free', 'restricted'], apt['disable_components'])
+        self.assertEqual(200, apt['preferences'][0]['pin-priority'])
+        self.assertEqual("origin *ubuntu.com*", apt['preferences'][0]['pin'])
+        self.assertEqual(-1, apt['preferences'][1]['pin-priority'])
+        self.assertEqual("python-*", apt['preferences'][1]['package'])
+        # breakpoint()
 
         # FIXME system-setup
 
-# python3 scripts/check-yaml-fields.py $tmpdir/var/log/installer/subiquity-curtin-apt.conf \
-#         apt.disable_components='[non-free, restricted]' \
-#         apt.preferences[0].pin-priority=200 \
-#         apt.preferences[0].pin='"origin *ubuntu.com*"' \
-#         apt.preferences[1].package='"python-*"' \
-#         apt.preferences[1].pin-priority=-1
 # python3 scripts/check-yaml-fields.py "$tmpdir"/var/log/installer/curtin-install/subiquity-curthooks.conf \
 #         debconf_selections.subiquity='"eek"' \
 #         storage.config[-1].options='"errors=remount-ro"'
