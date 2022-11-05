@@ -143,12 +143,30 @@ on_exit () {
     exit $ec
 }
 
+start_test () {
+    type="$1"
+    instance="$2"
+    cat > $tmpdir/test.log <<EOF
+Starting Subiquity integration test
+start_time: $(date -R)
+type: $type
+instance: $instance
+EOF
+}
+
+end_test () {
+    cat >> $tmpdir/test.log <<EOF
+end_time: $(date -R)
+EOF
+}
+
 trap on_exit EXIT
 tty=$(tty) || tty=/dev/console
 
 export SUBIQUITY_REPLAY_TIMESCALE=100
 
 for answers in examples/answers*.yaml; do
+    start_test "answers" "$answers"
     if echo $answers|grep -vq system-setup; then
         config=$(sed -n 's/^#machine-config: \(.*\)/\1/p' $answers || true)
         catalog=$(sed -n 's/^#source-catalog: \(.*\)/\1/p' $answers || true)
