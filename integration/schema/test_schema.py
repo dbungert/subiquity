@@ -34,5 +34,4 @@ class TestSchema(SubiTestCase):
 
         expected = load('autoinstall-schema.json')
         actual = load(generated_schema_file)
-
         self.assertEqual(expected, actual)
