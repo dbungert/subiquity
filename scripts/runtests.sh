@@ -1,11 +1,12 @@
 #!/bin/bash
-set -eux
+set -eu
 
 export PYTHONPATH=$PWD:$PWD/probert:$PWD/curtin
 export PYTHONTRACEMALLOC=3
 
 RELEASE=$(lsb_release -rs)
 
+testrun_tmpdir=$(mktemp -d)
 tmpdir=$(mktemp -d)
 subiquity_pid=""
 
@@ -146,15 +147,20 @@ on_exit () {
 start_test () {
     type="$1"
     instance="$2"
+    label="$(echo "$type-$instance" | sed -e 's,[/.],_,g')"
+    echo "start_test-$label"
     cat > $tmpdir/test.log <<EOF
 Starting Subiquity integration test
 start_time: $(date -R)
 type: $type
 instance: $instance
 EOF
+    exec 2>> $tmpdir/test.log
+    set -x
 }
 
 end_test () {
+    set +x
     cat >> $tmpdir/test.log <<EOF
 end_time: $(date -R)
 EOF
@@ -216,9 +222,10 @@ for answers in examples/answers*.yaml; do
             validate "system_setup" "$validate_subtype"
         fi
     fi
-    clean
+    end_test
 done
 
+clean
 LANG=C.UTF-8 timeout --foreground 60 \
     python3 -m subiquity.cmd.tui \
     --dry-run \
