@@ -29,29 +29,8 @@ class TestSchema(SubiTestCase):
 
         generated_schema_file = self.tmp_path('schema.json')
         with open(generated_schema_file, 'w') as fp:
-            orig_stdout = sys.stdout
-            orig_stdout_fd = sys.stdout.fileno()
-            sys.stdout = fp
-            subiquity.cmd.schema.main()
-            sys.stdout = orig_stdout
-            self.assertEqual(orig_stdout_fd, sys.stdout.fileno())
-
-        expected = load('autoinstall-schema.json')
-        actual = load(generated_schema_file)
-
-        self.assertEqual(expected, actual)
-
-    def test_schema_2(self):
-        def load(filepath):
-            with open(filepath) as fp:
-                return json.load(fp)
-
-        generated_schema_file = self.tmp_path('schema.json')
-        with open(generated_schema_file, 'w') as fp:
-            orig_stdout_fd = sys.stdout.fileno()
             with mock.patch('sys.stdout', fp):
                 subiquity.cmd.schema.main()
-            self.assertEqual(orig_stdout_fd, sys.stdout.fileno())
 
         expected = load('autoinstall-schema.json')
         actual = load(generated_schema_file)
