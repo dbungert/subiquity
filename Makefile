@@ -78,7 +78,10 @@ flake8:
 
 .PHONY: unit
 unit: gitdeps
-	$(PYTHON) -m pytest --ignore curtin --ignore probert \
+	$(PYTHON) -m pytest \
+		--ignore curtin \
+		--ignore probert \
+		--ignore integration \
 		--ignore subiquity/tests/api
 
 .PHONY: api
