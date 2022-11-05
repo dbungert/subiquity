@@ -52,9 +52,6 @@ class SetupShutdownController(ShutdownController):
         await self.app.controllers.Late.run_event.wait()
         self.server_reboot_event.set()
 
-    def interactive(self):
-        return False
-
     @with_context(description='mode={self.mode.name}')
     def shutdown(self, context):
         self.shuttingdown_event.set()
@@ -68,8 +65,8 @@ class SetupShutdownController(ShutdownController):
         elif self.mode == ShutdownMode.POWEROFF:
             log.debug("Setting launcher for shut down")
             launcher_status += ["action=shutdown"]
-        # else:
-        #     raise Exception(f"Unknown Shutdown Mode {self.mode}")
+        else:
+            raise Exception(f"Unknown Shutdown Mode {self.mode}")
 
         default_uid = self.app.controllers.Install.get_default_uid()
         if default_uid is not None and default_uid != 0:
