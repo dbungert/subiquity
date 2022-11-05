@@ -211,10 +211,12 @@ class TestAnswers(SubiTestCase):
         self.assertEqual("origin *ubuntu.com*", apt['preferences'][0]['pin'])
         self.assertEqual(-1, apt['preferences'][1]['pin-priority'])
         self.assertEqual("python-*", apt['preferences'][1]['package'])
-        # breakpoint()
+
+        subiquity_curthooks_conf = self.cur_tmpdir / \
+                'var/log/installer/curtin-install/subiquity-curthooks.conf'
+        curthooks = self.loadYaml(subiquity_curthooks_conf)
+        self.assertEqual("eek", curthooks['debconf_selections']['subiquity'])
+        self.assertEqual("errors=remounte-ro",
+                         curthooks['storage']['config'][-1]['options'])
 
         # FIXME system-setup
-
-# python3 scripts/check-yaml-fields.py "$tmpdir"/var/log/installer/curtin-install/subiquity-curthooks.conf \
-#         debconf_selections.subiquity='"eek"' \
-#         storage.config[-1].options='"errors=remount-ro"'
