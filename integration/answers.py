@@ -23,6 +23,11 @@ from parameterized import parameterized
 
 from subiquitycore.tests import SubiTestCase
 
+installing_security = (
+    'finish: '
+    'subiquity/Install/install/postinstall/run_unattended_upgrades: '
+    'SUCCESS: downloading and installing security updates')
+
 
 @attr.s(auto_attribs=True)
 class Parameters:
@@ -82,6 +87,7 @@ class TestParameters(SubiTestCase):
 
 
 answers_files = [f for f in glob.glob('examples/answers*.yaml')
+# answers_files = [f for f in glob.glob('examples/answers.yaml')
                  if 'system-setup' not in f]
 
 
@@ -104,6 +110,7 @@ class TestAnswers(SubiTestCase):
             '--snaps-from-examples',
             '--source-catalog', param.source_catalog,
         ]
+        # FIXME redirect tty input?
         if param.serial:
             args.append('--serial')
         env = os.environ
@@ -125,9 +132,12 @@ class TestAnswers(SubiTestCase):
 
         if param.validate_mode == 'install':
             # actually OK for tpm
-            self.assertExists(tmpdir / 'subiquity-client-debug.log')
+            client_debug = tmpdir / 'subiquity-client-debug.log'
+            self.assertExists(client_debug)
             # actually OK for tpm
-            self.assertExists(tmpdir / 'subiquity-server-debug.log')
+            server_debug = tmpdir / 'subiquity-server-debug.log'
+            self.assertExists(server_debug)
+
             partitioning_conf = tmpdir / \
                 'var/log/installer/curtin-install/subiquity-partitioning.conf'
             subprocess.run([
@@ -135,30 +145,27 @@ class TestAnswers(SubiTestCase):
                 './scripts/validate-yaml.py',
                 str(partitioning_conf),
             ], check=True, timeout=60)
+
             ai_user_data = f'{tmpdir}/var/log/installer/autoinstall-user-data'
             subprocess.run([
                 'python3',
-                './scripts/validate-autoinstall-user-data.py'
+                './scripts/validate-autoinstall-user-data.py',
                 ai_user_data
             ], check=True, timeout=60)
 
-# if grep passw0rd $tmpdir/subiquity-client-debug.log
-#   $tmpdir/subiquity-server-debug.log | grep -v "Loaded answers" \
-#     | grep -v "answers_action"; then
-#   echo "password leaked into log file"
-#   exit 1
-# fi
-# netplan generate --root $tmpdir
+            with open(client_debug) as fp:
+                for line in fp:
+                    if 'Loaded answers' in line:
+                        continue
+                    if 'answers_action' in line:
+                        continue
+                    self.assertNotIn('passw0rd', line)
 
-#     # The --foreground is important to avoid subiquity getting SIGTTOU-ed.
-#     python3 -m subiquity.cmd.tui < "$tty" \
-#     if [ "$answers" = examples/answers-tpm.yaml ]; then
-#         validate skip
-#     else
-#         validate install
-#     fi
-#     grep -q '
-#     finish: subiquity/Install/install/postinstall/run_unattended_upgrades:
-#     SUCCESS: downloading and installing security updates'
-#     $tmpdir/subiquity-server-debug.log
-#     clean
+            subprocess.run([
+                'netplan', 'generate', '--root', tmpdir
+            ], check=True, timeout=60)
+
+            with open(server_debug) as fp:
+                for line in fp:
+                    if installing_security in line:
+                        break
