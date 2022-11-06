@@ -17,40 +17,52 @@
 # from unittest import mock
 # import sys
 
+import attr
+
 from subiquitycore.tests import SubiTestCase
 
-
+@attr.s(auto_attribs=True)
 class Parameters:
-    pass
-    # config = str default 'examples/simple.json'
-    # catalog = str default 'examples/install-sources.yaml'
-    # serial = bool default False
+    config: str = attr.ib(default='examples/simple.json')
+    catalog: str = attr.ib(default='examples/install-sources.yaml')
+    serial: bool = attr.ib(default=False)
+
+    @staticmethod
+    def from_file(filename):
+        kw = {}
+        for line in open(filename):
+            if line.startswith('#machine-config'):
+                k, v = line.split(': ')
+                kw['config'] = v.strip()
+            if line.startswith('#source-catalog'):
+                k, v = line.split(': ')
+                kw['catalog'] = v.strip()
+            if line.startswith('#serial'):
+                kw['serial'] = True
+
+        return Parameters(**kw)
 
 
 class TestAnswers(SubiTestCase):
     def test_answers(self):
-        pass
+        expected = Parameters()
+        actual = Parameters.from_file('examples/answers.yaml')
+        self.assertEqual(expected, actual)
 
+    def test_answers_serial(self):
+        expected = Parameters(serial=True)
+        actual = Parameters.from_file('examples/answers-serial.yaml')
+        self.assertEqual(expected, actual)
 
-# def read_parameters(filename):
-#     config = None
-#     catalog = None
-#     serial = None
-#     for line in open(filename):
-#         if line.startswith('#machine-config'):
-#             k, v = line.split(': ')
-#             config = v
-#         if line.startswith('#source-catalog'):
-#             k, v = line.split(': ')
-#             catalog = v
-#         if line.startswith('#serial'):
-#             k, v = line.split(': ')
-#             catalog = bool(v)
+    def test_answers_machine_config(self):
+        expected = Parameters(config='examples/imsm.json')
+        actual = Parameters.from_file('examples/answers-imsm.yaml')
+        self.assertEqual(expected, actual)
 
-#     return Parameters(config=config, catalog=catalog, serial=serial)
-
-# for filename in glob('examples/answers*.yaml'):
-#     read_parameters(filename)
+    def test_answers_source_catalog(self):
+        expected = Parameters(catalog='examples/tpm-sources.yaml')
+        actual = Parameters.from_file('examples/answers-tpm.yaml')
+        self.assertEqual(expected, actual)
 
 # origbash = '''
 # for answers in examples/answers*.yaml; do
