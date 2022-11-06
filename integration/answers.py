@@ -33,7 +33,7 @@ installing_security = (
 @attr.s(auto_attribs=True)
 class Parameters:
     """In the answers file are a simplistic and optional key-value set of
-    configurations for the answers-based test.  Load those values, and use
+    configurations for the answers-based tests.  Load those values, and use
     sensible defaults if not overwritten with a more specific value.
 
     Also triggers off of the filename to adjust validation mode.
@@ -88,8 +88,31 @@ class TestParameters(SubiTestCase):
 
 
 answers_files = [f for f in glob.glob('examples/answers*.yaml')
-# answers_files = [f for f in glob.glob('examples/answers.yaml')
                  if 'system-setup' not in f]
+# answers_files = ['examples/answers.yaml']
+# answers_files = [
+#     'examples/answers.yaml',
+    # 'examples/answers-imsm.yaml'
+# ]
+
+
+def readFile(filename):
+    with open(filename) as fp:
+        return fp.read()
+
+
+def wait(timeout, pidfile, exitfile):
+    import time
+    time.sleep(1)
+    pid = int(readFile(pidfile))
+    for i in range(timeout):
+        try:
+            os.kill(pid, 0)
+        except ProcessLookupError:
+            break
+        else:
+            time.sleep(1)
+    return int(readFile(exitfile))
 
 
 class TestAnswers(SubiTestCase):
@@ -156,8 +179,14 @@ class TestAnswers(SubiTestCase):
     @parameterized.expand(answers_files)
     def test_answers(self, answers_relative_path):
         param = Parameters.from_file(answers_relative_path)
-        self.cur_tmpdir = Path(self.tmp_dir())
+        self.cur_tmpdir = Path(self.tmp_dir(cleanup=False))
+        print(self.cur_tmpdir)
+        #  runs our real program finally
+        pidfile = self.tmp_path(path='pid', dir=self.cur_tmpdir)
+        exitfile = self.tmp_path(path='exitcode', dir=self.cur_tmpdir)
         args = [
+            'screen', '-d', '-m',
+            './process_monitor', pidfile, exitfile,
             'python3', '-m', 'subiquity.cmd.tui',
             '--dry-run',
             '--output-base', self.cur_tmpdir,
@@ -178,6 +207,8 @@ class TestAnswers(SubiTestCase):
             'SUBIQUITY_REPLAY_TIMESCALE': '100',
         })
         subprocess.run(args, env=env, check=True, timeout=60)
+        ec = wait(timeout=60, pidfile=pidfile, exitfile=exitfile)
+        self.assertEqual(0, ec, 'program had non-zero exit')
         self.validate(param.validate_mode)
 
     def test_autoinstall(self):
