@@ -42,7 +42,7 @@ class Parameters:
     def from_file(filename):
         param = Parameters(filename)
         if 'tpm' in filename:
-            param.validate_mode = 'tpm'
+            param.validate_mode = 'skip'
         for line in open(filename):
             if line.startswith('#machine-config'):
                 param.machine_config = line.split(': ')[1].strip()
@@ -76,7 +76,7 @@ class TestParameters(SubiTestCase):
     def test_source_catalog(self):
         expected = Parameters('examples/answers-tpm.yaml',
                               source_catalog='examples/tpm-sources.yaml',
-                              validate_mode='tpm')
+                              validate_mode='skip')
         actual = Parameters.from_file('examples/answers-tpm.yaml')
         self.assertEqual(expected, actual)
 
@@ -92,7 +92,6 @@ class TestAnswers(SubiTestCase):
 
     @parameterized.expand(answers_files)
     def test_answers(self, answers_relative_path):
-        print(answers_relative_path)
         param = Parameters.from_file(answers_relative_path)
         tmpdir = Path(self.tmp_dir(cleanup=False))
         args = [
@@ -124,9 +123,12 @@ class TestAnswers(SubiTestCase):
                 print(fp.read())
             self.fail('has output on stderr')
 
-        # if param.mode == 'install':
-        self.assertExists(tmpdir / 'subiquity-client-debug.log')
-        self.assertExists(tmpdir / 'subiquity-server-debug.log')
+        if param.mode == 'install':
+            # actually OK for tpm
+            self.assertExists(tmpdir / 'subiquity-client-debug.log')
+            # actually OK for tpm
+            self.assertExists(tmpdir / 'subiquity-server-debug.log')
+
             # python3 scripts/validate-yaml.py "$tmpdir"/var/log/installer/curtin-install/subiquity-partitioning.conf
             # python3 scripts/validate-autoinstall-user-data.py < $tmpdir/var/log/installer/autoinstall-user-data
             # if grep passw0rd $tmpdir/subiquity-client-debug.log $tmpdir/subiquity-server-debug.log | grep -v "Loaded answers" | grep -v "answers_action"; then

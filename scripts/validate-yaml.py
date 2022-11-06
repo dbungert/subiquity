@@ -95,4 +95,5 @@ def main():
     storage_checker.final_checks()
 
 
-main()
+if __name__ == '__main__':
+    main()
