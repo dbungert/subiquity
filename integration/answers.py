@@ -198,6 +198,8 @@ class TestAnswers(SubiTestCase):
         subprocess.run(args, env=env, check=True, timeout=60)
         self.validate()
 
+        # FIXME system-setup
+
 # python3 scripts/check-yaml-fields.py $tmpdir/var/log/installer/subiquity-curtin-apt.conf \
 #         apt.disable_components='[non-free, restricted]' \
 #         apt.preferences[0].pin-priority=200 \
