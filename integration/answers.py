@@ -77,7 +77,6 @@ class TestAnswers(SubiTestCase):
     def test_answers(self, answers_relative_path):
         param = Parameters.from_file(answers_relative_path)
         tmpdir = self.tmp_dir(cleanup=False)
-        print(tmpdir)
         args = [
             'python3', '-m', 'subiquity.cmd.tui',
             '--dry-run',
@@ -92,24 +91,16 @@ class TestAnswers(SubiTestCase):
             args.append('--serial')
         env = os.environ
         env.update({
-            'PYTHONTRACEMALLOC': '3',
             'LANG': 'C.UTF-8',
+            'PYTHONTRACEMALLOC': '3',
+            'SUBIQUITY_REPLAY_TIMESCALE': '100',
         })
-        subprocess.run(args, env=env)
+        subprocess.run(args, env=env, check=True)
 
 # origbash = '''
 # for answers in examples/answers*.yaml; do
 #     # The --foreground is important to avoid subiquity getting SIGTTOU-ed.
-#     LANG=C.UTF-8 timeout --foreground 60 \
 #         python3 -m subiquity.cmd.tui < "$tty" \
-#         --dry-run \
-#         --output-base "$tmpdir" \
-#         --answers "$answers" \
-#         "${opts[@]}" \
-#         --machine-config "$config" \
-#         --bootloader uefi \
-#         --snaps-from-examples \
-#         --source-catalog $catalog
 #     if [ "$answers" = examples/answers-tpm.yaml ]; then
 #         validate skip
 #     else
