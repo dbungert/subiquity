@@ -14,7 +14,8 @@ class SubiTestCase(IsolatedAsyncioTestCase):
                 prefix="subiquity-%s." % self.__class__.__name__)
         else:
             tmpd = tempfile.mkdtemp(dir=dir)
-        self.addCleanup(functools.partial(shutil.rmtree, tmpd))
+        if cleanup:
+            self.addCleanup(functools.partial(shutil.rmtree, tmpd))
         return tmpd
 
     def tmp_path(self, path, dir=None):

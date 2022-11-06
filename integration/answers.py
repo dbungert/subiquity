@@ -19,6 +19,7 @@
 
 import attr
 import glob
+import subprocess
 
 from parameterized import parameterized
 
@@ -26,8 +27,8 @@ from subiquitycore.tests import SubiTestCase
 
 @attr.s(auto_attribs=True)
 class Parameters:
-    config: str = attr.ib(default='examples/simple.json')
-    catalog: str = attr.ib(default='examples/install-sources.yaml')
+    machine_config: str = attr.ib(default='examples/simple.json')
+    source_catalog: str = attr.ib(default='examples/install-sources.yaml')
     serial: bool = attr.ib(default=False)
 
     @staticmethod
@@ -36,13 +37,15 @@ class Parameters:
         for line in open(filename):
             if line.startswith('#machine-config'):
                 k, v = line.split(': ')
-                kw['config'] = v.strip()
+                kw['machine_config'] = v.strip()
+                continue
             if line.startswith('#source-catalog'):
                 k, v = line.split(': ')
-                kw['catalog'] = v.strip()
+                kw['source_catalog'] = v.strip()
+                continue
             if line.startswith('#serial'):
                 kw['serial'] = True
-
+                continue
         return Parameters(**kw)
 
 
@@ -58,12 +61,12 @@ class TestParameters(SubiTestCase):
         self.assertEqual(expected, actual)
 
     def test_machine_config(self):
-        expected = Parameters(config='examples/imsm.json')
+        expected = Parameters(machine_config='examples/imsm.json')
         actual = Parameters.from_file('examples/answers-imsm.yaml')
         self.assertEqual(expected, actual)
 
     def test_source_catalog(self):
-        expected = Parameters(catalog='examples/tpm-sources.yaml')
+        expected = Parameters(source_catalog='examples/tpm-sources.yaml')
         actual = Parameters.from_file('examples/answers-tpm.yaml')
         self.assertEqual(expected, actual)
 
@@ -75,7 +78,20 @@ answers_files = [f for f in glob.glob('examples/answers.yaml')]
 class TestAnswers(SubiTestCase):
     @parameterized.expand(answers_files)
     def test_answers(self, answers_relative_path):
-        print(answers_relative_path)
+        param = Parameters(answers_relative_path)
+        args = [
+            'python3', '-m', 'subiquity.cmd.tui',
+            '--dry-run',
+            '--output-base', self.tmp_dir(),
+            '--answers', answers_relative_path,
+            '--machine-config', param.machine_config,
+            '--bootloader', 'uefi',
+            '--snaps-from-examples',
+            '--source-catalog', param.source_catalog,
+        ]
+        if param.serial:
+            args.append('--serial')
+        subprocess.run(args)
 
 # origbash = '''
 # for answers in examples/answers*.yaml; do
