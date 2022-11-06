@@ -18,6 +18,9 @@
 # import sys
 
 import attr
+import glob
+
+from parameterized import parameterized
 
 from subiquitycore.tests import SubiTestCase
 
@@ -63,6 +66,15 @@ class TestParameters(SubiTestCase):
         expected = Parameters(catalog='examples/tpm-sources.yaml')
         actual = Parameters.from_file('examples/answers-tpm.yaml')
         self.assertEqual(expected, actual)
+
+
+answers_files = [f for f in glob.glob('examples/answers*.yaml')]
+
+
+class TestAnswers(SubiTestCase):
+    @parameterized.expand(answers_files)
+    def test_answers(self, answers_relative_path):
+        print(answers_relative_path)
 
 # origbash = '''
 # for answers in examples/answers*.yaml; do
