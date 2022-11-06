@@ -15,7 +15,7 @@
 
 import json
 from unittest import mock
-import sys
+# import sys
 
 from subiquitycore.tests import SubiTestCase
 

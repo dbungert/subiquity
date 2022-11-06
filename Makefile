@@ -13,7 +13,8 @@ SYSTEM_SETUP_DRYRUN?=--dry-run
 export PYTHONPATH
 CWD := $(shell pwd)
 
-CHECK_DIRS := console_conf/ subiquity/ subiquitycore/ system_setup/
+CHECK_DIRS := console_conf/ subiquity/ subiquitycore/ system_setup/ \
+	      integration/
 PYTHON := python3
 
 ifneq (,$(MACHINE))
