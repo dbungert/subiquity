@@ -25,6 +25,9 @@ from subiquitycore.tests import SubiTestCase
 
 @attr.s(auto_attribs=True)
 class Parameters:
+    """In the answers file are a simplistic and optional key-value set of
+    configurations for the answers-based test.  Load those values, and use
+    sensible defaults if not overwritten with a more specific value."""
     machine_config: str = attr.ib(default='examples/simple.json')
     source_catalog: str = attr.ib(default='examples/install-sources.yaml')
     serial: bool = attr.ib(default=False)
@@ -72,6 +75,7 @@ class TestParameters(SubiTestCase):
 answers_files = [f for f in glob.glob('examples/answers*.yaml')
                  if 'system-setup' not in f]
 
+
 class TestAnswers(SubiTestCase):
     @parameterized.expand(answers_files)
     def test_answers(self, answers_relative_path):
@@ -100,10 +104,8 @@ class TestAnswers(SubiTestCase):
         if glob.glob(f'{tmpdir}/var/crash/*'):
             self.fail('testcase crash')
 
-# origbash = '''
-# for answers in examples/answers*.yaml; do
 #     # The --foreground is important to avoid subiquity getting SIGTTOU-ed.
-#         python3 -m subiquity.cmd.tui < "$tty" \
+#     python3 -m subiquity.cmd.tui < "$tty" \
 #     if [ "$answers" = examples/answers-tpm.yaml ]; then
 #         validate skip
 #     else
@@ -114,5 +116,3 @@ class TestAnswers(SubiTestCase):
 #     SUCCESS: downloading and installing security updates'
 #     $tmpdir/subiquity-server-debug.log
 #     clean
-# done
-# '''
