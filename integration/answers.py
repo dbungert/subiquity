@@ -68,7 +68,8 @@ class TestParameters(SubiTestCase):
         self.assertEqual(expected, actual)
 
 
-answers_files = [f for f in glob.glob('examples/answers*.yaml')]
+answers_files = [f for f in glob.glob('examples/answers.yaml')]
+# answers_files = [f for f in glob.glob('examples/answers*.yaml')]
 
 
 class TestAnswers(SubiTestCase):
