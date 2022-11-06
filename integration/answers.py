@@ -135,16 +135,13 @@ class TestAnswers(SubiTestCase):
                 './scripts/validate-yaml.py',
                 str(partitioning_conf),
             ], check=True, timeout=60)
-            # ai_user_data
-            # $tmpdir/var/log/installer/autoinstall-user-data
+            ai_user_data = f'{tmpdir}/var/log/installer/autoinstall-user-data'
             subprocess.run([
                 'python3',
                 './scripts/validate-autoinstall-user-data.py'
-                (str(partitioning_conf)),
+                ai_user_data
             ], check=True, timeout=60)
 
-# python3 scripts/validate-autoinstall-user-data.py
-#    < $tmpdir/var/log/installer/autoinstall-user-data
 # if grep passw0rd $tmpdir/subiquity-client-debug.log
 #   $tmpdir/subiquity-server-debug.log | grep -v "Loaded answers" \
 #     | grep -v "answers_action"; then
