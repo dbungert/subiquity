@@ -97,7 +97,7 @@ class TestAnswers(SubiTestCase):
         if not os.path.exists(filepath):
             raise AssertionError(f'expected file {filepath} not found')
 
-    def loadYaml(self, filepath):
+    def fromYamlFile(self, filepath):
         with open(filepath) as fp:
             return yaml.safe_load(fp)
 
@@ -204,7 +204,7 @@ class TestAnswers(SubiTestCase):
         self.validate()
         s_c_a_conf = self.cur_tmpdir / \
                 'var/log/installer/subiquity-curtin-apt.conf'
-        curtin_apt_yaml = self.loadYaml(s_c_a_conf)
+        curtin_apt_yaml = self.fromYamlFile(s_c_a_conf)
         apt = curtin_apt_yaml['apt']
         self.assertEqual(['non-free', 'restricted'], apt['disable_components'])
         self.assertEqual(200, apt['preferences'][0]['pin-priority'])
@@ -214,17 +214,16 @@ class TestAnswers(SubiTestCase):
 
         subiquity_curthooks_conf = self.cur_tmpdir / \
                 'var/log/installer/curtin-install/subiquity-curthooks.conf'
-        curthooks = self.loadYaml(subiquity_curthooks_conf)
+        curthooks = self.fromYamlFile(subiquity_curthooks_conf)
         self.assertEqual("eek", curthooks['debconf_selections']['subiquity'])
         self.assertEqual("errors=remount-ro",
                          curthooks['storage']['config'][-1]['options'])
 
         cloud_cfg = self.cur_tmpdir / \
                 'etc/cloud/cloud.cfg.d/99-installer.cfg'
-        ccdata = self.loadYaml(cloud_cfg)
+        ccdata = self.fromYamlFile(cloud_cfg)
         userdata_raw = ccdata['datasource']['None']['userdata_raw']
-        # FIXME load the string, it's taking a filename
-        userdata = self.loadYaml(userdata_raw)
+        userdata = yaml.safe_load(userdata_raw)
         self.assertEqual('en_GB.UTF-8', userdata['locale'])
         self.assertEqual('Pacific/Guam', userdata['timezone'])
         self.assertEqual('C1NWcZTHLteJXGVMM6YhvHDpGrhyy7',
