@@ -90,7 +90,8 @@ api: gitdeps
 
 .PHONY: pyintegration
 pyintegration: gitdeps
-	$(PYTHON) -m pytest -n auto integration
+	# FIXME restore -n auto
+	$(PYTHON) -m pytest integration
 
 .PHONY: integration
 integration: gitdeps

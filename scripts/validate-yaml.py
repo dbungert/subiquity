@@ -75,10 +75,10 @@ class StorageChecker:
         assert '/' in self.path_to_mount
 
 
-config = yaml.safe_load(open(sys.argv[1]))
+def validate_yaml(filename):
+    with open(filename) as fp:
+        config = yaml.safe_load(fp)
 
-
-def main():
     storage_checker = StorageChecker()
 
     for action in config['storage']['config']:
@@ -89,6 +89,10 @@ def main():
             raise
 
     storage_checker.final_checks()
+
+
+def main():
+    validate_yaml(sys.argv[1])
 
 
 if __name__ == '__main__':
