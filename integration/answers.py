@@ -129,13 +129,17 @@ class TestAnswers(SubiTestCase):
             # actually OK for tpm
             self.assertExists(tmpdir / 'subiquity-server-debug.log')
 
-            # python3 scripts/validate-yaml.py "$tmpdir"/var/log/installer/curtin-install/subiquity-partitioning.conf
-            # python3 scripts/validate-autoinstall-user-data.py < $tmpdir/var/log/installer/autoinstall-user-data
-            # if grep passw0rd $tmpdir/subiquity-client-debug.log $tmpdir/subiquity-server-debug.log | grep -v "Loaded answers" | grep -v "answers_action"; then
-            #   echo "password leaked into log file"
-            #   exit 1
-            # fi
-            # netplan generate --root $tmpdir
+# python3 scripts/validate-yaml.py
+#   "$tmpdir"/var/log/installer/curtin-install/subiquity-partitioning.conf
+# python3 scripts/validate-autoinstall-user-data.py
+#    < $tmpdir/var/log/installer/autoinstall-user-data
+# if grep passw0rd $tmpdir/subiquity-client-debug.log
+#   $tmpdir/subiquity-server-debug.log | grep -v "Loaded answers" \
+#     | grep -v "answers_action"; then
+#   echo "password leaked into log file"
+#   exit 1
+# fi
+# netplan generate --root $tmpdir
 
 #     # The --foreground is important to avoid subiquity getting SIGTTOU-ed.
 #     python3 -m subiquity.cmd.tui < "$tty" \
