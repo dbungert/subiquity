@@ -96,49 +96,26 @@ class TestAnswers(SubiTestCase):
         if not os.path.exists(filepath):
             raise AssertionError(f'expected file {filepath} not found')
 
-    @parameterized.expand(answers_files)
-    def test_answers(self, answers_relative_path):
-        param = Parameters.from_file(answers_relative_path)
-        tmpdir = Path(self.tmp_dir(cleanup=False))
-        args = [
-            'python3', '-m', 'subiquity.cmd.tui',
-            '--dry-run',
-            '--output-base', tmpdir,
-            '--answers', answers_relative_path,
-            '--machine-config', param.machine_config,
-            '--bootloader', 'uefi',
-            '--snaps-from-examples',
-            '--source-catalog', param.source_catalog,
-        ]
-        # FIXME redirect tty input?
-        if param.serial:
-            args.append('--serial')
-        env = os.environ
-        env.update({
-            'LANG': 'C.UTF-8',
-            'PYTHONTRACEMALLOC': '3',
-            'SUBIQUITY_REPLAY_TIMESCALE': '100',
-        })
-        subprocess.run(args, env=env, check=True, timeout=60)
-
-        if glob.glob(str(tmpdir / 'var/crash/*')):
+    def validate(self, mode='install'):
+        if glob.glob(str(self.cur_tmpdir / 'var/crash/*')):
             self.fail('testcase crash')
             # FIXME show?
 
-        if os.path.getsize(tmpdir / 'server-stderr') > 0:
-            with open(tmpdir / 'server-stderr') as fp:
+        server_stderr = self.cur_tmpdir / 'server-stderr'
+        if server_stderr.exists() and os.path.getsize(server_stderr) > 0:
+            with open(server_stderr) as fp:
                 print(fp.read())
             self.fail('has output on stderr')
 
-        if param.validate_mode == 'install':
+        if mode == 'install':
             # actually OK for tpm
-            client_debug = tmpdir / 'subiquity-client-debug.log'
+            client_debug = self.cur_tmpdir / 'subiquity-client-debug.log'
             self.assertExists(client_debug)
             # actually OK for tpm
-            server_debug = tmpdir / 'subiquity-server-debug.log'
+            server_debug = self.cur_tmpdir / 'subiquity-server-debug.log'
             self.assertExists(server_debug)
 
-            partitioning_conf = tmpdir / \
+            partitioning_conf = self.cur_tmpdir / \
                 'var/log/installer/curtin-install/subiquity-partitioning.conf'
             subprocess.run([
                 'python3',
@@ -146,7 +123,8 @@ class TestAnswers(SubiTestCase):
                 str(partitioning_conf),
             ], check=True, timeout=60)
 
-            ai_user_data = f'{tmpdir}/var/log/installer/autoinstall-user-data'
+            ai_user_data = self.cur_tmpdir / \
+                'var/log/installer/autoinstall-user-data'
             subprocess.run([
                 'python3',
                 './scripts/validate-autoinstall-user-data.py',
@@ -162,10 +140,70 @@ class TestAnswers(SubiTestCase):
                     self.assertNotIn('passw0rd', line)
 
             subprocess.run([
-                'netplan', 'generate', '--root', tmpdir
+                'netplan', 'generate', '--root', self.cur_tmpdir
             ], check=True, timeout=60)
 
             with open(server_debug) as fp:
                 for line in fp:
                     if installing_security in line:
                         break
+
+    @parameterized.expand(answers_files)
+    def test_answers(self, answers_relative_path):
+        param = Parameters.from_file(answers_relative_path)
+        self.cur_tmpdir = Path(self.tmp_dir())
+        args = [
+            'python3', '-m', 'subiquity.cmd.tui',
+            '--dry-run',
+            '--output-base', self.cur_tmpdir,
+            '--answers', answers_relative_path,
+            '--machine-config', param.machine_config,
+            '--bootloader', 'uefi',
+            '--snaps-from-examples',
+            '--source-catalog', param.source_catalog,
+        ]
+        # FIXME redirect tty input?
+        if param.serial:
+            args.append('--serial')
+        env = os.environ
+        # FIXME patch
+        env.update({
+            'LANG': 'C.UTF-8',
+            'PYTHONTRACEMALLOC': '3',
+            'SUBIQUITY_REPLAY_TIMESCALE': '100',
+        })
+        subprocess.run(args, env=env, check=True, timeout=60)
+        self.validate(param.validate_mode)
+
+    def test_autoinstall(self):
+        self.cur_tmpdir = Path(self.tmp_dir())
+        args = [
+            'python3', '-m', 'subiquity.cmd.tui',
+            '--dry-run',
+            '--output-base', self.cur_tmpdir,
+            '--autoinstall', 'examples/autoinstall.yaml',
+            '--machine-config', 'examples/existing-partitions.json',
+            '--bootloader', 'bios',
+            '--snaps-from-examples',
+            '--source-catalog', 'examples/install-sources.yaml',
+            '--kernel-cmdline', 'autoinstall',
+        ]
+        env = os.environ
+        # FIXME patch
+        env.update({
+            'LANG': 'C.UTF-8',
+            'PYTHONTRACEMALLOC': '3',
+            'SUBIQUITY_REPLAY_TIMESCALE': '100',
+        })
+        subprocess.run(args, env=env, check=True, timeout=60)
+        self.validate()
+
+# python3 scripts/check-yaml-fields.py $tmpdir/var/log/installer/subiquity-curtin-apt.conf \
+#         apt.disable_components='[non-free, restricted]' \
+#         apt.preferences[0].pin-priority=200 \
+#         apt.preferences[0].pin='"origin *ubuntu.com*"' \
+#         apt.preferences[1].package='"python-*"' \
+#         apt.preferences[1].pin-priority=-1
+# python3 scripts/check-yaml-fields.py "$tmpdir"/var/log/installer/curtin-install/subiquity-curthooks.conf \
+#         debconf_selections.subiquity='"eek"' \
+#         storage.config[-1].options='"errors=remount-ro"'
