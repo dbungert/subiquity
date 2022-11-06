@@ -123,14 +123,26 @@ class TestAnswers(SubiTestCase):
                 print(fp.read())
             self.fail('has output on stderr')
 
-        if param.mode == 'install':
+        if param.validate_mode == 'install':
             # actually OK for tpm
             self.assertExists(tmpdir / 'subiquity-client-debug.log')
             # actually OK for tpm
             self.assertExists(tmpdir / 'subiquity-server-debug.log')
+            partitioning_conf = tmpdir / \
+                'var/log/installer/curtin-install/subiquity-partitioning.conf'
+            subprocess.run([
+                'python3',
+                './scripts/validate-yaml.py',
+                str(partitioning_conf),
+            ], check=True, timeout=60)
+            # ai_user_data
+            # $tmpdir/var/log/installer/autoinstall-user-data
+            subprocess.run([
+                'python3',
+                './scripts/validate-autoinstall-user-data.py'
+                (str(partitioning_conf)),
+            ], check=True, timeout=60)
 
-# python3 scripts/validate-yaml.py
-#   "$tmpdir"/var/log/installer/curtin-install/subiquity-partitioning.conf
 # python3 scripts/validate-autoinstall-user-data.py
 #    < $tmpdir/var/log/installer/autoinstall-user-data
 # if grep passw0rd $tmpdir/subiquity-client-debug.log
