@@ -22,6 +22,7 @@ from parameterized import parameterized
 
 from subiquitycore.tests import SubiTestCase
 
+
 @attr.s(auto_attribs=True)
 class Parameters:
     machine_config: str = attr.ib(default='examples/simple.json')
@@ -68,8 +69,7 @@ class TestParameters(SubiTestCase):
         self.assertEqual(expected, actual)
 
 
-answers_files = [f for f in glob.glob('examples/answers.yaml')]
-# answers_files = [f for f in glob.glob('examples/answers*.yaml')]
+answers_files = [f for f in glob.glob('examples/answers*.yaml')]
 
 
 class TestAnswers(SubiTestCase):
@@ -95,7 +95,7 @@ class TestAnswers(SubiTestCase):
             'PYTHONTRACEMALLOC': '3',
             'SUBIQUITY_REPLAY_TIMESCALE': '100',
         })
-        subprocess.run(args, env=env, check=True)
+        subprocess.run(args, env=env, check=True, timeout=60)
 
 # origbash = '''
 # for answers in examples/answers*.yaml; do
