@@ -13,12 +13,9 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# import json
-# from unittest import mock
-# import sys
-
 import attr
 import glob
+import os
 import subprocess
 
 from parameterized import parameterized
@@ -78,11 +75,13 @@ answers_files = [f for f in glob.glob('examples/answers.yaml')]
 class TestAnswers(SubiTestCase):
     @parameterized.expand(answers_files)
     def test_answers(self, answers_relative_path):
-        param = Parameters(answers_relative_path)
+        param = Parameters.from_file(answers_relative_path)
+        tmpdir = self.tmp_dir(cleanup=False)
+        print(tmpdir)
         args = [
             'python3', '-m', 'subiquity.cmd.tui',
             '--dry-run',
-            '--output-base', self.tmp_dir(),
+            '--output-base', tmpdir,
             '--answers', answers_relative_path,
             '--machine-config', param.machine_config,
             '--bootloader', 'uefi',
@@ -91,7 +90,12 @@ class TestAnswers(SubiTestCase):
         ]
         if param.serial:
             args.append('--serial')
-        subprocess.run(args)
+        env = os.environ
+        env.update({
+            'PYTHONTRACEMALLOC': '3',
+            'LANG': 'C.UTF-8',
+        })
+        subprocess.run(args, env=env)
 
 # origbash = '''
 # for answers in examples/answers*.yaml; do
