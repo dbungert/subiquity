@@ -69,12 +69,13 @@ class TestParameters(SubiTestCase):
         self.assertEqual(expected, actual)
 
 
-answers_files = [f for f in glob.glob('examples/answers*.yaml')]
-
+answers_files = [f for f in glob.glob('examples/answers*.yaml')
+                 if 'system-setup' not in f]
 
 class TestAnswers(SubiTestCase):
     @parameterized.expand(answers_files)
     def test_answers(self, answers_relative_path):
+        print(answers_relative_path)
         param = Parameters.from_file(answers_relative_path)
         tmpdir = self.tmp_dir(cleanup=False)
         args = [
@@ -96,6 +97,8 @@ class TestAnswers(SubiTestCase):
             'SUBIQUITY_REPLAY_TIMESCALE': '100',
         })
         subprocess.run(args, env=env, check=True, timeout=60)
+        if glob.glob(f'{tmpdir}/var/crash/*'):
+            self.fail('testcase crash')
 
 # origbash = '''
 # for answers in examples/answers*.yaml; do
