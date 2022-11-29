@@ -87,9 +87,10 @@ class TestParameters(SubiTestCase):
         self.assertEqual(expected, actual)
 
 
-answers_files = [f for f in glob.glob('examples/answers*.yaml')
-                 if 'system-setup' not in f]
+# answers_files = [f for f in glob.glob('examples/answers*.yaml')
+#                  if 'system-setup' not in f]
 # answers_files = ['examples/answers.yaml']
+answers_files = ['examples/answers-tpm.yaml']
 # answers_files = [
 #     'examples/answers.yaml',
     # 'examples/answers-imsm.yaml'
