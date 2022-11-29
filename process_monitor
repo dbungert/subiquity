@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# take a pid file and an exitcode file, run the program supplied, and pass pid
+# and exit code back by way of the files
+
+pidfile=$1
+shift
+exitfile=$1
+shift
+
+echo $BASHPID > $pidfile
+
+"$@"
+ec=$?
+
+echo $ec > $exitfile
+exit $ec
