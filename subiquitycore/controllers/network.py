@@ -35,6 +35,7 @@ from subiquitycore.models.network import (
     StaticConfig,
     WLANConfig,
     has_default_routes,
+    get_default_routes,
     )
 from subiquitycore import netplan
 from subiquitycore.controller import BaseController
@@ -57,7 +58,7 @@ class SubiquityNetworkEventReceiver(NetworkEventReceiver):
     def __init__(self, controller):
         self.controller = controller
         self.model = controller.model
-        self.default_routes = set()
+        self.default_routes = []
 
     def new_link(self, ifindex, link):
         netdev = self.model.new_link(ifindex, link)
@@ -66,9 +67,7 @@ class SubiquityNetworkEventReceiver(NetworkEventReceiver):
 
     def del_link(self, ifindex):
         netdev = self.model.del_link(ifindex)
-        if ifindex in self.default_routes:
-            self.default_routes.remove(ifindex)
-            self.controller.update_default_routes(self.default_routes)
+        self.update_default_routes()
         if netdev is not None:
             self.controller.del_link(netdev)
 
@@ -77,9 +76,8 @@ class SubiquityNetworkEventReceiver(NetworkEventReceiver):
         if netdev is None:
             return
         flags = getattr(netdev.info, "flags", 0)
-        if not (flags & IFF_UP) and ifindex in self.default_routes:
-            self.default_routes.remove(ifindex)
-            self.controller.update_default_routes(self.default_routes)
+        if not (flags & IFF_UP):
+            self.update_default_routes()
         self.controller.update_link(netdev)
 
     def route_change(self, action, data):
@@ -88,11 +86,10 @@ class SubiquityNetworkEventReceiver(NetworkEventReceiver):
             return
         if data['table'] != 254:
             return
-        ifindex = data['ifindex']
-        if action == "NEW" or action == "CHANGE":
-            self.default_routes.add(ifindex)
-        elif action == "DEL" and ifindex in self.default_routes:
-            self.default_routes.remove(ifindex)
+        self.update_default_routes()
+
+    def update_default_routes(self):
+        self.default_routes = get_default_routes():
         log.debug('default routes %s', self.default_routes)
         self.controller.update_default_routes(self.default_routes)
 

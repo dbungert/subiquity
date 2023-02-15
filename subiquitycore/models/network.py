@@ -566,5 +566,10 @@ class NetworkModel(object):
 
 
 def has_default_routes(self):
+    return any(not route['dst'] for route in ndb.routes)
+
+def get_default_routes(self):
     with pyroute2.NDB() as ndb:
-        return any(route['dst'] == '' for route in ndb.routes)
+        return [route._as_dict()
+                for route in ndb.routes.summary()
+                if route.table == 254 and not route.dst])
