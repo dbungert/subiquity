@@ -325,8 +325,9 @@ class NetworkView(BaseView):
         meth("{}/{}".format(dev_info.name, action.name), dev_info)
 
     def update_default_routes(self, routes):
-        log.debug('view route_watcher %s', routes)
-        if routes:
+        has_network = has_default_routes()
+        log.debug('view route_watcher %s', has_network)
+        if has_network:
             label = _("Done")
         else:
             label = _("Continue without network")

@@ -22,6 +22,8 @@ from socket import AF_INET, AF_INET6
 import attr
 from typing import Dict, List, Optional
 
+import pyroute2
+
 from subiquitycore import netplan
 
 
@@ -561,3 +563,8 @@ class NetworkModel(object):
                     },
                 },
             }
+
+
+def has_default_routes(self):
+    with pyroute2.NDB() as ndb:
+        return any(route['dst'] == '' for route in ndb.routes)

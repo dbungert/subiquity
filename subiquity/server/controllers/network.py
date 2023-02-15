@@ -32,6 +32,7 @@ from subiquitycore.models.network import (
     BondConfig,
     StaticConfig,
     WLANConfig,
+    has_default_routes,
     )
 from subiquitycore.utils import arun_command
 
@@ -246,8 +247,7 @@ class NetworkController(BaseNetworkController, SubiquityController):
             self.apply_config(context)
         with context.child("wait_for_apply"):
             await self.apply_config_task.wait()
-        self.model.has_network = bool(
-            self.network_event_receiver.default_routes)
+        self.model.has_network = has_default_routes()
 
     async def _apply_config(self, *, context=None, silent=False):
         try:
@@ -284,8 +284,7 @@ class NetworkController(BaseNetworkController, SubiquityController):
             wlan_support_install_state=self.wlan_support_install_state())
 
     async def configured(self):
-        self.model.has_network = bool(
-            self.network_event_receiver.default_routes)
+        self.model.has_network = has_default_routes()
         self.model.needs_wpasupplicant = (
             self.wlan_support_install_state() == WLANSupportInstallState.DONE)
         await super().configured()

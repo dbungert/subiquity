@@ -34,6 +34,7 @@ from subiquitycore.models.network import (
     NetDevAction,
     StaticConfig,
     WLANConfig,
+    has_default_routes,
     )
 from subiquitycore import netplan
 from subiquitycore.controller import BaseController
@@ -621,8 +622,7 @@ class NetworkController(BaseNetworkController, TuiController,
 
     def done(self):
         log.debug("NetworkController.done next_screen")
-        self.model.has_network = bool(
-            self.network_event_receiver.default_routes)
+        self.model.has_network = has_default_routes()
         self.app.next_screen()
 
     def cancel(self):
