@@ -35,6 +35,7 @@ python3-pyflakes
 python3-pytest
 python3-pytest-xdist
 python3-pyudev
+python3-pyroute2
 python3-requests
 python3-requests-unixsocket
 python3-setuptools
