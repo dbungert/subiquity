@@ -16,6 +16,8 @@
 import asyncio
 import inspect
 
+from subiquitycore.async_helpers import run_bg_task
+
 
 class CoreChannels:
     NETWORK_UP = 'network-up'
@@ -35,5 +37,10 @@ class MessageHub:
             if inspect.iscoroutine(v):
                 await v
 
-    def broadcast(self, channel, *args, **kwargs):
-        return asyncio.create_task(self.abroadcast(channel, *args, **kwargs))
+    def broadcast(self, channel, *args, bg_task=True, **kwargs):
+        coro = self.abroadcast(channel, *args, **kwargs)
+        if bg_task:
+            run_bg_task(coro)
+            return None
+        else:
+            return asyncio.create_task(coro)

@@ -46,7 +46,7 @@ class ProxyController(SubiquityController):
             os.environ['http_proxy'] = os.environ['https_proxy'] = \
               self.model.proxy
             self._set_task = self.app.hub.broadcast(
-                InstallerChannels.NETWORK_PROXY_SET)
+                InstallerChannels.NETWORK_PROXY_SET, bg_task=False)
 
     @with_context()
     async def apply_autoinstall_config(self, context=None):
