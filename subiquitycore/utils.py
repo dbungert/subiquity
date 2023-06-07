@@ -163,7 +163,7 @@ def log_process_streams(level: int,
 
 
 # FIXME: replace with passlib and update package deps
-def crypt_password(passwd, algo='SHA-512'):
+def crypt_password(passwd, algo='SHA-512', backend='crypt'):
     # encryption algo - id pairs for crypt()
     algos = {'SHA-512': '$6$', 'SHA-256': '$5$', 'MD5': '$1$', 'DES': ''}
     if algo not in algos:
@@ -175,7 +175,12 @@ def crypt_password(passwd, algo='SHA-512'):
                 '0123456789./')
     salt = 16 * ' '
     salt = ''.join([random.choice(salt_set) for c in salt])
-    return crypt.crypt(passwd, algos[algo] + salt)
+    if backend == 'crypt':
+        return crypt.crypt(passwd, algos[algo] + salt)
+    if backend == 'passlib':
+        # FIXME assumes sha512
+        return passlib.hash.sha512_crypt(salt=salt, rounds=5000).hash(passwd)
+    raise Exception(f'Invalid backend {backend}')
 
 
 def disable_console_conf():
