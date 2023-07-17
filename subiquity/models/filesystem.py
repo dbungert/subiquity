@@ -1077,6 +1077,10 @@ class ZPool:
     def name(self):
         return self.pool
 
+    @property
+    def mount(self):
+        return self.mountpoint
+
     async def pre_shutdown(self, command_runner):
         await command_runner.run(['zpool', 'export', self.pool])
 
