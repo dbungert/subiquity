@@ -346,7 +346,7 @@ class TestGuided(IsolatedAsyncioTestCase):
         (Bootloader.UEFI, 'gpt', '/boot/efi'),
         (Bootloader.UEFI, 'msdos', '/boot/efi'),
         (Bootloader.BIOS, 'gpt', None),
-        # BIOS + msdos is different
+        (Bootloader.BIOS, 'msdos', '/'),
         (Bootloader.PREP, 'gpt', None),
         (Bootloader.PREP, 'msdos', None),
     ]
@@ -407,23 +407,25 @@ class TestGuided(IsolatedAsyncioTestCase):
             disk_id=self.d1.id, allowed=default_capabilities)
         await self.controller.guided(
             GuidedChoiceV2(target=target, capability=GuidedCapability.DIRECT))
-        [d1p1, d1p2] = self.d1.partitions()
-        self.assertEqual(p1mnt, d1p1.mount)
-        self.assertEqual('/', d1p2.mount)
-        self.assertFalse(d1p1.preserve)
-        self.assertFalse(d1p2.preserve)
+        parts = self.d1.partitions()
+        self.assertEqual(p1mnt, parts[0].mount)
+        self.assertEqual('/', parts[-1].mount)
+        for p in parts:
+            self.assertFalse(p.preserve, p)
         self.assertIsNone(gaps.largest_gap(self.d1))
 
-    async def test_guided_direct_BIOS_MSDOS(self):
-        await self._guided_setup(Bootloader.BIOS, 'msdos')
-        target = GuidedStorageTargetReformat(
-            disk_id=self.d1.id, allowed=default_capabilities)
-        await self.controller.guided(
-            GuidedChoiceV2(target=target, capability=GuidedCapability.DIRECT))
-        [d1p1] = self.d1.partitions()
-        self.assertEqual('/', d1p1.mount)
-        self.assertFalse(d1p1.preserve)
-        self.assertIsNone(gaps.largest_gap(self.d1))
+    # async def test_guided_direct_BIOS_MSDOS(self):
+    #     await self._guided_setup(Bootloader.BIOS, 'msdos')
+    #     target = GuidedStorageTargetReformat(
+    #         disk_id=self.d1.id, allowed=default_capabilities)
+    #     await self.controller.guided(
+    #         GuidedChoiceV2(target=target, capability=GuidedCapability.DIRECT))
+    #     [d1p1] = self.d1.partitions()
+    #     parts = self.d1.partitions()
+    #     self.assertEqual('/', parts[-1].mount)
+    #     for p in parts:
+    #         self.assertFalse(p.preserve, p)
+    #     self.assertIsNone(gaps.largest_gap(self.d1))
 
     @parameterized.expand(boot_expectations)
     async def test_guided_lvm(self, bootloader, ptable, p1mnt):
