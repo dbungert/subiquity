@@ -342,15 +342,6 @@ class TestSubiquityControllerFilesystem(IsolatedAsyncioTestCase):
 
 
 class TestGuided(IsolatedAsyncioTestCase):
-    boot_expectations = [
-        (Bootloader.UEFI, 'gpt', '/boot/efi'),
-        (Bootloader.UEFI, 'msdos', '/boot/efi'),
-        (Bootloader.BIOS, 'gpt', None),
-        (Bootloader.BIOS, 'msdos', '/'),
-        (Bootloader.PREP, 'gpt', None),
-        (Bootloader.PREP, 'msdos', None),
-    ]
-
     async def _guided_setup(self, bootloader, ptable, storage_version=None):
         self.app = make_app()
         self.app.opts.bootloader = bootloader.value
@@ -400,103 +391,66 @@ class TestGuided(IsolatedAsyncioTestCase):
         self.assertEqual(None, d1p2.mount)
         self.assertEqual(DRY_RUN_RESET_SIZE, d1p2.size)
 
-    @parameterized.expand(boot_expectations)
-    async def test_guided_direct(self, bootloader, ptable, p1mnt):
+    def _common_checks(self, bootloader, nparts, parts, ptable):
+        self.assertIsNone(gaps.largest_gap(self.d1))
+        for p in parts:
+            self.assertFalse(p.preserve, p)
+        if bootloader == Bootloader.UEFI:
+            self.assertEqual('/boot/efi', parts[0].mount)
+            nparts += 1
+        if (bootloader == Bootloader.BIOS and ptable != 'msdos') or \
+                bootloader == Bootloader.PREP:
+            self.assertEqual(None, parts[0].mount)
+            nparts += 1
+        self.assertEqual(nparts, len(parts), f'{bootloader} {ptable}')
+
+    @parameterized.expand(bootloaders_and_ptables)
+    async def test_guided_direct(self, bootloader, ptable):
         await self._guided_setup(bootloader, ptable)
         target = GuidedStorageTargetReformat(
             disk_id=self.d1.id, allowed=default_capabilities)
         await self.controller.guided(
             GuidedChoiceV2(target=target, capability=GuidedCapability.DIRECT))
         parts = self.d1.partitions()
-        self.assertEqual(p1mnt, parts[0].mount)
+        self._common_checks(bootloader, 1, parts, ptable)
         self.assertEqual('/', parts[-1].mount)
-        for p in parts:
-            self.assertFalse(p.preserve, p)
-        self.assertIsNone(gaps.largest_gap(self.d1))
 
-    # async def test_guided_direct_BIOS_MSDOS(self):
-    #     await self._guided_setup(Bootloader.BIOS, 'msdos')
-    #     target = GuidedStorageTargetReformat(
-    #         disk_id=self.d1.id, allowed=default_capabilities)
-    #     await self.controller.guided(
-    #         GuidedChoiceV2(target=target, capability=GuidedCapability.DIRECT))
-    #     [d1p1] = self.d1.partitions()
-    #     parts = self.d1.partitions()
-    #     self.assertEqual('/', parts[-1].mount)
-    #     for p in parts:
-    #         self.assertFalse(p.preserve, p)
-    #     self.assertIsNone(gaps.largest_gap(self.d1))
-
-    @parameterized.expand(boot_expectations)
-    async def test_guided_lvm(self, bootloader, ptable, p1mnt):
+    @parameterized.expand(bootloaders_and_ptables)
+    async def test_guided_lvm(self, bootloader, ptable):
         await self._guided_setup(bootloader, ptable)
         target = GuidedStorageTargetReformat(
             disk_id=self.d1.id, allowed=default_capabilities)
         await self.controller.guided(GuidedChoiceV2(
             target=target, capability=GuidedCapability.LVM))
-        [d1p1, d1p2, d1p3] = self.d1.partitions()
-        self.assertEqual(p1mnt, d1p1.mount)
-        self.assertEqual('/boot', d1p2.mount)
-        self.assertEqual(None, d1p3.mount)
-        self.assertFalse(d1p1.preserve)
-        self.assertFalse(d1p2.preserve)
-        self.assertFalse(d1p3.preserve)
+        parts = self.d1.partitions()
+        self._common_checks(bootloader, 2, parts, ptable)
+        self.assertEqual('/boot', parts[-2].mount)
+        self.assertEqual(None, parts[-1].mount)
         [vg] = self.model._all(type='lvm_volgroup')
         [part] = list(vg.devices)
-        self.assertEqual(d1p3, part)
-        self.assertIsNone(gaps.largest_gap(self.d1))
+        self.assertEqual(parts[-1], part)
+        [lv] = vg.partitions()
+        self.assertEqual('/', lv.mount)
 
-    async def test_guided_lvm_BIOS_MSDOS(self):
-        await self._guided_setup(Bootloader.BIOS, 'msdos')
-        target = GuidedStorageTargetReformat(
-            disk_id=self.d1.id, allowed=default_capabilities)
-        await self.controller.guided(
-            GuidedChoiceV2(target=target, capability=GuidedCapability.LVM))
-        [d1p1, d1p2] = self.d1.partitions()
-        self.assertEqual('/boot', d1p1.mount)
-        [vg] = self.model._all(type='lvm_volgroup')
-        [part] = list(vg.devices)
-        self.assertEqual(d1p2, part)
-        self.assertEqual(None, d1p2.mount)
-        self.assertFalse(d1p1.preserve)
-        self.assertFalse(d1p2.preserve)
-        self.assertIsNone(gaps.largest_gap(self.d1))
-
-    @parameterized.expand(boot_expectations)
-    async def test_guided_zfs(self, bootloader, ptable, p1mnt):
+    @parameterized.expand(bootloaders_and_ptables)
+    async def test_guided_zfs(self, bootloader, ptable):
         await self._guided_setup(bootloader, ptable)
         target = GuidedStorageTargetReformat(
             disk_id=self.d1.id, allowed=default_capabilities)
         await self.controller.guided(GuidedChoiceV2(
             target=target, capability=GuidedCapability.ZFS))
-        [d1p1, d1p2, d1p3] = self.d1.partitions()
-        self.assertEqual(p1mnt, d1p1.mount)
-        self.assertEqual(None, d1p2.mount)
-        self.assertEqual(None, d1p3.mount)
-        self.assertFalse(d1p1.preserve)
-        self.assertFalse(d1p2.preserve)
-        self.assertFalse(d1p3.preserve)
+        parts = self.d1.partitions()
+        self._common_checks(bootloader, 2, parts, ptable)
+        self.assertEqual(None, parts[-2].mount)
+        self.assertEqual(None, parts[-1].mount)
         [rpool] = self.model._all(type='zpool', pool='rpool')
-        self.assertEqual('/', rpool.mountpoint)
+        [rpool_vdev] = rpool.vdevs
+        self.assertEqual('/', rpool.mount)
+        self.assertEqual(parts[-1], rpool_vdev)
         [bpool] = self.model._all(type='zpool', pool='bpool')
-        self.assertEqual('/boot', bpool.mountpoint)
-
-    async def test_guided_zfs_BIOS_MSDOS(self):
-        await self._guided_setup(Bootloader.BIOS, 'msdos')
-        target = GuidedStorageTargetReformat(
-            disk_id=self.d1.id, allowed=default_capabilities)
-        await self.controller.guided(GuidedChoiceV2(
-            target=target, capability=GuidedCapability.ZFS))
-        [d1p1, d1p2] = self.d1.partitions()
-        self.assertEqual(None, d1p1.mount)
-        self.assertEqual(None, d1p2.mount)
-        self.assertFalse(d1p1.preserve)
-        self.assertFalse(d1p2.preserve)
-        [rpool] = self.model._all(type='zpool', pool='rpool')
-        self.assertEqual('/', rpool.mountpoint)
-        [bpool] = self.model._all(type='zpool', pool='bpool')
-        self.assertEqual('/boot', bpool.mountpoint)
-
+        [bpool_vdev] = bpool.vdevs
+        self.assertEqual('/boot', bpool.mount)
+        self.assertEqual(parts[-2], bpool_vdev)
 
     async def _guided_side_by_side(self, bl, ptable):
         await self._guided_setup(bl, ptable, storage_version=2)
