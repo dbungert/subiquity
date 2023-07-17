@@ -370,20 +370,6 @@ class TestGuided(IsolatedAsyncioTestCase):
         self.model._probe_data = {'blockdev': {}}
         self.d1 = make_disk(self.model, ptable=ptable)
 
-    @parameterized.expand(boot_expectations)
-    async def test_guided_direct(self, bootloader, ptable, p1mnt):
-        await self._guided_setup(bootloader, ptable)
-        target = GuidedStorageTargetReformat(
-            disk_id=self.d1.id, allowed=default_capabilities)
-        await self.controller.guided(
-            GuidedChoiceV2(target=target, capability=GuidedCapability.DIRECT))
-        [d1p1, d1p2] = self.d1.partitions()
-        self.assertEqual(p1mnt, d1p1.mount)
-        self.assertEqual('/', d1p2.mount)
-        self.assertFalse(d1p1.preserve)
-        self.assertFalse(d1p2.preserve)
-        self.assertIsNone(gaps.largest_gap(self.d1))
-
     async def test_guided_reset_partition(self):
         await self._guided_setup(Bootloader.UEFI, 'gpt')
         target = GuidedStorageTargetReformat(
@@ -413,6 +399,20 @@ class TestGuided(IsolatedAsyncioTestCase):
         self.assertEqual(None, d1p1.mount)
         self.assertEqual(None, d1p2.mount)
         self.assertEqual(DRY_RUN_RESET_SIZE, d1p2.size)
+
+    @parameterized.expand(boot_expectations)
+    async def test_guided_direct(self, bootloader, ptable, p1mnt):
+        await self._guided_setup(bootloader, ptable)
+        target = GuidedStorageTargetReformat(
+            disk_id=self.d1.id, allowed=default_capabilities)
+        await self.controller.guided(
+            GuidedChoiceV2(target=target, capability=GuidedCapability.DIRECT))
+        [d1p1, d1p2] = self.d1.partitions()
+        self.assertEqual(p1mnt, d1p1.mount)
+        self.assertEqual('/', d1p2.mount)
+        self.assertFalse(d1p1.preserve)
+        self.assertFalse(d1p2.preserve)
+        self.assertIsNone(gaps.largest_gap(self.d1))
 
     async def test_guided_direct_BIOS_MSDOS(self):
         await self._guided_setup(Bootloader.BIOS, 'msdos')
