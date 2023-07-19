@@ -132,21 +132,21 @@ def calculate_guided_resize(part_min: int, part_size: int, install_min: int,
 #    accounted for as part of the planned rootfs size.  The files that would
 #    otherwise be stored in a dedicated UEFI partition are presumed to be
 #    negligible on non-UEFI systems.  As /boot itself uses a scaling sizing
-#    system, use the bootfs_scale.maximum value for the purposes of finding
-#    minimum suggested size.  The maximum value is to be used instead of the
-#    minimum as the boot scaling system will also make adjustments, and we
-#    don’t want to short change the other calculations.
+#    system, use the bootfs_scale.minimum value for the purposes of finding
+#    the overall minimum suggested size.
 # 3) Room to grow - while meaningful work can sometimes be possible on a full
 #    disk, it’s not the sort of thing to suggest in a guided install.
-#    Suggest for room to grow max(2GiB, 80% of source minimum).
+#    Suggest for room to grow max(2GiB, 20% of source minimum).
 # 4) Swap - Ubuntu policy recommends swap, either in the form of a partition or
 #    a swapfile.  Curtin has an existing swap size recommendation at
-#    curtin.swap.suggested_swapsize().
+#    curtin.swap.suggested_swapsize(), but we're just picking minimums.
+#    Use 2GiB as a minimal install placeholder, we'll repeat that calculation
+#    live during the install when we know real filesystem sizes.
 def calculate_suggested_install_min(source_min: int,
                                     part_align: int = MiB) -> int:
-    room_for_boot = bootfs_scale.maximum
-    room_to_grow = max(2 * GiB, math.ceil(.8 * source_min))
-    room_for_swap = swap.suggested_swapsize()
+    room_for_boot = bootfs_scale.minimum
+    room_to_grow = max(2 * GiB, math.ceil(.2 * source_min))
+    room_for_swap = 2 * GiB
     total = source_min + room_for_boot + room_to_grow + room_for_swap
     return align_up(total, part_align)
 
