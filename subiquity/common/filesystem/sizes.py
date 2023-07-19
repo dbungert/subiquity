@@ -140,13 +140,13 @@ def calculate_guided_resize(part_min: int, part_size: int, install_min: int,
 # 4) Swap - Ubuntu policy recommends swap, either in the form of a partition or
 #    a swapfile.  Curtin has an existing swap size recommendation at
 #    curtin.swap.suggested_swapsize(), but we're just picking minimums.
-#    Use 2GiB as a minimal install placeholder, we'll repeat that calculation
+#    Use 2GiB as a placeholder max value, we'll repeat that calculation
 #    live during the install when we know real filesystem sizes.
 def calculate_suggested_install_min(source_min: int,
                                     part_align: int = MiB) -> int:
     room_for_boot = bootfs_scale.minimum
     room_to_grow = max(2 * GiB, math.ceil(.2 * source_min))
-    room_for_swap = 2 * GiB
+    room_for_swap = swap.suggested_swapsize(maxsize=2 * GiB)
     total = source_min + room_for_boot + room_to_grow + room_for_swap
     return align_up(total, part_align)
 
