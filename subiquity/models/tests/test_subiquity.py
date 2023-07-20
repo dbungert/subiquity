@@ -262,8 +262,11 @@ class TestSubiquityModel(unittest.IsolatedAsyncioTestCase):
         model = self.make_model()
         model.identity.add_user(main_user)
         model.userdata = {}
+        networking_cfg = (
+            "etc/cloud/cloud.cfg.d/subiquity-disable-cloudinit-networking.cfg"
+        )
         expected_files = {
-            "etc/cloud/cloud.cfg.d/subiquity-disable-cloudinit-networking.cfg": "network: {config: disabled}\n",
+            networking_cfg: "network: {config: disabled}\n",
             "etc/cloud/cloud.cfg.d/99-installer.cfg": re.compile(
                 "datasource:\n  None:\n    metadata:\n      instance-id: .*\n    userdata_raw: \"#cloud-config\\\\ngrowpart:\\\\n  mode: \\'off\\'\\\\npreserve_hostname: true\\\\n\\\\\n"
             ),  # noqa
