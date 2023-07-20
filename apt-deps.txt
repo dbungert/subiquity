@@ -9,6 +9,7 @@ gettext
 gir1.2-umockdev-1.0
 git
 isolinux
+isort
 jq
 language-selector-common
 libnl-3-dev
