@@ -17,17 +17,11 @@
 
 import logging
 
-from urwid import (
-    Text,
-)
-from subiquitycore.ui.anchors import Header
-from subiquitycore.ui.container import (
-    ListBox,
-    Pile,
-    WidgetWrap,
-)
-from subiquitycore.ui.utils import Color
+from urwid import Text
 
+from subiquitycore.ui.anchors import Header
+from subiquitycore.ui.container import ListBox, Pile, WidgetWrap
+from subiquitycore.ui.utils import Color
 
 log = logging.getLogger("subiquitycore.ui.frame")
 

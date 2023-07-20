@@ -3,17 +3,12 @@ from unittest import mock
 
 import urwid
 
+from subiquity.client.controllers.filesystem import FilesystemController
+from subiquity.models.filesystem import raidlevels_by_value
+from subiquity.ui.views.filesystem.raid import RaidStretchy
+from subiquity.ui.views.filesystem.tests.test_partition import make_model_and_disk
 from subiquitycore.testing import view_helpers
 from subiquitycore.view import BaseView
-
-from subiquity.client.controllers.filesystem import FilesystemController
-from subiquity.models.filesystem import (
-    raidlevels_by_value,
-)
-from subiquity.ui.views.filesystem.raid import RaidStretchy
-from subiquity.ui.views.filesystem.tests.test_partition import (
-    make_model_and_disk,
-)
 
 
 def make_view(model, existing=None):

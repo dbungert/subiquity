@@ -18,27 +18,26 @@ from unittest import mock
 
 import attr
 
-from subiquitycore.tests import SubiTestCase
-from subiquitycore.tests.parameterized import parameterized
-from subiquitycore.utils import matching_dicts
-
+from subiquity.common.filesystem import gaps
 from subiquity.models.filesystem import (
+    LVM_CHUNK_SIZE,
+    ZFS,
     ActionRenderMode,
     Bootloader,
-    dehumanize_size,
     Disk,
     Filesystem,
     FilesystemModel,
-    get_raid_size,
-    humanize_size,
     NotFinalPartitionError,
     Partition,
-    ZFS,
     ZPool,
     align_down,
-    LVM_CHUNK_SIZE,
+    dehumanize_size,
+    get_raid_size,
+    humanize_size,
 )
-from subiquity.common.filesystem import gaps
+from subiquitycore.tests import SubiTestCase
+from subiquitycore.tests.parameterized import parameterized
+from subiquitycore.utils import matching_dicts
 
 
 class TestHumanizeSize(unittest.TestCase):

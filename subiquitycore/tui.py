@@ -21,22 +21,15 @@ import signal
 from typing import Callable, Optional, Union
 
 import urwid
-
 import yaml
 
-from subiquitycore.async_helpers import (
-    run_bg_task,
-    schedule_task,
-)
+from subiquitycore.async_helpers import run_bg_task, schedule_task
 from subiquitycore.core import Application
-from subiquitycore.palette import (
-    PALETTE_COLOR,
-    PALETTE_MONO,
-)
+from subiquitycore.palette import PALETTE_COLOR, PALETTE_MONO
 from subiquitycore.screen import make_screen
 from subiquitycore.tuicontroller import Skip
-from subiquitycore.ui.utils import LoadingDialog
 from subiquitycore.ui.frame import SubiquityCoreUI
+from subiquitycore.ui.utils import LoadingDialog
 from subiquitycore.utils import astart_command
 from subiquitycore.view import BaseView
 

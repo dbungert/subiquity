@@ -16,12 +16,9 @@
 import aiohttp
 from aioresponses import aioresponses
 
+from subiquity.server.geoip import GeoIP, HTTPGeoIPStrategy
 from subiquitycore.tests import SubiTestCase
 from subiquitycore.tests.mocks import make_app
-from subiquity.server.geoip import (
-    GeoIP,
-    HTTPGeoIPStrategy,
-)
 
 xml = """
 <Response>

@@ -24,11 +24,7 @@ from subiquity.common.types import (
     SSHIdentity,
 )
 from subiquity.server.controller import SubiquityController
-from subiquity.server.ssh import (
-    SSHFetchError,
-    SSHKeyFetcher,
-    DryRunSSHKeyFetcher,
-)
+from subiquity.server.ssh import DryRunSSHKeyFetcher, SSHFetchError, SSHKeyFetcher
 
 log = logging.getLogger("subiquity.server.controllers.ssh")
 

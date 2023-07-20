@@ -22,14 +22,13 @@ import logging
 
 from urwid import Text
 
+from subiquity.common.resources import resource_path
+from subiquitycore.screen import is_linux_tty
 from subiquitycore.ui.buttons import forward_btn, other_btn
 from subiquitycore.ui.container import ListBox
 from subiquitycore.ui.stretchy import Stretchy
 from subiquitycore.ui.utils import button_pile, rewrap, screen
-from subiquitycore.screen import is_linux_tty
 from subiquitycore.view import BaseView
-
-from subiquity.common.resources import resource_path
 
 log = logging.getLogger("subiquity.ui.views.welcome")
 

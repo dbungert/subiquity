@@ -17,9 +17,9 @@ import contextlib
 import functools
 import logging
 import os
-from pathlib import Path
 import shutil
 import tempfile
+from pathlib import Path
 from typing import List, Optional, Union
 
 import attr

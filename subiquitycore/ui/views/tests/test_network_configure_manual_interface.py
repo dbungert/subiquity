@@ -4,7 +4,6 @@ import unittest
 from unittest import mock
 
 import attr
-
 import urwid
 
 from subiquitycore.controllers.network import NetworkController
@@ -15,7 +14,6 @@ from subiquitycore.ui.views.network_configure_manual_interface import (
     ViewInterfaceInfo,
 )
 from subiquitycore.view import BaseView
-
 
 valid_data = {
     "subnet": "10.0.2.0/24",

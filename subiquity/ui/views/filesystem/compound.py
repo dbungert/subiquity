@@ -15,37 +15,17 @@
 
 import logging
 
-from urwid import (
-    CheckBox,
-    connect_signal,
-    Padding as UrwidPadding,
-    Text,
-)
-
-from subiquitycore.ui.container import (
-    WidgetWrap,
-)
-from subiquitycore.ui.form import (
-    Form,
-    simple_field,
-    Toggleable,
-    WantsToKnowFormField,
-)
-from subiquitycore.ui.selector import (
-    Selector,
-)
-from subiquitycore.ui.table import (
-    TablePile,
-    TableRow,
-)
-from subiquitycore.ui.utils import (
-    Color,
-)
+from urwid import CheckBox
+from urwid import Padding as UrwidPadding
+from urwid import Text, connect_signal
 
 from subiquity.common.filesystem import labels
-from subiquity.models.filesystem import (
-    humanize_size,
-)
+from subiquity.models.filesystem import humanize_size
+from subiquitycore.ui.container import WidgetWrap
+from subiquitycore.ui.form import Form, Toggleable, WantsToKnowFormField, simple_field
+from subiquitycore.ui.selector import Selector
+from subiquitycore.ui.table import TablePile, TableRow
+from subiquitycore.ui.utils import Color
 
 log = logging.getLogger("subiquity.ui.views.filesystem.compound")
 

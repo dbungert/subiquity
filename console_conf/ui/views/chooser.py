@@ -20,29 +20,14 @@ Chooser provides a view with recovery chooser actions.
 """
 import logging
 
-from urwid import (
-    connect_signal,
-    Text,
-)
-from subiquitycore.ui.buttons import (
-    danger_btn,
-    forward_btn,
-    back_btn,
-)
-from subiquitycore.ui.actionmenu import (
-    Action,
-    ActionMenu,
-)
-from subiquitycore.ui.container import Pile, ListBox
-from subiquitycore.ui.utils import (
-    button_pile,
-    screen,
-    make_action_menu_row,
-    Color,
-)
-from subiquitycore.ui.table import TableRow, TablePile
-from subiquitycore.view import BaseView
+from urwid import Text, connect_signal
 
+from subiquitycore.ui.actionmenu import Action, ActionMenu
+from subiquitycore.ui.buttons import back_btn, danger_btn, forward_btn
+from subiquitycore.ui.container import ListBox, Pile
+from subiquitycore.ui.table import TablePile, TableRow
+from subiquitycore.ui.utils import Color, button_pile, make_action_menu_row, screen
+from subiquitycore.view import BaseView
 
 log = logging.getLogger("console_conf.ui.views.chooser")
 

@@ -13,20 +13,19 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import aiohttp
 import asyncio
 import contextlib
 import enum
 import logging
 from typing import Dict, List, Optional
 
-from subiquity.common.api.client import make_client
-from subiquity.common.api.defs import api, path_parameter, Payload
-from subiquity.common.serialize import named_field, Serializer
-from subiquity.common.types import Change, TaskStatus
-
+import aiohttp
 import attr
 
+from subiquity.common.api.client import make_client
+from subiquity.common.api.defs import Payload, api, path_parameter
+from subiquity.common.serialize import Serializer, named_field
+from subiquity.common.types import Change, TaskStatus
 
 log = logging.getLogger("subiquity.server.snapdapi")
 

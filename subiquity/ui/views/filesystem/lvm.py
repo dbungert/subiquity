@@ -17,37 +17,24 @@ import logging
 import os
 import re
 
-from urwid import (
-    connect_signal,
-    Text,
-)
+from urwid import Text, connect_signal
 
-from subiquitycore.ui.container import (
-    Pile,
+from subiquity.models.filesystem import get_lvm_size, humanize_size
+from subiquity.ui.views.filesystem.compound import (
+    CompoundDiskForm,
+    MultiDeviceField,
+    get_possible_components,
 )
+from subiquitycore.ui.container import Pile
 from subiquitycore.ui.form import (
     BooleanField,
     PasswordField,
     ReadOnlyField,
-    simple_field,
     WantsToKnowFormField,
+    simple_field,
 )
-from subiquitycore.ui.interactive import (
-    StringEditor,
-)
-from subiquitycore.ui.stretchy import (
-    Stretchy,
-)
-
-from subiquity.models.filesystem import (
-    get_lvm_size,
-    humanize_size,
-)
-from subiquity.ui.views.filesystem.compound import (
-    CompoundDiskForm,
-    get_possible_components,
-    MultiDeviceField,
-)
+from subiquitycore.ui.interactive import StringEditor
+from subiquitycore.ui.stretchy import Stretchy
 
 log = logging.getLogger("subiquity.ui.views.filesystem.lvm")
 

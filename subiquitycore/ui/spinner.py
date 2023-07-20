@@ -15,9 +15,7 @@
 
 import asyncio
 
-from urwid import (
-    Text,
-)
+from urwid import Text
 
 styles = {
     "dots": {

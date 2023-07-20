@@ -24,7 +24,7 @@ from urwid import Text
 
 from subiquitycore.ui.buttons import done_btn
 from subiquitycore.ui.container import ListBox, Pile
-from subiquitycore.ui.utils import button_pile, Padding
+from subiquitycore.ui.utils import Padding, button_pile
 from subiquitycore.view import BaseView
 
 log = logging.getLogger("console_conf.ui.views.login")

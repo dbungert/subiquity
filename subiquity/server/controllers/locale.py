@@ -16,11 +16,10 @@
 import logging
 import os
 
-from subiquitycore import async_helpers as async_helpers
 from subiquity.common.apidef import API
 from subiquity.server.controller import SubiquityController
 from subiquity.server.types import InstallerChannels
-
+from subiquitycore import async_helpers as async_helpers
 
 log = logging.getLogger("subiquity.server.controllers.locale")
 

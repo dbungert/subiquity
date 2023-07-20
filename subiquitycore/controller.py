@@ -13,8 +13,8 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from abc import ABC
 import logging
+from abc import ABC
 from typing import Optional
 
 log = logging.getLogger("subiquitycore.controller")

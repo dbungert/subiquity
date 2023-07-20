@@ -18,12 +18,12 @@ import unittest
 from unittest import mock
 
 from subiquity.models.mirror import (
-    countrify_uri,
     LEGACY_DEFAULT_PRIMARY_SECTION,
+    LegacyPrimaryEntry,
     MirrorModel,
     MirrorSelectionFallback,
-    LegacyPrimaryEntry,
     PrimaryEntry,
+    countrify_uri,
 )
 
 

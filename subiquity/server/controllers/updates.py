@@ -18,7 +18,6 @@ import logging
 from subiquity.common.apidef import API
 from subiquity.server.controller import SubiquityController
 
-
 log = logging.getLogger("subiquity.server.controllers.updates")
 
 

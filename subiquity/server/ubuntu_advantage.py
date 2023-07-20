@@ -15,24 +15,21 @@
 """ This module defines utilities to interface with the ubuntu-advantage-tools
 helper. """
 
-from abc import ABC, abstractmethod
-from datetime import datetime as dt
+import asyncio
 import contextlib
 import json
 import logging
 import os
-from subprocess import CompletedProcess
 import tempfile
+from abc import ABC, abstractmethod
+from datetime import datetime as dt
+from subprocess import CompletedProcess
 from typing import List, Sequence, Tuple, Union
+
 import yaml
-import asyncio
 
-from subiquity.common.types import (
-    UbuntuProSubscription,
-    UbuntuProService,
-)
+from subiquity.common.types import UbuntuProService, UbuntuProSubscription
 from subiquitycore import utils
-
 
 log = logging.getLogger("subiquity.server.ubuntu_advantage")
 

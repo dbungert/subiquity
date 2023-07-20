@@ -16,9 +16,9 @@
 import logging
 import os
 import typing
-import yaml
 
 import attr
+import yaml
 
 from subiquity.common.serialize import Serializer
 

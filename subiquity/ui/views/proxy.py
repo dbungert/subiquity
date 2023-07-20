@@ -19,14 +19,11 @@ Provides high level options for Ubuntu install
 
 """
 import logging
+
 from urwid import connect_signal
 
+from subiquitycore.ui.form import Form, URLField
 from subiquitycore.view import BaseView
-from subiquitycore.ui.form import (
-    Form,
-    URLField,
-)
-
 
 log = logging.getLogger("subiquity.ui.views.proxy")
 

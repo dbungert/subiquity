@@ -16,29 +16,7 @@
 import logging
 import re
 
-from urwid import (
-    connect_signal,
-    Text,
-)
-
-from subiquitycore.ui.container import (
-    Pile,
-)
-from subiquitycore.ui.form import (
-    ChoiceField,
-    ReadOnlyField,
-    simple_field,
-    WantsToKnowFormField,
-)
-from subiquitycore.ui.interactive import (
-    StringEditor,
-)
-from subiquitycore.ui.selector import (
-    Option,
-)
-from subiquitycore.ui.stretchy import (
-    Stretchy,
-)
+from urwid import Text, connect_signal
 
 from subiquity.models.filesystem import (
     get_raid_size,
@@ -48,9 +26,19 @@ from subiquity.models.filesystem import (
 )
 from subiquity.ui.views.filesystem.compound import (
     CompoundDiskForm,
-    get_possible_components,
     MultiDeviceField,
+    get_possible_components,
 )
+from subiquitycore.ui.container import Pile
+from subiquitycore.ui.form import (
+    ChoiceField,
+    ReadOnlyField,
+    WantsToKnowFormField,
+    simple_field,
+)
+from subiquitycore.ui.interactive import StringEditor
+from subiquitycore.ui.selector import Option
+from subiquitycore.ui.stretchy import Stretchy
 
 log = logging.getLogger("subiquity.ui.views.filesystem.raid")
 

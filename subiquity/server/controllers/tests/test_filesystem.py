@@ -14,18 +14,10 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import copy
-from unittest import mock, IsolatedAsyncioTestCase
 import uuid
+from unittest import IsolatedAsyncioTestCase, mock
 
 from curtin.commands.extract import TrivialSourceHandler
-
-from subiquitycore.tests.parameterized import parameterized
-
-from subiquitycore.snapd import AsyncSnapd, get_fake_connection
-from subiquitycore.tests.mocks import make_app
-from subiquitycore.utils import matching_dicts
-from subiquitycore.tests.util import random_string
-
 from subiquity.common.filesystem import gaps, labels
 from subiquity.common.filesystem.actions import DeviceAction
 from subiquity.common.types import (
@@ -34,9 +26,9 @@ from subiquity.common.types import (
     Gap,
     GapUsable,
     GuidedCapability,
+    GuidedChoiceV2,
     GuidedDisallowedCapability,
     GuidedDisallowedCapabilityReason,
-    GuidedChoiceV2,
     GuidedStorageTargetManual,
     GuidedStorageTargetReformat,
     GuidedStorageTargetResize,
@@ -62,6 +54,11 @@ from subiquity.server.controllers.filesystem import (
     VariationInfo,
 )
 from subiquity.server.dryrun import DRConfig
+from subiquitycore.snapd import AsyncSnapd, get_fake_connection
+from subiquitycore.tests.mocks import make_app
+from subiquitycore.tests.parameterized import parameterized
+from subiquitycore.tests.util import random_string
+from subiquitycore.utils import matching_dicts
 
 bootloaders = [(bl,) for bl in list(Bootloader)]
 bootloaders_and_ptables = [

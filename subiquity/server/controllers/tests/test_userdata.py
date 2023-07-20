@@ -15,12 +15,10 @@
 
 import unittest
 
-from subiquity.server.controllers.userdata import (
-    UserdataController,
-)
-from subiquitycore.tests.mocks import make_app
-
 from cloudinit.config.schema import SchemaValidationError
+
+from subiquity.server.controllers.userdata import UserdataController
+from subiquitycore.tests.mocks import make_app
 
 try:
     from cloudinit.config.schema import SchemaProblem

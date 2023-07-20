@@ -17,7 +17,6 @@ import logging
 
 import attr
 
-
 log = logging.getLogger("console_conf.models.identity")
 
 

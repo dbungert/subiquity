@@ -15,17 +15,17 @@
 
 import contextlib
 import io
-import jsonschema
 import unittest
 from unittest import mock
 
-from subiquitycore.tests.mocks import make_app
+import jsonschema
+
 from subiquity.common.types import MirrorSelectionFallback
 from subiquity.models.mirror import MirrorModel
 from subiquity.server.apt import AptConfigCheckError
-from subiquity.server.controllers.mirror import MirrorController
+from subiquity.server.controllers.mirror import MirrorController, NoUsableMirrorError
 from subiquity.server.controllers.mirror import log as MirrorLogger
-from subiquity.server.controllers.mirror import NoUsableMirrorError
+from subiquitycore.tests.mocks import make_app
 
 
 class TestMirrorSchema(unittest.TestCase):

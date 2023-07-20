@@ -16,18 +16,15 @@
 
 import argparse
 import asyncio
+import fcntl
 import logging
 import os
-import fcntl
 import subprocess
 import sys
 
 from subiquitycore.log import setup_logger
 
-from .common import (
-    LOGDIR,
-    setup_environment,
-)
+from .common import LOGDIR, setup_environment
 from .server import make_server_args_parser
 
 

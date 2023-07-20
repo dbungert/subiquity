@@ -22,23 +22,21 @@ from typing import Callable, Optional
 import aiohttp
 from urwid import Widget
 
-from subiquitycore.async_helpers import schedule_task
-
 from subiquity.client.controller import SubiquityTuiController
+from subiquity.common.types import UbuntuProCheckTokenStatus as TokenStatus
 from subiquity.common.types import (
     UbuntuProInfo,
     UbuntuProResponse,
-    UbuntuProCheckTokenStatus as TokenStatus,
     UbuntuProSubscription,
     UPCSWaitStatus,
 )
 from subiquity.ui.views.ubuntu_pro import (
-    UbuntuProView,
-    UpgradeYesNoForm,
-    UpgradeModeForm,
     TokenAddedWidget,
+    UbuntuProView,
+    UpgradeModeForm,
+    UpgradeYesNoForm,
 )
-
+from subiquitycore.async_helpers import schedule_task
 from subiquitycore.lsb_release import lsb_release
 from subiquitycore.tuicontroller import Skip
 

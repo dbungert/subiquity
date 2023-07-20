@@ -16,28 +16,18 @@
 import asyncio
 import logging
 
-from urwid import (
-    LineBox,
-    Text,
-)
+from urwid import LineBox, Text
 
+from subiquity.common.types import ApplicationState
 from subiquitycore.async_helpers import run_bg_task
-from subiquitycore.view import BaseView
-from subiquitycore.ui.buttons import (
-    cancel_btn,
-    danger_btn,
-    ok_btn,
-    other_btn,
-)
+from subiquitycore.ui.buttons import cancel_btn, danger_btn, ok_btn, other_btn
 from subiquitycore.ui.container import Columns, ListBox, Pile
 from subiquitycore.ui.form import Toggleable
 from subiquitycore.ui.spinner import Spinner
-from subiquitycore.ui.utils import button_pile, Padding, rewrap
 from subiquitycore.ui.stretchy import Stretchy
+from subiquitycore.ui.utils import Padding, button_pile, rewrap
 from subiquitycore.ui.width import widget_width
-
-from subiquity.common.types import ApplicationState
-
+from subiquitycore.view import BaseView
 
 log = logging.getLogger("subiquity.ui.views.installprogress")
 

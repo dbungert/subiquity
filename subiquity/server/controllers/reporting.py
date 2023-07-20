@@ -16,17 +16,9 @@
 import copy
 import logging
 
-from curtin.reporter import (
-    available_handlers,
-    update_configuration,
-)
-from curtin.reporter.events import (
-    report_finish_event,
-    report_start_event,
-    status,
-)
+from curtin.reporter import available_handlers, update_configuration
+from curtin.reporter.events import report_finish_event, report_start_event, status
 from curtin.reporter.handlers import LogHandler as CurtinLogHandler
-
 from subiquity.server.controller import NonInteractiveController
 
 

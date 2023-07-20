@@ -15,7 +15,6 @@
 
 import urwid
 
-
 size_neutral_decorations = (
     urwid.AttrMap,
     urwid.PopUpLauncher,

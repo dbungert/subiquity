@@ -19,9 +19,7 @@ import logging
 import os
 
 from subiquitycore.async_helpers import run_bg_task
-from subiquitycore.context import (
-    Context,
-)
+from subiquitycore.context import Context
 from subiquitycore.controllerset import ControllerSet
 from subiquitycore.pubsub import MessageHub
 

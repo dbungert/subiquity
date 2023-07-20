@@ -18,11 +18,7 @@ from unittest import TestCase
 
 from urwid import Text
 
-from subiquitycore.ui.table import (
-    _compute_widths_for_size,
-    ColSpec,
-    TableRow,
-)
+from subiquitycore.ui.table import ColSpec, TableRow, _compute_widths_for_size
 
 
 class TestComputeWidthsForSize(TestCase):

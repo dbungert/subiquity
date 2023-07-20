@@ -14,17 +14,14 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import logging
-import re
 import os
+import re
 
 import yaml
 
 from subiquity.common.resources import resource_path
 from subiquity.common.serialize import Serializer
-from subiquity.common.types import (
-    KeyboardLayout,
-    KeyboardSetting,
-)
+from subiquity.common.types import KeyboardLayout, KeyboardSetting
 
 log = logging.getLogger("subiquity.models.keyboard")
 

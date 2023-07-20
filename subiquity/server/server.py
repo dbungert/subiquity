@@ -20,44 +20,17 @@ import sys
 import time
 from typing import List, Optional
 
+import jsonschema
+import yaml
 from aiohttp import web
-
 from cloudinit import safeyaml, stages
 from cloudinit.config.cc_set_passwords import rand_user_password
 from cloudinit.distros import ug_util
-
-import jsonschema
-
 from systemd import journal
 
-import yaml
-
-from subiquitycore.async_helpers import (
-    run_bg_task,
-    run_in_thread,
-)
-from subiquitycore.context import with_context
-from subiquitycore.core import Application
-from subiquitycore.file_util import (
-    copy_file_if_exists,
-    write_file,
-)
-from subiquitycore.prober import Prober
-from subiquitycore.ssh import (
-    host_key_fingerprints,
-    user_key_fingerprints,
-)
-from subiquitycore.utils import arun_command, run_command
-
-from subiquity.common.api.server import (
-    bind,
-    controller_for_request,
-)
+from subiquity.common.api.server import bind, controller_for_request
 from subiquity.common.apidef import API
-from subiquity.common.errorreport import (
-    ErrorReportKind,
-    ErrorReporter,
-)
+from subiquity.common.errorreport import ErrorReporter, ErrorReportKind
 from subiquity.common.serialize import to_json
 from subiquity.common.types import (
     ApplicationState,
@@ -67,27 +40,23 @@ from subiquity.common.types import (
     LiveSessionSSHInfo,
     PasswordKind,
 )
-from subiquity.models.subiquity import (
-    ModelNames,
-    SubiquityModel,
-)
-from subiquity.server.dryrun import DRConfig
+from subiquity.models.subiquity import ModelNames, SubiquityModel
 from subiquity.server.controller import SubiquityController
-from subiquity.server.geoip import (
-    GeoIP,
-    DryRunGeoIPStrategy,
-    HTTPGeoIPStrategy,
-)
+from subiquity.server.dryrun import DRConfig
 from subiquity.server.errors import ErrorController
+from subiquity.server.geoip import DryRunGeoIPStrategy, GeoIP, HTTPGeoIPStrategy
 from subiquity.server.pkghelper import PackageInstaller
 from subiquity.server.runner import get_command_runner
 from subiquity.server.snapdapi import make_api_client
 from subiquity.server.types import InstallerChannels
-from subiquitycore.snapd import (
-    AsyncSnapd,
-    get_fake_connection,
-    SnapdConnection,
-)
+from subiquitycore.async_helpers import run_bg_task, run_in_thread
+from subiquitycore.context import with_context
+from subiquitycore.core import Application
+from subiquitycore.file_util import copy_file_if_exists, write_file
+from subiquitycore.prober import Prober
+from subiquitycore.snapd import AsyncSnapd, SnapdConnection, get_fake_connection
+from subiquitycore.ssh import host_key_fingerprints, user_key_fingerprints
+from subiquitycore.utils import arun_command, run_command
 
 NOPROBERARG = "NOPROBER"
 

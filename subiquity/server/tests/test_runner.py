@@ -16,11 +16,8 @@
 import os
 from unittest.mock import patch
 
+from subiquity.server.runner import DryRunCommandRunner, LoggedCommandRunner
 from subiquitycore.tests import SubiTestCase
-from subiquity.server.runner import (
-    LoggedCommandRunner,
-    DryRunCommandRunner,
-)
 
 
 class TestLoggedCommandRunner(SubiTestCase):

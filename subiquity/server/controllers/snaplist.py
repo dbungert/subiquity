@@ -18,13 +18,7 @@ import logging
 from typing import List
 
 import attr
-
 import requests.exceptions
-
-from subiquitycore.async_helpers import (
-    schedule_task,
-)
-from subiquitycore.context import with_context
 
 from subiquity.common.apidef import API
 from subiquity.common.types import (
@@ -33,11 +27,10 @@ from subiquity.common.types import (
     SnapListResponse,
     SnapSelection,
 )
-from subiquity.server.controller import (
-    SubiquityController,
-)
+from subiquity.server.controller import SubiquityController
 from subiquity.server.types import InstallerChannels
-
+from subiquitycore.async_helpers import schedule_task
+from subiquitycore.context import with_context
 
 log = logging.getLogger("subiquity.server.controllers.snaplist")
 

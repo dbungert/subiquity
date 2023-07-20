@@ -18,18 +18,10 @@ import logging
 
 import aiohttp
 
-from subiquitycore.tuicontroller import (
-    Skip,
-)
-
-from subiquity.common.types import (
-    RefreshCheckState,
-)
-from subiquity.client.controller import (
-    SubiquityTuiController,
-)
+from subiquity.client.controller import SubiquityTuiController
+from subiquity.common.types import RefreshCheckState
 from subiquity.ui.views.refresh import RefreshView
-
+from subiquitycore.tuicontroller import Skip
 
 log = logging.getLogger("subiquity.client.controllers.refresh")
 

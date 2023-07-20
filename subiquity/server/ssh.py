@@ -19,10 +19,8 @@ import os
 import subprocess
 from typing import List
 
+from subiquity.common.types import SSHFetchIdStatus
 from subiquitycore.utils import arun_command
-from subiquity.common.types import (
-    SSHFetchIdStatus,
-)
 
 log = logging.getLogger("subiquity.server.ssh")
 

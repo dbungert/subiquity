@@ -13,19 +13,18 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from subprocess import CalledProcessError
 import unittest
-from unittest.mock import patch, AsyncMock, Mock
-
-from subiquitycore.tests.mocks import make_app
+from subprocess import CalledProcessError
+from unittest.mock import AsyncMock, Mock, patch
 
 from subiquity.server.dryrun import DRConfig
 from subiquity.server.ubuntu_drivers import (
-    UbuntuDriversInterface,
-    UbuntuDriversClientInterface,
-    UbuntuDriversRunDriversInterface,
     CommandNotFoundError,
+    UbuntuDriversClientInterface,
+    UbuntuDriversInterface,
+    UbuntuDriversRunDriversInterface,
 )
+from subiquitycore.tests.mocks import make_app
 
 
 class TestUbuntuDriversInterface(unittest.IsolatedAsyncioTestCase):

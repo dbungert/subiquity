@@ -14,20 +14,20 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import functools
-from typing import Tuple, List
+from typing import List, Tuple
 
 import attr
 
 from subiquity.common.types import GapUsable
 from subiquity.models.filesystem import (
-    align_up,
-    align_down,
-    Disk,
     LVM_CHUNK_SIZE,
+    Disk,
     LVM_LogicalVolume,
     LVM_VolGroup,
     Partition,
     Raid,
+    align_down,
+    align_up,
 )
 
 

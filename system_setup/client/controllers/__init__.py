@@ -14,14 +14,13 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from .identity import WSLIdentityController
-from .wslconfbase import WSLConfigurationBaseController
-from .summary import SummaryController
-from .wslconfadvanced import WSLConfigurationAdvancedController
-from .wslsetupoptions import WSLSetupOptionsController
-
 from subiquity.client.controllers import WelcomeController
 
+from .identity import WSLIdentityController
+from .summary import SummaryController
+from .wslconfadvanced import WSLConfigurationAdvancedController
+from .wslconfbase import WSLConfigurationBaseController
+from .wslsetupoptions import WSLSetupOptionsController
 
 __all__ = [
     "WelcomeController",

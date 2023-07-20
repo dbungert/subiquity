@@ -21,37 +21,26 @@ Provides network device listings and extended network information
 
 import logging
 
-from urwid import (
-    connect_signal,
-    Text,
-)
+from urwid import Text, connect_signal
 
 from subiquitycore.async_helpers import run_bg_task
-from subiquitycore.models.network import (
-    DHCPState,
-    NetDevAction,
-)
+from subiquitycore.models.network import DHCPState, NetDevAction
 from subiquitycore.ui.actionmenu import ActionMenu
-from subiquitycore.ui.buttons import (
-    back_btn,
-    done_btn,
-    menu_btn,
-)
-from subiquitycore.ui.container import (
-    Pile,
-    WidgetWrap,
-)
+from subiquitycore.ui.buttons import back_btn, done_btn, menu_btn
+from subiquitycore.ui.container import Pile, WidgetWrap
 from subiquitycore.ui.spinner import Spinner
 from subiquitycore.ui.stretchy import StretchyOverlay
 from subiquitycore.ui.table import ColSpec, TablePile, TableRow
 from subiquitycore.ui.utils import (
-    button_pile,
     Color,
+    button_pile,
     make_action_menu_row,
     rewrap,
     screen,
 )
 from subiquitycore.ui.width import widget_width
+from subiquitycore.view import BaseView
+
 from .network_configure_manual_interface import (
     AddVlanStretchy,
     BondStretchy,
@@ -59,9 +48,6 @@ from .network_configure_manual_interface import (
     ViewInterfaceInfo,
 )
 from .network_configure_wlan_interface import NetworkConfigureWLANStretchy
-
-from subiquitycore.view import BaseView
-
 
 log = logging.getLogger("subiquitycore.ui.views.network")
 

@@ -16,11 +16,7 @@
 
 import unittest
 
-from subiquity.common.filesystem.labels import (
-    annotations,
-    for_client,
-    usage_labels,
-)
+from subiquity.common.filesystem.labels import annotations, for_client, usage_labels
 from subiquity.models.tests.test_filesystem import (
     make_model,
     make_model_and_disk,

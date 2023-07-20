@@ -19,6 +19,7 @@ import inspect
 import aiohttp
 
 from subiquity.common.serialize import Serializer
+
 from .defs import Payload
 
 

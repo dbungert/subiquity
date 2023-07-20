@@ -17,46 +17,17 @@ import logging
 import re
 from typing import List
 
-from urwid import (
-    connect_signal,
-    LineBox,
-    Text,
-)
-
-from subiquitycore.view import (
-    BaseView,
-)
-from subiquitycore.ui.buttons import (
-    cancel_btn,
-    ok_btn,
-)
-from subiquitycore.ui.container import (
-    ListBox,
-    Pile,
-    WidgetWrap,
-)
-from subiquitycore.ui.form import (
-    BooleanField,
-    ChoiceField,
-    Form,
-)
-from subiquitycore.ui.spinner import (
-    Spinner,
-)
-from subiquitycore.ui.stretchy import (
-    Stretchy,
-)
-from subiquitycore.ui.utils import (
-    button_pile,
-    screen,
-    SomethingFailed,
-)
+from urwid import LineBox, Text, connect_signal
 
 from subiquity.common.types import SSHData, SSHIdentity
-from subiquity.ui.views.identity import (
-    UsernameField,
-)
-
+from subiquity.ui.views.identity import UsernameField
+from subiquitycore.ui.buttons import cancel_btn, ok_btn
+from subiquitycore.ui.container import ListBox, Pile, WidgetWrap
+from subiquitycore.ui.form import BooleanField, ChoiceField, Form
+from subiquitycore.ui.spinner import Spinner
+from subiquitycore.ui.stretchy import Stretchy
+from subiquitycore.ui.utils import SomethingFailed, button_pile, screen
+from subiquitycore.view import BaseView
 
 log = logging.getLogger("subiquity.ui.views.ssh")
 

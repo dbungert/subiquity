@@ -13,10 +13,8 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from unittest import (
-    TestCase,
-    IsolatedAsyncioTestCase,
-)
+from unittest import IsolatedAsyncioTestCase, TestCase
+
 from subiquity.common.types import (
     AdAdminNameValidation,
     AdConnectionInfo,
@@ -24,11 +22,8 @@ from subiquity.common.types import (
     AdJoinResult,
     AdPasswordValidation,
 )
-from subiquity.server.controllers.ad import (
-    AdController,
-    AdValidators,
-)
 from subiquity.models.ad import AdModel
+from subiquity.server.controllers.ad import AdController, AdValidators
 from subiquitycore.tests.mocks import make_app
 
 

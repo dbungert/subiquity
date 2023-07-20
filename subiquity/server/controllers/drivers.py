@@ -17,8 +17,6 @@ import asyncio
 import logging
 from typing import List, Optional
 
-from subiquitycore.context import with_context
-
 from subiquity.common.apidef import API
 from subiquity.common.types import DriversPayload, DriversResponse
 from subiquity.server.apt import OverlayCleanupError
@@ -29,6 +27,7 @@ from subiquity.server.ubuntu_drivers import (
     UbuntuDriversInterface,
     get_ubuntu_drivers_interface,
 )
+from subiquitycore.context import with_context
 
 log = logging.getLogger("subiquity.server.controllers.drivers")
 

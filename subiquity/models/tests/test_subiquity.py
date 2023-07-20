@@ -15,11 +15,11 @@
 
 import fnmatch
 import json
+import re
 import unittest
 from unittest import mock
-import re
-import yaml
 
+import yaml
 from cloudinit.config.schema import SchemaValidationError
 
 try:
@@ -30,8 +30,6 @@ except ImportError:
         return (x, y)  # TODO(drop on cloud-init 22.3 SRU)
 
 
-from subiquitycore.pubsub import MessageHub
-
 from subiquity.common.types import IdentityData
 from subiquity.models.subiquity import (
     CLOUDINIT_CLEAN_FILE_TMPL,
@@ -39,11 +37,9 @@ from subiquity.models.subiquity import (
     ModelNames,
     SubiquityModel,
 )
-from subiquity.server.server import (
-    INSTALL_MODEL_NAMES,
-    POSTINSTALL_MODEL_NAMES,
-)
+from subiquity.server.server import INSTALL_MODEL_NAMES, POSTINSTALL_MODEL_NAMES
 from subiquity.server.types import InstallerChannels
+from subiquitycore.pubsub import MessageHub
 
 getent_group_output = """
 root:x:0:

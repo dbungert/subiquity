@@ -15,10 +15,8 @@
 
 import unittest
 
-from subiquity.common.filesystem.actions import (
-    DeviceAction,
-)
 from subiquity.common.filesystem import gaps
+from subiquity.common.filesystem.actions import DeviceAction
 from subiquity.models.filesystem import Bootloader
 from subiquity.models.tests.test_filesystem import (
     make_disk,

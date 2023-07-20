@@ -21,12 +21,11 @@ from typing import List, Sequence, Union
 import attr
 from systemd import journal
 
+from subiquity.common.types import ApplicationState
+from subiquity.server.controller import NonInteractiveController
 from subiquitycore.async_helpers import run_bg_task
 from subiquitycore.context import with_context
 from subiquitycore.utils import arun_command
-
-from subiquity.common.types import ApplicationState
-from subiquity.server.controller import NonInteractiveController
 
 
 @attr.s(auto_attribs=True)

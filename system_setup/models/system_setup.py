@@ -17,15 +17,14 @@ import asyncio
 import functools
 import logging
 
-from subiquity.models.subiquity import SubiquityModel
-from subiquity.models.locale import LocaleModel
 from subiquity.models.identity import IdentityModel
+from subiquity.models.locale import LocaleModel
+from subiquity.models.subiquity import SubiquityModel
 from subiquity.server.types import InstallerChannels
 
-from .wslconfbase import WSLConfigurationBaseModel
 from .wslconfadvanced import WSLConfigurationAdvancedModel
+from .wslconfbase import WSLConfigurationBaseModel
 from .wslsetupoptions import WSLSetupOptionsModel
-
 
 log = logging.getLogger("system_setup.models.system_setup")
 

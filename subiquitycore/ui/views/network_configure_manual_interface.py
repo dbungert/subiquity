@@ -13,35 +13,25 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import logging
 import ipaddress
+import logging
 
-from urwid import (
-    CheckBox,
-    connect_signal,
-    Text,
-    WidgetPlaceholder,
-)
+from urwid import CheckBox, Text, WidgetPlaceholder, connect_signal
 
-from subiquitycore.models.network import (
-    BondConfig,
-    BondParameters,
-    StaticConfig,
-)
+from subiquitycore.models.network import BondConfig, BondParameters, StaticConfig
+from subiquitycore.ui.buttons import done_btn
 from subiquitycore.ui.container import Pile, WidgetWrap
 from subiquitycore.ui.form import (
     ChoiceField,
     Form,
     FormField,
-    simple_field,
     StringField,
     WantsToKnowFormField,
+    simple_field,
 )
 from subiquitycore.ui.interactive import RestrictedEditor, StringEditor
 from subiquitycore.ui.stretchy import Stretchy
-
 from subiquitycore.ui.utils import button_pile
-from subiquitycore.ui.buttons import done_btn
 
 log = logging.getLogger("subiquitycore.ui.views.network_configure_manual_interface")
 

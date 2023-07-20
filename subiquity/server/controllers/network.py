@@ -19,31 +19,15 @@ from typing import List, Optional
 
 import aiohttp
 
-from subiquitycore.async_helpers import (
-    run_bg_task,
-    schedule_task,
-)
+from subiquity.common.api.client import make_client_for_conn
+from subiquity.common.apidef import API, LinkAction, NetEventAPI
+from subiquity.common.errorreport import ErrorReportKind
+from subiquity.common.types import NetworkStatus, PackageInstallState
+from subiquity.server.controller import SubiquityController
+from subiquitycore.async_helpers import run_bg_task, schedule_task
 from subiquitycore.context import with_context
 from subiquitycore.controllers.network import BaseNetworkController
-from subiquitycore.models.network import (
-    BondConfig,
-    StaticConfig,
-    WLANConfig,
-)
-
-from subiquity.common.api.client import make_client_for_conn
-from subiquity.common.apidef import (
-    API,
-    LinkAction,
-    NetEventAPI,
-)
-from subiquity.common.errorreport import ErrorReportKind
-from subiquity.common.types import (
-    NetworkStatus,
-    PackageInstallState,
-)
-from subiquity.server.controller import SubiquityController
-
+from subiquitycore.models.network import BondConfig, StaticConfig, WLANConfig
 
 log = logging.getLogger("subiquity.server.controllers.network")
 

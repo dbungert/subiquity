@@ -16,15 +16,10 @@
 import asyncio
 import logging
 
-from subiquitycore.tuicontroller import Skip
-
-from subiquity.common.types import (
-    MirrorCheckStatus,
-    MirrorGet,
-    MirrorPost,
-)
 from subiquity.client.controller import SubiquityTuiController
+from subiquity.common.types import MirrorCheckStatus, MirrorGet, MirrorPost
 from subiquity.ui.views.mirror import MirrorView
+from subiquitycore.tuicontroller import Skip
 
 log = logging.getLogger("subiquity.client.controllers.mirror")
 

@@ -17,35 +17,23 @@ import asyncio
 import logging
 from typing import Callable, Optional
 
-from subiquitycore.async_helpers import run_bg_task
-from subiquitycore.lsb_release import lsb_release
-from subiquitycore.view import BaseView
-
 from subiquity.client.controller import SubiquityTuiController
 from subiquity.common.filesystem import gaps
 from subiquity.common.filesystem.manipulator import FilesystemManipulator
 from subiquity.common.types import (
-    ProbeStatus,
     GuidedCapability,
     GuidedChoiceV2,
     GuidedStorageResponseV2,
     GuidedStorageTargetManual,
+    ProbeStatus,
     StorageResponseV2,
 )
-from subiquity.models.filesystem import (
-    Bootloader,
-    FilesystemModel,
-    raidlevels_by_value,
-)
-from subiquity.ui.views import (
-    FilesystemView,
-    GuidedDiskSelectionView,
-)
-from subiquity.ui.views.filesystem.probing import (
-    SlowProbing,
-    ProbingFailed,
-)
-
+from subiquity.models.filesystem import Bootloader, FilesystemModel, raidlevels_by_value
+from subiquity.ui.views import FilesystemView, GuidedDiskSelectionView
+from subiquity.ui.views.filesystem.probing import ProbingFailed, SlowProbing
+from subiquitycore.async_helpers import run_bg_task
+from subiquitycore.lsb_release import lsb_release
+from subiquitycore.view import BaseView
 
 log = logging.getLogger("subiquity.client.controllers.filesystem")
 
@@ -200,8 +188,8 @@ class FilesystemController(SubiquityTuiController, FilesystemManipulator):
         return raidlevels_by_value[level]
 
     async def _answers_action(self, action):
-        from subiquitycore.ui.stretchy import StretchyOverlay
         from subiquity.ui.views.filesystem.delete import ConfirmDeleteStretchy
+        from subiquitycore.ui.stretchy import StretchyOverlay
 
         log.debug("_answers_action %r", action)
         if "obj" in action:

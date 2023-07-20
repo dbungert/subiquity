@@ -18,19 +18,11 @@ import logging
 
 import aiohttp
 
+from subiquity.client.controller import SubiquityTuiController
+from subiquity.common.types import ApplicationState, ShutdownMode
+from subiquity.ui.views.installprogress import InstallRunning, ProgressView
 from subiquitycore.async_helpers import run_bg_task
 from subiquitycore.context import with_context
-
-from subiquity.client.controller import SubiquityTuiController
-from subiquity.common.types import (
-    ApplicationState,
-    ShutdownMode,
-)
-from subiquity.ui.views.installprogress import (
-    InstallRunning,
-    ProgressView,
-)
-
 
 log = logging.getLogger("subiquity.client.controllers.progress")
 

@@ -3,19 +3,11 @@ from unittest import mock
 
 import urwid
 
-from subiquitycore.testing import view_helpers
-
 from subiquity.client.controllers.filesystem import FilesystemController
-from subiquity.models.filesystem import (
-    Bootloader,
-    Disk,
-    FilesystemModel,
-)
-from subiquity.models.tests.test_filesystem import (
-    FakeStorageInfo,
-    make_model,
-)
+from subiquity.models.filesystem import Bootloader, Disk, FilesystemModel
+from subiquity.models.tests.test_filesystem import FakeStorageInfo, make_model
 from subiquity.ui.views.filesystem.filesystem import FilesystemView
+from subiquitycore.testing import view_helpers
 
 
 class FilesystemViewTests(unittest.TestCase):

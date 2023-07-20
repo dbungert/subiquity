@@ -16,9 +16,7 @@
 from urwid import Text
 
 from subiquity.common.filesystem import gaps, labels
-from subiquity.models.filesystem import (
-    humanize_size,
-)
+from subiquity.models.filesystem import humanize_size
 
 
 def summarize_device(device, part_filter=lambda p: True):

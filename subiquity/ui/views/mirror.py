@@ -20,36 +20,17 @@ import asyncio
 import logging
 from typing import Callable, Optional
 
-from urwid import (
-    connect_signal,
-    LineBox,
-    Padding,
-    Text,
-)
+from urwid import LineBox, Padding, Text, connect_signal
 
 import subiquitycore.async_helpers as async_helpers
-from subiquitycore.ui.buttons import (
-    other_btn,
-)
-from subiquitycore.ui.container import (
-    ListBox,
-    Pile,
-    WidgetWrap,
-)
-from subiquitycore.ui.form import (
-    Form,
-    URLField,
-)
+from subiquity.common.types import MirrorCheckResponse, MirrorCheckStatus, MirrorPost
+from subiquitycore.ui.buttons import other_btn
+from subiquitycore.ui.container import ListBox, Pile, WidgetWrap
+from subiquitycore.ui.form import Form, URLField
 from subiquitycore.ui.spinner import Spinner
-from subiquitycore.ui.table import TableRow, TablePile
+from subiquitycore.ui.table import TablePile, TableRow
 from subiquitycore.ui.utils import button_pile, rewrap
 from subiquitycore.view import BaseView
-
-from subiquity.common.types import (
-    MirrorPost,
-    MirrorCheckResponse,
-    MirrorCheckStatus,
-)
 
 log = logging.getLogger("subiquity.ui.views.mirror")
 

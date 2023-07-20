@@ -18,14 +18,11 @@ from unittest import mock
 
 import urwid
 
-from subiquitycore.testing import view_helpers
-from subiquitycore.view import BaseView
-
 from subiquity.client.controllers.filesystem import FilesystemController
 from subiquity.ui.views.filesystem.lvm import VolGroupStretchy
-from subiquity.ui.views.filesystem.tests.test_partition import (
-    make_model_and_disk,
-)
+from subiquity.ui.views.filesystem.tests.test_partition import make_model_and_disk
+from subiquitycore.testing import view_helpers
+from subiquitycore.view import BaseView
 
 
 def make_view(model, existing=None):

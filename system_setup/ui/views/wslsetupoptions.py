@@ -18,17 +18,12 @@
 WSLSetupOptions provides user with options to customize the setup experience.
 """
 
-from urwid import (
-    connect_signal,
-)
+from urwid import connect_signal
 
-from subiquitycore.ui.form import (
-    Form,
-    BooleanField,
-)
+from subiquity.common.types import WSLSetupOptions
+from subiquitycore.ui.form import BooleanField, Form
 from subiquitycore.ui.utils import screen
 from subiquitycore.view import BaseView
-from subiquity.common.types import WSLSetupOptions
 
 CAPTION = _("Install packages for better {lang} language support")
 

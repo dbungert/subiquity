@@ -18,21 +18,15 @@ import json
 import logging
 
 import aiohttp
+from urwid import ProgressBar, Text, WidgetWrap
 
-from urwid import (
-    ProgressBar,
-    Text,
-    WidgetWrap,
-)
-
+from subiquity.common.types import RefreshCheckState, TaskStatus
 from subiquitycore.async_helpers import schedule_task
-from subiquitycore.view import BaseView
 from subiquitycore.ui.buttons import done_btn, other_btn
 from subiquitycore.ui.container import Columns, ListBox
 from subiquitycore.ui.spinner import Spinner
-from subiquitycore.ui.utils import button_pile, Color, screen
-
-from subiquity.common.types import RefreshCheckState, TaskStatus
+from subiquitycore.ui.utils import Color, button_pile, screen
+from subiquitycore.view import BaseView
 
 log = logging.getLogger("subiquity.ui.views.refresh")
 

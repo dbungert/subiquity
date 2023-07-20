@@ -15,16 +15,12 @@
 
 from unittest import mock
 
+from subiquity.server import snapdapi
+from subiquity.server.controllers import refresh as refresh_mod
+from subiquity.server.controllers.refresh import RefreshController, SnapChannelSource
 from subiquitycore.snapd import AsyncSnapd, get_fake_connection
 from subiquitycore.tests import SubiTestCase
 from subiquitycore.tests.mocks import make_app
-
-from subiquity.server.controllers import refresh as refresh_mod
-from subiquity.server.controllers.refresh import (
-    RefreshController,
-    SnapChannelSource,
-)
-from subiquity.server import snapdapi
 
 
 class TestRefreshController(SubiTestCase):

@@ -15,10 +15,10 @@
 
 import logging
 
-from subiquitycore import i18n
-from subiquitycore.tuicontroller import Skip
 from subiquity.client.controller import SubiquityTuiController
 from subiquity.ui.views.welcome import WelcomeView
+from subiquitycore import i18n
+from subiquitycore.tuicontroller import Skip
 
 log = logging.getLogger("subiquity.client.controllers.welcome")
 

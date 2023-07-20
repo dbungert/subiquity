@@ -15,20 +15,14 @@
 
 import os
 import unittest
-
 from unittest.mock import Mock, patch
 
+from subiquity.common.types import KeyboardSetting
+from subiquity.models.keyboard import KeyboardModel
+from subiquity.server.controllers.keyboard import KeyboardController
 from subiquitycore.tests import SubiTestCase
 from subiquitycore.tests.mocks import make_app
 from subiquitycore.tests.parameterized import parameterized
-
-from subiquity.models.keyboard import (
-    KeyboardModel,
-)
-from subiquity.server.controllers.keyboard import (
-    KeyboardController,
-)
-from subiquity.common.types import KeyboardSetting
 
 
 class opts:

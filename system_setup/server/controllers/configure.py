@@ -14,15 +14,15 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import asyncio
-import os
-import shutil
 import logging
+import os
 import re
-from typing import Optional, Tuple, List
+import shutil
+from typing import List, Optional, Tuple
 
 from subiquity.common.errorreport import ErrorReportKind
-from subiquity.common.types import ApplicationState
 from subiquity.common.resources import get_users_and_groups
+from subiquity.common.types import ApplicationState
 from subiquity.server.controller import SubiquityController
 from subiquitycore.context import with_context
 from subiquitycore.utils import arun_command

@@ -16,48 +16,19 @@
 import logging
 import os
 
-from urwid import (
-    connect_signal,
-    Divider,
-    Filler,
-    PopUpLauncher,
-    Text,
-)
-
-from subiquitycore.async_helpers import run_bg_task
-from subiquitycore.lsb_release import lsb_release
-from subiquitycore.ssh import summarize_host_keys
-from subiquitycore.ui.buttons import (
-    header_btn,
-    other_btn,
-)
-from subiquitycore.ui.container import (
-    Columns,
-    Pile,
-    WidgetWrap,
-)
-from subiquitycore.ui.utils import (
-    button_pile,
-    ClickableIcon,
-    Color,
-)
-from subiquitycore.ui.stretchy import (
-    Stretchy,
-)
-from subiquitycore.ui.table import (
-    ColSpec,
-    TablePile,
-    TableRow,
-)
-from subiquitycore.ui.utils import (
-    rewrap,
-)
-from subiquitycore.ui.width import (
-    widget_width,
-)
+from urwid import Divider, Filler, PopUpLauncher, Text, connect_signal
 
 from subiquity.common.types import PasswordKind
 from subiquity.ui.views.error import ErrorReportListStretchy
+from subiquitycore.async_helpers import run_bg_task
+from subiquitycore.lsb_release import lsb_release
+from subiquitycore.ssh import summarize_host_keys
+from subiquitycore.ui.buttons import header_btn, other_btn
+from subiquitycore.ui.container import Columns, Pile, WidgetWrap
+from subiquitycore.ui.stretchy import Stretchy
+from subiquitycore.ui.table import ColSpec, TablePile, TableRow
+from subiquitycore.ui.utils import ClickableIcon, Color, button_pile, rewrap
+from subiquitycore.ui.width import widget_width
 
 log = logging.getLogger("subiquity.ui.views.help")
 

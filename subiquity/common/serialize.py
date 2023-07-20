@@ -15,8 +15,8 @@
 
 import datetime
 import enum
-import json
 import inspect
+import json
 import typing
 
 import attr

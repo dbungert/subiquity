@@ -22,13 +22,11 @@ import re
 import subprocess
 import sys
 from typing import Dict, List, Type
+
 import yaml
 
+from subiquity.journald import journald_listen
 from subiquitycore.context import Context, Status
-
-from subiquity.journald import (
-    journald_listen,
-)
 
 log = logging.getLogger("subiquity.server.curtin")
 

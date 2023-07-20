@@ -13,16 +13,16 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from functools import partial
 import unittest
+from functools import partial
 from unittest import mock
 
-from subiquitycore.tests.parameterized import parameterized
-
+from subiquity.common.filesystem import gaps
+from subiquity.common.types import GapUsable
 from subiquity.models.filesystem import (
-    Disk,
     LVM_CHUNK_SIZE,
     LVM_OVERHEAD,
+    Disk,
     MiB,
     PartitionAlignmentData,
     Raid,
@@ -36,9 +36,7 @@ from subiquity.models.tests.test_filesystem import (
     make_partition,
     make_vg,
 )
-
-from subiquity.common.filesystem import gaps
-from subiquity.common.types import GapUsable
+from subiquitycore.tests.parameterized import parameterized
 
 
 class GapTestCase(unittest.TestCase):

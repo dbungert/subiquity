@@ -1,11 +1,11 @@
 import unittest
 from unittest import mock
-import urwid
 
-from subiquitycore.testing import view_helpers
+import urwid
 
 from subiquity.client.controllers.welcome import WelcomeController
 from subiquity.ui.views.welcome import WelcomeView
+from subiquitycore.testing import view_helpers
 
 
 class WelcomeViewTests(unittest.TestCase):

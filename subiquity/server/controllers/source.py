@@ -14,21 +14,17 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import contextlib
-from typing import Any, Optional
 import os
+from typing import Any, Optional
 
 from curtin.commands.extract import (
     AbstractSourceHandler,
-    get_handler_for_source,
     TrivialSourceHandler,
+    get_handler_for_source,
 )
 from curtin.util import sanitize_source
-
 from subiquity.common.apidef import API
-from subiquity.common.types import (
-    SourceSelection,
-    SourceSelectionAndSetting,
-)
+from subiquity.common.types import SourceSelection, SourceSelectionAndSetting
 from subiquity.server.controller import SubiquityController
 from subiquity.server.types import InstallerChannels
 

@@ -14,15 +14,12 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import logging
+
 from urwid import connect_signal
 
-from subiquitycore.view import BaseView
+from subiquitycore.ui.form import EmailField, Form
 from subiquitycore.ui.utils import SomethingFailed
-from subiquitycore.ui.form import (
-    Form,
-    EmailField,
-)
-
+from subiquitycore.view import BaseView
 
 log = logging.getLogger("console_conf.ui.views.identity")
 

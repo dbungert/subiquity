@@ -16,9 +16,7 @@
 import logging
 from typing import Optional
 
-from subiquitycore.tuicontroller import (
-    TuiController,
-)
+from subiquitycore.tuicontroller import TuiController
 
 log = logging.getLogger("subiquity.client.controller")
 

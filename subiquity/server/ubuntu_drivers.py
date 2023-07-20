@@ -15,14 +15,13 @@
 
 """ Module that defines helpers to use the ubuntu-drivers command. """
 
-from abc import ABC, abstractmethod
 import logging
 import subprocess
+from abc import ABC, abstractmethod
 from typing import List, Type
 
 from subiquity.server.curtin import run_curtin_command
 from subiquitycore.utils import arun_command
-
 
 log = logging.getLogger("subiquity.server.ubuntu_drivers")
 

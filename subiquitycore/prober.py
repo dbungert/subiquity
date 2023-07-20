@@ -15,14 +15,11 @@
 
 import asyncio
 import logging
+
 import yaml
 
+from probert.network import StoredDataObserver, UdevObserver
 from subiquitycore.async_helpers import run_in_thread
-
-from probert.network import (
-    StoredDataObserver,
-    UdevObserver,
-)
 
 log = logging.getLogger("subiquitycore.prober")
 

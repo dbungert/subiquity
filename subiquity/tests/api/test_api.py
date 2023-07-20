@@ -13,25 +13,23 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import aiohttp
-from aiohttp.client_exceptions import ClientResponseError
-import async_timeout
 import asyncio
 import contextlib
-from functools import wraps
 import json
 import os
 import re
 import tempfile
+from functools import wraps
 from typing import Dict, List, Optional
 from unittest.mock import patch
 from urllib.parse import unquote
 
+import aiohttp
+import async_timeout
+from aiohttp.client_exceptions import ClientResponseError
+
 from subiquitycore.tests import SubiTestCase
-from subiquitycore.utils import (
-    astart_command,
-    matching_dicts,
-)
+from subiquitycore.utils import astart_command, matching_dicts
 
 default_timeout = 10
 

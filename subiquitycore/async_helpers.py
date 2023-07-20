@@ -17,7 +17,6 @@ import asyncio
 import concurrent.futures
 import logging
 
-
 log = logging.getLogger("subiquitycore.async_helpers")
 
 

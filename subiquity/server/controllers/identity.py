@@ -14,17 +14,16 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import logging
-
-import attr
 import re
 from typing import Set
 
-from subiquitycore.context import with_context
+import attr
 
 from subiquity.common.apidef import API
 from subiquity.common.resources import resource_path
 from subiquity.common.types import IdentityData, UsernameValidation
 from subiquity.server.controller import SubiquityController
+from subiquitycore.context import with_context
 
 log = logging.getLogger("subiquity.server.controllers.identity")
 

@@ -25,38 +25,15 @@ import time
 from typing import Any, Dict, List, Optional
 
 import attr
+import pyudev
 
 from curtin.commands.extract import AbstractSourceHandler
 from curtin.storage_config import ptable_part_type_to_flag
-
-import pyudev
-
-from subiquitycore.async_helpers import (
-    schedule_task,
-    SingleInstanceTask,
-    TaskAlreadyRunningError,
-)
-from subiquitycore.context import with_context
-from subiquitycore.utils import (
-    arun_command,
-    run_command,
-)
-from subiquitycore.lsb_release import lsb_release
-
 from subiquity.common.apidef import API
 from subiquity.common.errorreport import ErrorReportKind
-from subiquity.common.filesystem.actions import (
-    DeviceAction,
-)
-from subiquity.common.filesystem import (
-    boot,
-    gaps,
-    labels,
-    sizes,
-)
-from subiquity.common.filesystem.manipulator import (
-    FilesystemManipulator,
-)
+from subiquity.common.filesystem import boot, gaps, labels, sizes
+from subiquity.common.filesystem.actions import DeviceAction
+from subiquity.common.filesystem.manipulator import FilesystemManipulator
 from subiquity.common.types import (
     AddPartitionV2,
     Bootloader,
@@ -79,21 +56,16 @@ from subiquity.common.types import (
     StorageResponseV2,
 )
 from subiquity.models.filesystem import (
+    LVM_CHUNK_SIZE,
     ActionRenderMode,
     ArbitraryDevice,
-    align_up,
-    align_down,
-    _Device,
-    Disk as ModelDisk,
-    MiB,
-    Partition as ModelPartition,
-    LVM_CHUNK_SIZE,
-    Raid,
 )
-from subiquity.server.controller import (
-    SubiquityController,
-)
+from subiquity.models.filesystem import Disk as ModelDisk
+from subiquity.models.filesystem import MiB
+from subiquity.models.filesystem import Partition as ModelPartition
+from subiquity.models.filesystem import Raid, _Device, align_down, align_up
 from subiquity.server import snapdapi
+from subiquity.server.controller import SubiquityController
 from subiquity.server.mounter import Mounter
 from subiquity.server.snapdapi import (
     StorageEncryptionSupport,
@@ -101,7 +73,14 @@ from subiquity.server.snapdapi import (
     SystemDetails,
 )
 from subiquity.server.types import InstallerChannels
-
+from subiquitycore.async_helpers import (
+    SingleInstanceTask,
+    TaskAlreadyRunningError,
+    schedule_task,
+)
+from subiquitycore.context import with_context
+from subiquitycore.lsb_release import lsb_release
+from subiquitycore.utils import arun_command, run_command
 
 log = logging.getLogger("subiquity.server.controllers.filesystem")
 block_discover_log = logging.getLogger("block-discover")

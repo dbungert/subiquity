@@ -14,24 +14,19 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import logging
-from typing import Dict, Optional, Sequence, Tuple
 import os
 import pwd
+from typing import Dict, Optional, Sequence, Tuple
 
 import attr
-
-from subiquitycore.context import with_context
-from subiquitycore.utils import arun_command
 
 from subiquity.common.apidef import API
 from subiquity.common.resources import resource_path
 from subiquity.common.serialize import Serializer
-from subiquity.common.types import (
-    AnyStep,
-    KeyboardSetting,
-    KeyboardSetup,
-)
+from subiquity.common.types import AnyStep, KeyboardSetting, KeyboardSetup
 from subiquity.server.controller import SubiquityController
+from subiquitycore.context import with_context
+from subiquitycore.utils import arun_command
 
 log = logging.getLogger("subiquity.server.controllers.keyboard")
 

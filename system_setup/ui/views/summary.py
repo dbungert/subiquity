@@ -6,18 +6,15 @@ Summary provides user with the summary of all the current settings.
 
 import logging
 
-from subiquitycore.ui.utils import button_pile, screen
-from subiquitycore.view import BaseView
-from subiquitycore.ui.form import Toggleable
-from subiquitycore.ui.buttons import (
-    cancel_btn,
-    ok_btn,
-)
-from subiquitycore.ui.width import widget_width
-from subiquity.common.types import ApplicationState
-
-from subiquitycore.ui.container import ListBox
 from urwid import Text
+
+from subiquity.common.types import ApplicationState
+from subiquitycore.ui.buttons import cancel_btn, ok_btn
+from subiquitycore.ui.container import ListBox
+from subiquitycore.ui.form import Toggleable
+from subiquitycore.ui.utils import button_pile, screen
+from subiquitycore.ui.width import widget_width
+from subiquitycore.view import BaseView
 
 log = logging.getLogger("system_setup.ui.views.summary")
 

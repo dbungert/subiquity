@@ -14,9 +14,9 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from .identity import WSLIdentityView
-from .wslconfbase import WSLConfigurationBaseView
-from .wslconfadvanced import WSLConfigurationAdvancedView
 from .summary import SummaryView
+from .wslconfadvanced import WSLConfigurationAdvancedView
+from .wslconfbase import WSLConfigurationBaseView
 
 __all__ = [
     "WSLIdentityView",

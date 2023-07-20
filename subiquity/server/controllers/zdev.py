@@ -17,16 +17,13 @@ import asyncio
 import logging
 import platform
 import random
-from typing import List
-
 from collections import OrderedDict
-
-from subiquitycore.utils import arun_command, run_command
+from typing import List
 
 from subiquity.common.apidef import API
 from subiquity.common.types import Bootloader, ZdevInfo
 from subiquity.server.controller import SubiquityController
-
+from subiquitycore.utils import arun_command, run_command
 
 log = logging.getLogger("subiquity.server.controllers.zdev")
 

@@ -16,11 +16,7 @@
 import datetime
 import logging
 
-from subiquity.common.types import (
-    ChannelSnapInfo,
-    SnapInfo,
-)
-
+from subiquity.common.types import ChannelSnapInfo, SnapInfo
 
 log = logging.getLogger("subiquity.models.snaplist")
 

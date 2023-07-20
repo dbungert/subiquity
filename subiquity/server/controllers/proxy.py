@@ -16,11 +16,10 @@
 import logging
 import os
 
-from subiquitycore.context import with_context
-
 from subiquity.common.apidef import API
 from subiquity.server.controller import SubiquityController
 from subiquity.server.types import InstallerChannels
+from subiquitycore.context import with_context
 
 log = logging.getLogger("subiquity.server.controllers.proxy")
 

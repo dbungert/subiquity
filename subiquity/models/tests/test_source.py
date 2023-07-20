@@ -18,13 +18,11 @@ import random
 import shutil
 import tempfile
 import unittest
+
 import yaml
 
+from subiquity.models.source import SourceModel
 from subiquitycore.tests.util import random_string
-
-from subiquity.models.source import (
-    SourceModel,
-)
 
 
 def make_entry(**fields):

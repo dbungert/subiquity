@@ -17,12 +17,7 @@ import contextlib
 import unittest
 
 from subiquity.common.api.client import make_client
-from subiquity.common.api.defs import (
-    api,
-    InvalidQueryArgs,
-    path_parameter,
-    Payload,
-)
+from subiquity.common.api.defs import InvalidQueryArgs, Payload, api, path_parameter
 
 
 def extract(c):

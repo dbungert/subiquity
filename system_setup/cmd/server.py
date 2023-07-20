@@ -19,12 +19,8 @@ import logging
 import os
 import sys
 
+from subiquity.cmd.common import LOGDIR, setup_environment
 from subiquitycore.log import setup_logger
-
-from subiquity.cmd.common import (
-    LOGDIR,
-    setup_environment,
-)
 
 
 def make_server_args_parser():
@@ -70,8 +66,8 @@ def main():
     setup_environment()
     # setup_environment sets $APPORT_DATA_DIR which must be set before
     # apport is imported, which is done by this import:
-    from system_setup.server.server import SystemSetupServer
     from subiquity.server.server import NOPROBERARG
+    from system_setup.server.server import SystemSetupServer
 
     parser = make_server_args_parser()
     opts = parser.parse_args(sys.argv[1:])

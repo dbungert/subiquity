@@ -1,26 +1,13 @@
 import logging
 
-from urwid import (
-    BoxAdapter,
-    connect_signal,
-    LineBox,
-    Text,
-)
+from urwid import BoxAdapter, LineBox, Text, connect_signal
 
 from subiquitycore.models.network import WLANConfig
 from subiquitycore.ui.buttons import cancel_btn, menu_btn
-from subiquitycore.ui.container import (
-    ListBox,
-    Pile,
-    WidgetWrap,
-)
+from subiquitycore.ui.container import ListBox, Pile, WidgetWrap
 from subiquitycore.ui.form import Form, PasswordField, StringField
 from subiquitycore.ui.stretchy import Stretchy
-from subiquitycore.ui.utils import (
-    Color,
-    disabled,
-    Padding,
-)
+from subiquitycore.ui.utils import Color, Padding, disabled
 
 log = logging.getLogger("subiquitycore.ui.views.network_configure_wlan_interface")
 

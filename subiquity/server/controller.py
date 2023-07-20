@@ -20,13 +20,10 @@ from typing import Any, Optional
 
 import jsonschema
 
-from subiquitycore.context import with_context
-from subiquitycore.controller import (
-    BaseController,
-)
-
 from subiquity.common.api.server import bind
 from subiquity.server.types import InstallerChannels
+from subiquitycore.context import with_context
+from subiquitycore.controller import BaseController
 
 log = logging.getLogger("subiquity.server.controller")
 

@@ -22,57 +22,31 @@ configuration.
 import logging
 
 import attr
+from urwid import Text, connect_signal
 
-from urwid import (
-    connect_signal,
-    Text,
-)
-
-from subiquitycore.ui.actionmenu import (
-    Action,
-    ActionMenu,
-    ActionMenuOpenButton,
-)
-from subiquitycore.ui.buttons import (
-    back_btn,
-    done_btn,
-    menu_btn,
-    other_btn,
-    reset_btn,
-)
-from subiquitycore.ui.container import (
-    ListBox,
-    WidgetWrap,
-)
+from subiquity.common.filesystem import boot, gaps, labels
+from subiquity.common.filesystem.actions import DeviceAction
+from subiquity.models.filesystem import humanize_size
+from subiquitycore.ui.actionmenu import Action, ActionMenu, ActionMenuOpenButton
+from subiquitycore.ui.buttons import back_btn, done_btn, menu_btn, other_btn, reset_btn
+from subiquitycore.ui.container import ListBox, WidgetWrap
 from subiquitycore.ui.form import Toggleable
 from subiquitycore.ui.stretchy import Stretchy
-from subiquitycore.ui.table import (
-    ColSpec,
-    TablePile,
-    TableRow,
-)
+from subiquitycore.ui.table import ColSpec, TablePile, TableRow
 from subiquitycore.ui.utils import (
-    button_pile,
     Color,
-    make_action_menu_row,
     Padding,
+    button_pile,
+    make_action_menu_row,
     screen,
 )
 from subiquitycore.view import BaseView
-
-from subiquity.common.filesystem.actions import (
-    DeviceAction,
-)
-from subiquity.common.filesystem import boot, gaps, labels
-from subiquity.models.filesystem import (
-    humanize_size,
-)
 
 from .delete import ConfirmDeleteStretchy, ConfirmReformatStretchy
 from .disk_info import DiskInfoStretchy
 from .helpers import summarize_device
 from .lvm import VolGroupStretchy
-from .partition import PartitionStretchy, FormatEntireStretchy
+from .partition import FormatEntireStretchy, PartitionStretchy
 from .raid import RaidStretchy
 
 log = logging.getLogger("subiquity.ui.views.filesystem.filesystem")

@@ -14,13 +14,13 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import logging
+import os
 import subprocess
+from shutil import which
 
 from subiquity.common.apidef import API
 from subiquity.common.types import TimeZoneInfo
 from subiquity.server.controller import SubiquityController
-from shutil import which
-import os
 
 log = logging.getLogger("subiquity.server.controllers.timezone")
 

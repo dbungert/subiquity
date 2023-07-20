@@ -19,55 +19,26 @@ import logging
 import re
 from typing import Callable, List
 
-from urwid import (
-    Columns,
-    connect_signal,
-    LineBox,
-    Text,
-    Widget,
-)
+from urwid import Columns, LineBox, Text, Widget, connect_signal
 
-from subiquity.common.types import (
-    UbuntuProCheckTokenStatus,
-    UbuntuProSubscription,
-)
-from subiquitycore.view import BaseView
-from subiquitycore.ui.buttons import (
-    back_btn,
-    cancel_btn,
-    done_btn,
-    menu_btn,
-    ok_btn,
-)
-from subiquitycore.ui.container import (
-    ListBox,
-    Pile,
-    WidgetWrap,
-)
+from subiquity.common.types import UbuntuProCheckTokenStatus, UbuntuProSubscription
+from subiquitycore.ui.buttons import back_btn, cancel_btn, done_btn, menu_btn, ok_btn
+from subiquitycore.ui.container import ListBox, Pile, WidgetWrap
 from subiquitycore.ui.form import (
-    Form,
-    SubForm,
-    SubFormField,
     NO_HELP,
-    simple_field,
+    Form,
     RadioButtonField,
     ReadOnlyField,
+    SubForm,
+    SubFormField,
     WantsToKnowFormField,
+    simple_field,
 )
-from subiquitycore.ui.spinner import (
-    Spinner,
-)
-from subiquitycore.ui.stretchy import (
-    Stretchy,
-)
-from subiquitycore.ui.utils import (
-    button_pile,
-    screen,
-    SomethingFailed,
-)
-
 from subiquitycore.ui.interactive import StringEditor
-
+from subiquitycore.ui.spinner import Spinner
+from subiquitycore.ui.stretchy import Stretchy
+from subiquitycore.ui.utils import SomethingFailed, button_pile, screen
+from subiquitycore.view import BaseView
 
 log = logging.getLogger("subiquity.ui.views.ubuntu_pro")
 

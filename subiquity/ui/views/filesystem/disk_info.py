@@ -14,15 +14,14 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import logging
+
 from urwid import Text
 
+from subiquity.common.filesystem import labels
 from subiquitycore.ui.buttons import done_btn
-from subiquitycore.ui.utils import button_pile
 from subiquitycore.ui.stretchy import Stretchy
 from subiquitycore.ui.table import ColSpec, TablePile, TableRow
-
-from subiquity.common.filesystem import labels
-
+from subiquitycore.ui.utils import button_pile
 
 log = logging.getLogger("subiquity.ui.views.filesystem.disk_info")
 

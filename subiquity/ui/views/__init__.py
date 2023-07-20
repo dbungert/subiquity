@@ -13,10 +13,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from .filesystem import (
-    FilesystemView,
-    GuidedDiskSelectionView,
-)
+from .filesystem import FilesystemView, GuidedDiskSelectionView
 from .identity import IdentityView
 from .installprogress import ProgressView
 from .keyboard import KeyboardView

@@ -18,7 +18,6 @@ import logging
 from subiquity.client.controller import SubiquityTuiController
 from subiquity.ui.views import ZdevView
 
-
 log = logging.getLogger("subiquity.client.controllers.zdev")
 
 

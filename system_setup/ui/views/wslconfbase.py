@@ -6,15 +6,13 @@ requested on first setup.
 """
 import re
 
-from urwid import (
-    connect_signal,
-)
+from urwid import connect_signal
 
-from subiquitycore.ui.form import Form, BooleanField, simple_field, WantsToKnowFormField
+from subiquity.common.types import WSLConfigurationBase
+from subiquitycore.ui.form import BooleanField, Form, WantsToKnowFormField, simple_field
 from subiquitycore.ui.interactive import StringEditor
 from subiquitycore.ui.utils import screen
 from subiquitycore.view import BaseView
-from subiquity.common.types import WSLConfigurationBase
 
 
 class MountEditor(StringEditor, WantsToKnowFormField):

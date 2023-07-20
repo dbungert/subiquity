@@ -20,10 +20,10 @@ import sys
 
 import jsonschema
 
-from system_setup.cmd.server import make_server_args_parser
-from system_setup.server.server import SystemSetupServer
 from subiquity.cmd.schema import make_schema
 from subiquity.server.server import NOPROBERARG
+from system_setup.cmd.server import make_server_args_parser
+from system_setup.server.server import SystemSetupServer
 
 
 def make_app():

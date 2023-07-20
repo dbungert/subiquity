@@ -17,19 +17,19 @@ import logging
 import os
 import re
 from typing import List, Optional, Set
-from subiquitycore.utils import arun_command
-from subiquitycore.async_helpers import run_bg_task
 
 from subiquity.common.apidef import API
 from subiquity.common.types import (
-    AdConnectionInfo,
     AdAdminNameValidation,
+    AdConnectionInfo,
     AdDomainNameValidation,
     AdJoinResult,
     AdPasswordValidation,
 )
 from subiquity.server.ad_joiner import AdJoiner
 from subiquity.server.controller import SubiquityController
+from subiquitycore.async_helpers import run_bg_task
+from subiquitycore.utils import arun_command
 
 log = logging.getLogger("subiquity.server.controllers.ad")
 

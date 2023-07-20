@@ -16,12 +16,11 @@
 import logging
 
 import attr
-from subiquitycore.context import with_context
 
 from subiquity.common.apidef import API
 from subiquity.common.types import WSLConfigurationAdvanced
 from subiquity.server.controller import SubiquityController
-
+from subiquitycore.context import with_context
 from system_setup.common.wsl_conf import default_loader
 from system_setup.common.wsl_utils import convert_if_bool
 

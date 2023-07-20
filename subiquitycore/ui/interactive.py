@@ -16,18 +16,13 @@
 """ Re-usable input widgets
 """
 
-from functools import partial
 import logging
 import re
+from functools import partial
 
-from urwid import (
-    Edit,
-    IntEdit,
-)
+from urwid import Edit, IntEdit
 
-from subiquitycore.ui.container import (
-    WidgetWrap,
-)
+from subiquitycore.ui.container import WidgetWrap
 from subiquitycore.ui.selector import Selector
 
 log = logging.getLogger("subiquitycore.ui.interactive")

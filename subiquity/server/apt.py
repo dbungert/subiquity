@@ -29,13 +29,8 @@ from typing import List, Optional
 
 import apt_pkg
 
-from curtin.config import merge_config
 from curtin.commands.extract import AbstractSourceHandler
-
-from subiquitycore.file_util import write_file, generate_config_yaml
-from subiquitycore.lsb_release import lsb_release
-from subiquitycore.utils import astart_command, orig_environ
-
+from curtin.config import merge_config
 from subiquity.server.curtin import run_curtin_command
 from subiquity.server.mounter import (
     DryRunMounter,
@@ -44,6 +39,9 @@ from subiquity.server.mounter import (
     OverlayCleanupError,
     OverlayMountpoint,
 )
+from subiquitycore.file_util import generate_config_yaml, write_file
+from subiquitycore.lsb_release import lsb_release
+from subiquitycore.utils import astart_command, orig_environ
 
 log = logging.getLogger("subiquity.server.apt")
 

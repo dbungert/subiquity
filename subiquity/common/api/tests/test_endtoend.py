@@ -13,26 +13,23 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import attr
 import contextlib
 import functools
 import unittest
 
 import aiohttp
+import attr
 from aiohttp import web
 
 from subiquity.common.api.client import make_client
 from subiquity.common.api.defs import (
-    api,
     MultiplePathParameters,
-    path_parameter,
     Payload,
+    api,
+    path_parameter,
 )
 
-from .test_server import (
-    makeTestClient,
-    ControllerBase,
-)
+from .test_server import ControllerBase, makeTestClient
 
 
 def make_request(client, method, path, *, params, json):

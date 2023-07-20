@@ -19,24 +19,17 @@ from unittest import mock
 
 import attr
 
-from subiquitycore.tests.parameterized import parameterized
-
-from subiquity.common.filesystem.actions import (
-    DeviceAction,
-)
 from subiquity.common.filesystem import boot, gaps, sizes
+from subiquity.common.filesystem.actions import DeviceAction
 from subiquity.common.filesystem.manipulator import FilesystemManipulator
+from subiquity.models.filesystem import Bootloader, MiB, Partition
 from subiquity.models.tests.test_filesystem import (
     make_disk,
+    make_filesystem,
     make_model,
     make_partition,
-    make_filesystem,
 )
-from subiquity.models.filesystem import (
-    Bootloader,
-    MiB,
-    Partition,
-)
+from subiquitycore.tests.parameterized import parameterized
 
 
 def make_manipulator(bootloader=None, storage_version=1):

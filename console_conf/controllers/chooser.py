@@ -15,11 +15,10 @@
 import logging
 
 from console_conf.ui.views import (
-    ChooserView,
-    ChooserCurrentSystemView,
     ChooserConfirmView,
+    ChooserCurrentSystemView,
+    ChooserView,
 )
-
 from subiquitycore.tuicontroller import TuiController
 
 log = logging.getLogger("console_conf.controllers.chooser")

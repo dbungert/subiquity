@@ -25,44 +25,26 @@ from typing import Callable, Dict, List, Optional, Union
 
 import aiohttp
 
-from subiquitycore.async_helpers import (
-    run_bg_task,
-    run_in_thread,
-)
-from subiquitycore.screen import is_linux_tty
-from subiquitycore.tuicontroller import Skip
-from subiquitycore.tui import TuiApplication
-from subiquitycore.utils import orig_environ
-from subiquitycore.view import BaseView
-
 from subiquity.client.controller import Confirm
-from subiquity.client.keycodes import (
-    NoOpKeycodesFilter,
-    KeyCodesFilter,
-)
+from subiquity.client.keycodes import KeyCodesFilter, NoOpKeycodesFilter
 from subiquity.common.api.client import make_client_for_conn
 from subiquity.common.apidef import API
-from subiquity.common.errorreport import (
-    ErrorReporter,
-)
+from subiquity.common.errorreport import ErrorReporter
 from subiquity.common.serialize import from_json
-from subiquity.common.types import (
-    ApplicationState,
-    ErrorReportKind,
-    ErrorReportRef,
-)
+from subiquity.common.types import ApplicationState, ErrorReportKind, ErrorReportRef
 from subiquity.journald import journald_listen
 from subiquity.server.server import POSTINSTALL_MODEL_NAMES
 from subiquity.ui.frame import SubiquityUI
 from subiquity.ui.views.error import ErrorReportStretchy
 from subiquity.ui.views.help import HelpMenu, ssh_help_texts
-from subiquity.ui.views.installprogress import (
-    InstallConfirmation,
-)
-from subiquity.ui.views.welcome import (
-    CloudInitFail,
-)
-
+from subiquity.ui.views.installprogress import InstallConfirmation
+from subiquity.ui.views.welcome import CloudInitFail
+from subiquitycore.async_helpers import run_bg_task, run_in_thread
+from subiquitycore.screen import is_linux_tty
+from subiquitycore.tui import TuiApplication
+from subiquitycore.tuicontroller import Skip
+from subiquitycore.utils import orig_environ
+from subiquitycore.view import BaseView
 
 log = logging.getLogger("subiquity.client.client")
 

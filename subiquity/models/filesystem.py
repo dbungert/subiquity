@@ -13,8 +13,6 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from abc import ABC, abstractmethod
-import attr
 import collections
 import copy
 import enum
@@ -25,17 +23,17 @@ import os
 import pathlib
 import platform
 import tempfile
+from abc import ABC, abstractmethod
 from typing import List, Optional, Set, Union
 
+import attr
 import more_itertools
 
 from curtin import storage_config
 from curtin.block import partition_kname
 from curtin.swap import can_use_swapfile
 from curtin.util import human2bytes
-
 from probert.storage import StorageInfo
-
 from subiquity.common.types import Bootloader, OsProber
 
 log = logging.getLogger("subiquity.models.filesystem")
@@ -591,9 +589,7 @@ class _Device(_Formattable, ABC):
             return False
         if self._fs is not None:
             return self._fs._available()
-        from subiquity.common.filesystem.gaps import (
-            largest_gap_size,
-        )
+        from subiquity.common.filesystem.gaps import largest_gap_size
 
         if largest_gap_size(self) > 0:
             return True
@@ -1496,9 +1492,7 @@ class FilesystemModel(object):
                     # incomplete size is not used as is.
                     filtered_parent._partitions.remove(p)
 
-                    from subiquity.common.filesystem.gaps import (
-                        largest_gap_size,
-                    )
+                    from subiquity.common.filesystem.gaps import largest_gap_size
 
                     p.size = largest_gap_size(
                         filtered_parent, in_extended=is_logical_partition(p)

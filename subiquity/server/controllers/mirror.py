@@ -20,8 +20,6 @@ from typing import List, Optional
 
 import attr
 
-from subiquitycore.context import with_context
-
 from subiquity.common.apidef import API
 from subiquity.common.types import (
     MirrorCheckResponse,
@@ -32,13 +30,10 @@ from subiquity.common.types import (
     MirrorSelectionFallback,
 )
 from subiquity.models.mirror import filter_candidates
-from subiquity.server.apt import (
-    AptConfigCheckError,
-    AptConfigurer,
-    get_apt_configurer,
-)
+from subiquity.server.apt import AptConfigCheckError, AptConfigurer, get_apt_configurer
 from subiquity.server.controller import SubiquityController
 from subiquity.server.types import InstallerChannels
+from subiquitycore.context import with_context
 
 log = logging.getLogger("subiquity.server.controllers.mirror")
 

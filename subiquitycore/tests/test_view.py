@@ -16,9 +16,9 @@
 import urwid
 
 from subiquitycore.tests import SubiTestCase
-from subiquitycore.view import BaseView, OverlayNotFoundError
 from subiquitycore.ui.stretchy import Stretchy, StretchyOverlay
 from subiquitycore.ui.utils import undisabled
+from subiquitycore.view import BaseView, OverlayNotFoundError
 
 
 class InstrumentedStretchy(Stretchy):

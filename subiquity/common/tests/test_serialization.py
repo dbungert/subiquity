@@ -13,7 +13,6 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import attr
 import datetime
 import enum
 import inspect
@@ -22,11 +21,9 @@ import string
 import typing
 import unittest
 
-from subiquity.common.serialize import (
-    named_field,
-    Serializer,
-    SerializationError,
-)
+import attr
+
+from subiquity.common.serialize import SerializationError, Serializer, named_field
 
 
 @attr.s(auto_attribs=True)

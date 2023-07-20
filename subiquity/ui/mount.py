@@ -1,19 +1,11 @@
 import re
 
-from urwid import (
-    connect_signal,
-    Text,
-)
+from urwid import Text, connect_signal
 
-from subiquitycore.ui.container import (
-    Columns,
-    Pile,
-    WidgetWrap,
-)
+from subiquitycore.ui.container import Columns, Pile, WidgetWrap
 from subiquitycore.ui.form import FormField
 from subiquitycore.ui.interactive import Selector, StringEditor
 from subiquitycore.ui.utils import Color
-
 
 common_mountpoints = [
     "/",

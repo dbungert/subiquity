@@ -13,8 +13,6 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from subiquitycore.tests import SubiTestCase
-
 from subiquity.common.types import CasperMd5Results
 from subiquity.models.integrity import IntegrityModel
 from subiquity.server.controllers.integrity import (
@@ -23,6 +21,7 @@ from subiquity.server.controllers.integrity import (
     mock_pass,
     mock_skip,
 )
+from subiquitycore.tests import SubiTestCase
 from subiquitycore.tests.mocks import make_app
 
 

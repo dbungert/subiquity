@@ -16,12 +16,11 @@
 import json
 import logging
 
-from subiquitycore.async_helpers import schedule_task
 from subiquity.common.apidef import API
 from subiquity.common.types import CasperMd5Results
 from subiquity.journald import journald_get_first_match
 from subiquity.server.controller import SubiquityController
-
+from subiquitycore.async_helpers import schedule_task
 
 log = logging.getLogger("subiquity.server.controllers.integrity")
 

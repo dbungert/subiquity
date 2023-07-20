@@ -13,18 +13,18 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from subprocess import CompletedProcess
 import unittest
-from unittest.mock import patch, AsyncMock, ANY
+from subprocess import CompletedProcess
+from unittest.mock import ANY, AsyncMock, patch
 
 from subiquity.common.types import UbuntuProService
 from subiquity.server.ubuntu_advantage import (
-    InvalidTokenError,
-    ExpiredTokenError,
     CheckSubscriptionError,
-    UAInterface,
+    ExpiredTokenError,
+    InvalidTokenError,
     MockedUAInterfaceStrategy,
     UAClientUAInterfaceStrategy,
+    UAInterface,
 )
 
 

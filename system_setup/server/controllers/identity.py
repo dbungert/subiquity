@@ -14,10 +14,10 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import logging
-
-import attr
 import os
 from typing import Set
+
+import attr
 
 from subiquity.common.resources import resource_path
 from subiquity.common.types import IdentityData

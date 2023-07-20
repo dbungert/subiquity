@@ -1,8 +1,9 @@
 import copy
-import glob
 import fnmatch
-import os
+import glob
 import logging
+import os
+
 import yaml
 
 log = logging.getLogger("subiquitycore.netplan")

@@ -18,15 +18,8 @@ import math
 import attr
 
 from curtin import swap
-
-from subiquity.models.filesystem import (
-    align_up,
-    align_down,
-    MiB,
-    GiB,
-)
 from subiquity.common.types import GuidedResizeValues
-
+from subiquity.models.filesystem import GiB, MiB, align_down, align_up
 
 BIOS_GRUB_SIZE_BYTES = 1 * MiB
 PREP_GRUB_SIZE_BYTES = 8 * MiB

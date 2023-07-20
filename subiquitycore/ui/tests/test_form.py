@@ -15,12 +15,7 @@
 
 from unittest import TestCase
 
-from subiquitycore.ui.form import (
-    Form,
-    StringField,
-    SubForm,
-    SubFormField,
-)
+from subiquitycore.ui.form import Form, StringField, SubForm, SubFormField
 
 
 class TestForm(TestCase):

@@ -13,25 +13,12 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from urwid import (
-    ACTIVATE,
-    AttrWrap,
-    CompositeCanvas,
-    connect_signal,
-    LineBox,
-    Padding as UrwidPadding,
-    PopUpLauncher,
-    Text,
-)
+from urwid import ACTIVATE, AttrWrap, CompositeCanvas, LineBox
+from urwid import Padding as UrwidPadding
+from urwid import PopUpLauncher, Text, connect_signal
 
-from subiquitycore.ui.container import (
-    Columns,
-    ListBox,
-    WidgetWrap,
-)
-from subiquitycore.ui.utils import (
-    Color,
-)
+from subiquitycore.ui.container import Columns, ListBox, WidgetWrap
+from subiquitycore.ui.utils import Color
 from subiquitycore.ui.width import widget_width
 
 

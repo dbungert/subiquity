@@ -16,25 +16,18 @@
 """ Module defining the view for third-party drivers installation.
 
 """
-from enum import auto, Enum
 import logging
+from enum import Enum, auto
 from typing import List, Optional
 
-from urwid import (
-    connect_signal,
-    Text,
-)
+from urwid import Text, connect_signal
 
 from subiquitycore.async_helpers import run_bg_task
 from subiquitycore.ui.buttons import back_btn, ok_btn
-from subiquitycore.ui.form import (
-    Form,
-    RadioButtonField,
-)
+from subiquitycore.ui.form import Form, RadioButtonField
 from subiquitycore.ui.spinner import Spinner
 from subiquitycore.ui.utils import screen
 from subiquitycore.view import BaseView
-
 
 log = logging.getLogger("subiquity.ui.views.drivers")
 

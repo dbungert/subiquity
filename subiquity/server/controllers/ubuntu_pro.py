@@ -21,28 +21,25 @@ from typing import Optional
 
 from subiquity.common.apidef import API
 from subiquity.common.types import (
-    UbuntuProInfo,
     UbuntuProCheckTokenAnswer,
     UbuntuProCheckTokenStatus,
+    UbuntuProInfo,
     UbuntuProResponse,
     UPCSInitiateResponse,
-    UPCSWaitStatus,
     UPCSWaitResponse,
+    UPCSWaitStatus,
 )
+from subiquity.server.contract_selection import ContractSelection, UPCSExpiredError
+from subiquity.server.controller import SubiquityController
 from subiquity.server.ubuntu_advantage import (
-    InvalidTokenError,
-    ExpiredTokenError,
     CheckSubscriptionError,
-    UAInterface,
-    UAInterfaceStrategy,
+    ExpiredTokenError,
+    InvalidTokenError,
     MockedUAInterfaceStrategy,
     UAClientUAInterfaceStrategy,
+    UAInterface,
+    UAInterfaceStrategy,
 )
-from subiquity.server.contract_selection import (
-    ContractSelection,
-    UPCSExpiredError,
-)
-from subiquity.server.controller import SubiquityController
 
 log = logging.getLogger("subiquity.server.controllers.ubuntu_pro")
 

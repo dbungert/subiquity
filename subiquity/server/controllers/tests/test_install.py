@@ -13,26 +13,15 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from pathlib import Path
 import subprocess
 import unittest
-from unittest.mock import (
-    ANY,
-    AsyncMock,
-    call,
-    Mock,
-    mock_open,
-    patch,
-)
+from pathlib import Path
+from unittest.mock import ANY, AsyncMock, Mock, call, mock_open, patch
 
 from curtin.util import EFIBootEntry, EFIBootState
-
 from subiquity.common.types import PackageInstallState
 from subiquity.models.tests.test_filesystem import make_model_and_partition
-from subiquity.server.controllers.install import (
-    InstallController,
-)
-
+from subiquity.server.controllers.install import InstallController
 from subiquitycore.tests.mocks import make_app
 
 

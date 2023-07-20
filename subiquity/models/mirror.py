@@ -72,33 +72,22 @@ primary entry
 """
 
 import abc
-import copy
 import contextlib
+import copy
 import logging
-from typing import (
-    Any,
-    Callable,
-    Dict,
-    Iterator,
-    List,
-    Optional,
-    Sequence,
-    Set,
-    Union,
-)
+from typing import Any, Callable, Dict, Iterator, List, Optional, Sequence, Set, Union
 from urllib import parse
 
 import attr
 
-from subiquity.common.types import MirrorSelectionFallback
-
 from curtin.commands.apt_config import (
-    get_arch_mirrorconfig,
-    get_mirror,
     PORTS_ARCHES,
     PRIMARY_ARCHES,
+    get_arch_mirrorconfig,
+    get_mirror,
 )
 from curtin.config import merge_config
+from subiquity.common.types import MirrorSelectionFallback
 
 try:
     from curtin.distro import get_architecture

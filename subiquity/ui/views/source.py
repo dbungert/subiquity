@@ -16,19 +16,12 @@
 import logging
 from typing import List
 
-from urwid import (
-    connect_signal,
-    Text,
-)
+from urwid import Text, connect_signal
 
-from subiquitycore.view import BaseView
 from subiquitycore.ui.container import ListBox
-from subiquitycore.ui.form import (
-    BooleanField,
-    Form,
-    RadioButtonField,
-)
+from subiquitycore.ui.form import BooleanField, Form, RadioButtonField
 from subiquitycore.ui.utils import screen
+from subiquitycore.view import BaseView
 
 log = logging.getLogger("subiquity.ui.views.source")
 

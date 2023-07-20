@@ -67,22 +67,14 @@ Example:
 ```
 """
 
-from collections import defaultdict
 import logging
-
-
-from subiquitycore.ui.container import (
-    Columns,
-    ListBox,
-    Pile,
-    WidgetWrap,
-)
-from subiquitycore.ui.width import widget_width
+from collections import defaultdict
 
 import attr
-
 import urwid
 
+from subiquitycore.ui.container import Columns, ListBox, Pile, WidgetWrap
+from subiquitycore.ui.width import widget_width
 
 log = logging.getLogger("subiquitycore.ui.table")
 

@@ -17,23 +17,17 @@ import contextlib
 import unittest
 from unittest import mock
 
-from aiohttp.test_utils import TestClient, TestServer
 from aiohttp import web
+from aiohttp.test_utils import TestClient, TestServer
 
-from subiquitycore.context import Context
-
-from subiquity.common.api.defs import (
-    allowed_before_start,
-    api,
-    path_parameter,
-    Payload,
-)
+from subiquity.common.api.defs import Payload, allowed_before_start, api, path_parameter
 from subiquity.common.api.server import (
-    bind,
-    controller_for_request,
     MissingImplementationError,
     SignatureMisatchError,
+    bind,
+    controller_for_request,
 )
+from subiquitycore.context import Context
 
 
 class TestApp:

@@ -21,14 +21,7 @@ from typing import Any, Optional
 import attr
 
 from subiquity.common.filesystem import gaps, sizes
-from subiquity.models.filesystem import (
-    align_up,
-    Disk,
-    Raid,
-    Bootloader,
-    Partition,
-)
-
+from subiquity.models.filesystem import Bootloader, Disk, Partition, Raid, align_up
 
 log = logging.getLogger("subiquity.common.filesystem.boot")
 

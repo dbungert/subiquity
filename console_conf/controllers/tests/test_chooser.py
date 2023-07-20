@@ -15,16 +15,12 @@
 import unittest
 from unittest import mock
 
-from subiquitycore.tests.mocks import make_app
 from console_conf.controllers.chooser import (
-    RecoveryChooserController,
     RecoveryChooserConfirmController,
+    RecoveryChooserController,
 )
-from console_conf.models.systems import (
-    RecoverySystemsModel,
-    SelectedSystemAction,
-)
-
+from console_conf.models.systems import RecoverySystemsModel, SelectedSystemAction
+from subiquitycore.tests.mocks import make_app
 
 model1_non_current = {
     "current": False,

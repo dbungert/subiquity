@@ -16,18 +16,10 @@
 import logging
 from typing import List
 
-from subiquitycore.tuicontroller import (
-    Skip,
-)
-
-from subiquity.client.controller import (
-    SubiquityTuiController,
-)
-from subiquity.common.types import (
-    SnapCheckState,
-    SnapSelection,
-)
+from subiquity.client.controller import SubiquityTuiController
+from subiquity.common.types import SnapCheckState, SnapSelection
 from subiquity.ui.views.snaplist import SnapListView
+from subiquitycore.tuicontroller import Skip
 
 log = logging.getLogger("subiquity.client.controllers.snaplist")
 

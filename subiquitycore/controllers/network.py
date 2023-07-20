@@ -25,9 +25,10 @@ import pyroute2
 import yaml
 
 from probert.network import IFF_UP, NetworkEventReceiver
-
+from subiquitycore import netplan
 from subiquitycore.async_helpers import SingleInstanceTask
 from subiquitycore.context import with_context
+from subiquitycore.controller import BaseController
 from subiquitycore.file_util import write_file
 from subiquitycore.models.network import (
     BondConfig,
@@ -36,20 +37,11 @@ from subiquitycore.models.network import (
     StaticConfig,
     WLANConfig,
 )
-from subiquitycore import netplan
-from subiquitycore.controller import BaseController
 from subiquitycore.pubsub import CoreChannels
 from subiquitycore.tuicontroller import TuiController
 from subiquitycore.ui.stretchy import StretchyOverlay
-from subiquitycore.ui.views.network import (
-    NetworkView,
-)
-from subiquitycore.utils import (
-    arun_command,
-    orig_environ,
-    run_command,
-)
-
+from subiquitycore.ui.views.network import NetworkView
+from subiquitycore.utils import arun_command, orig_environ, run_command
 
 log = logging.getLogger("subiquitycore.controllers.network")
 

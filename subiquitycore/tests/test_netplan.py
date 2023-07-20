@@ -1,7 +1,7 @@
 import os
 
-from subiquitycore.tests import SubiTestCase, populate_dir
 from subiquitycore.netplan import configs_in_root
+from subiquitycore.tests import SubiTestCase, populate_dir
 
 
 class TestConfigsInRoot(SubiTestCase):

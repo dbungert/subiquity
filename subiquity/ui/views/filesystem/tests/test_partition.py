@@ -3,21 +3,16 @@ from unittest import mock
 
 import urwid
 
-from subiquitycore.testing import view_helpers
-from subiquitycore.view import BaseView
-
 from subiquity.client.controllers.filesystem import FilesystemController
 from subiquity.common.filesystem import gaps
-from subiquity.models.filesystem import (
-    dehumanize_size,
-)
-from subiquity.models.tests.test_filesystem import (
-    make_model_and_disk,
-)
+from subiquity.models.filesystem import dehumanize_size
+from subiquity.models.tests.test_filesystem import make_model_and_disk
 from subiquity.ui.views.filesystem.partition import (
     FormatEntireStretchy,
     PartitionStretchy,
 )
+from subiquitycore.testing import view_helpers
+from subiquitycore.view import BaseView
 
 
 def make_partition_view(model, disk, **kw):

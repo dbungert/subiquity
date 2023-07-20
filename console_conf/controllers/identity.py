@@ -20,12 +20,11 @@ import pwd
 import shlex
 import sys
 
-from subiquitycore.ssh import host_key_info, get_ips_standalone
+from console_conf.ui.views import IdentityView, LoginView
 from subiquitycore.snapd import SnapdConnection
+from subiquitycore.ssh import get_ips_standalone, host_key_info
 from subiquitycore.tuicontroller import TuiController
 from subiquitycore.utils import disable_console_conf, run_command
-
-from console_conf.ui.views import IdentityView, LoginView
 
 log = logging.getLogger("console_conf.controllers.identity")
 

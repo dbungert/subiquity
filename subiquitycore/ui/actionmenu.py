@@ -14,24 +14,19 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import attr
-
 from urwid import (
     ACTIVATE,
     AttrWrap,
     Button,
-    connect_signal,
     LineBox,
     PopUpLauncher,
     SelectableIcon,
     Text,
     Widget,
+    connect_signal,
 )
 
-from subiquitycore.ui.container import (
-    Columns,
-    ListBox,
-    WidgetWrap,
-)
+from subiquitycore.ui.container import Columns, ListBox, WidgetWrap
 from subiquitycore.ui.utils import Color
 
 

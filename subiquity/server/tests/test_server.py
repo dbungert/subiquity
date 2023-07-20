@@ -17,9 +17,7 @@ import os
 import shlex
 from unittest.mock import Mock, patch
 
-from subiquitycore.utils import run_command
-from subiquitycore.tests import SubiTestCase
-from subiquitycore.tests.mocks import make_app
+from subiquity.common.types import PasswordKind
 from subiquity.server.server import (
     MetaController,
     SubiquityServer,
@@ -27,7 +25,9 @@ from subiquity.server.server import (
     iso_autoinstall_path,
     root_autoinstall_path,
 )
-from subiquity.common.types import PasswordKind
+from subiquitycore.tests import SubiTestCase
+from subiquitycore.tests.mocks import make_app
+from subiquitycore.utils import run_command
 
 
 class TestAutoinstallLoad(SubiTestCase):

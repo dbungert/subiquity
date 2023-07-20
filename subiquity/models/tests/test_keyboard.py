@@ -13,15 +13,10 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from subiquitycore.tests.parameterized import parameterized
-
-from subiquitycore.tests import SubiTestCase
-
 from subiquity.common.types import KeyboardSetting
-from subiquity.models.keyboard import (
-    InconsistentMultiLayoutError,
-    KeyboardModel,
-)
+from subiquity.models.keyboard import InconsistentMultiLayoutError, KeyboardModel
+from subiquitycore.tests import SubiTestCase
+from subiquitycore.tests.parameterized import parameterized
 
 
 class TestKeyboardModel(SubiTestCase):

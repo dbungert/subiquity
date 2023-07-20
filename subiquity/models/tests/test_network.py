@@ -17,9 +17,7 @@ import subprocess
 import unittest
 from unittest import mock
 
-from subiquity.models.network import (
-    NetworkModel,
-)
+from subiquity.models.network import NetworkModel
 
 
 class TestNetworkModel(unittest.IsolatedAsyncioTestCase):

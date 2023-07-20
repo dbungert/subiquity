@@ -15,24 +15,22 @@
 
 import io
 import subprocess
-from unittest.mock import Mock, patch, AsyncMock
+from unittest.mock import AsyncMock, Mock, patch
 
 from curtin.commands.extract import TrivialSourceHandler
-
-from subiquitycore.tests import SubiTestCase
-from subiquitycore.tests.mocks import make_app
-from subiquitycore.utils import astart_command
-from subiquity.server.apt import (
-    AptConfigurer,
-    DryRunAptConfigurer,
-    AptConfigCheckError,
-    OverlayMountpoint,
-)
-from subiquity.server.dryrun import DRConfig
 from subiquity.models.mirror import MirrorModel
 from subiquity.models.proxy import ProxyModel
 from subiquity.models.subiquity import DebconfSelectionsModel
-
+from subiquity.server.apt import (
+    AptConfigCheckError,
+    AptConfigurer,
+    DryRunAptConfigurer,
+    OverlayMountpoint,
+)
+from subiquity.server.dryrun import DRConfig
+from subiquitycore.tests import SubiTestCase
+from subiquitycore.tests.mocks import make_app
+from subiquitycore.utils import astart_command
 
 APT_UPDATE_SUCCESS = """\
 Hit:1 http://mirror focal InRelease

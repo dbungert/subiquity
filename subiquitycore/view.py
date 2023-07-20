@@ -21,22 +21,12 @@ Contains some default key navigations
 import asyncio
 import logging
 
-from urwid import (
-    emit_signal,
-    Overlay,
-    Text,
-)
-
-from subiquitycore.ui.container import (
-    Columns,
-    Pile,
-    WidgetWrap,
-)
+from urwid import Overlay, Text, emit_signal
 
 from subiquitycore.ui.confirmation import ConfirmationOverlay
+from subiquitycore.ui.container import Columns, Pile, WidgetWrap
 from subiquitycore.ui.stretchy import StretchyOverlay
 from subiquitycore.ui.utils import disabled, undisabled
-
 
 log = logging.getLogger("subiquitycore.view")
 

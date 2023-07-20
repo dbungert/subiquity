@@ -29,7 +29,6 @@ from subiquity.models.filesystem import (
     raidlevels_by_value,
 )
 
-
 _checkers = {}
 
 

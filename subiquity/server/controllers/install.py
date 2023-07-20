@@ -18,58 +18,34 @@ import copy
 import json
 import logging
 import os
-from pathlib import Path
 import re
 import shutil
 import subprocess
 import tempfile
+from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-from curtin.config import merge_config
-from curtin.util import (
-    get_efibootmgr,
-    is_uefi_bootable,
-)
 import yaml
 
-from subiquitycore.async_helpers import (
-    run_bg_task,
-    run_in_thread,
-)
+from curtin.config import merge_config
+from curtin.util import get_efibootmgr, is_uefi_bootable
+from subiquity.common.errorreport import ErrorReportKind
+from subiquity.common.types import ApplicationState, PackageInstallState
+from subiquity.journald import journald_listen
+from subiquity.models.filesystem import ActionRenderMode
+from subiquity.server.controller import SubiquityController
+from subiquity.server.curtin import run_curtin_command, start_curtin_command
+from subiquity.server.kernel import list_installed_kernels
+from subiquity.server.mounter import Mounter
+from subiquity.server.types import InstallerChannels
+from subiquitycore.async_helpers import run_bg_task, run_in_thread
 from subiquitycore.context import with_context
 from subiquitycore.file_util import (
-    write_file,
     generate_config_yaml,
     generate_timestamped_header,
+    write_file,
 )
 from subiquitycore.utils import arun_command, log_process_streams
-
-from subiquity.common.errorreport import ErrorReportKind
-from subiquity.common.types import (
-    ApplicationState,
-    PackageInstallState,
-)
-from subiquity.journald import (
-    journald_listen,
-)
-from subiquity.models.filesystem import ActionRenderMode
-from subiquity.server.controller import (
-    SubiquityController,
-)
-from subiquity.server.curtin import (
-    run_curtin_command,
-    start_curtin_command,
-)
-from subiquity.server.kernel import (
-    list_installed_kernels,
-)
-from subiquity.server.mounter import (
-    Mounter,
-)
-from subiquity.server.types import (
-    InstallerChannels,
-)
-
 
 log = logging.getLogger("subiquity.server.controllers.install")
 

@@ -17,27 +17,16 @@ import logging
 import os
 import re
 
-from urwid import (
-    connect_signal,
-)
-from subiquitycore.async_helpers import schedule_task
-
-from subiquitycore.ui.interactive import (
-    PasswordEditor,
-    StringEditor,
-)
-from subiquitycore.ui.form import (
-    Form,
-    simple_field,
-    WantsToKnowFormField,
-)
-from subiquitycore.ui.utils import screen
-from subiquitycore.utils import crypt_password
-from subiquitycore.view import BaseView
+from urwid import connect_signal
 
 from subiquity.common.resources import resource_path
 from subiquity.common.types import IdentityData, UsernameValidation
-
+from subiquitycore.async_helpers import schedule_task
+from subiquitycore.ui.form import Form, WantsToKnowFormField, simple_field
+from subiquitycore.ui.interactive import PasswordEditor, StringEditor
+from subiquitycore.ui.utils import screen
+from subiquitycore.utils import crypt_password
+from subiquitycore.view import BaseView
 
 log = logging.getLogger("subiquity.ui.views.identity")
 

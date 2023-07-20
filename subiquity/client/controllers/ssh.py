@@ -15,16 +15,11 @@
 
 import logging
 
+from subiquity.client.controller import SubiquityTuiController
+from subiquity.common.types import SSHData, SSHFetchIdResponse, SSHFetchIdStatus
+from subiquity.ui.views.ssh import SSHView
 from subiquitycore.async_helpers import schedule_task
 from subiquitycore.context import with_context
-
-from subiquity.client.controller import SubiquityTuiController
-from subiquity.common.types import (
-    SSHData,
-    SSHFetchIdResponse,
-    SSHFetchIdStatus,
-)
-from subiquity.ui.views.ssh import SSHView
 
 log = logging.getLogger("subiquity.client.controllers.ssh")
 

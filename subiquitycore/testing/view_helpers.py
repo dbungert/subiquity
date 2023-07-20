@@ -1,4 +1,5 @@
 import re
+
 import urwid
 
 from subiquitycore.ui.stretchy import StretchyOverlay

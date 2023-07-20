@@ -17,8 +17,8 @@ import logging
 import os
 import sys
 
-from subiquitycore.lsb_release import lsb_release
 from subiquity.client.client import SubiquityClient
+from subiquitycore.lsb_release import lsb_release
 
 log = logging.getLogger("system_setup.client.client")
 

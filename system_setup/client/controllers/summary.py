@@ -1,15 +1,13 @@
-import aiohttp
 import asyncio
 import logging
 
-from subiquitycore.async_helpers import run_bg_task
-from subiquitycore.context import with_context
+import aiohttp
 
 from subiquity.client.controller import SubiquityTuiController
 from subiquity.common.types import ApplicationState, ShutdownMode
-
+from subiquitycore.async_helpers import run_bg_task
+from subiquitycore.context import with_context
 from system_setup.ui.views.summary import SummaryView
-
 
 log = logging.getLogger("system_setup.client.controllers.summary")
 

@@ -16,35 +16,7 @@
 import logging
 
 import attr
-
-from urwid import (
-    connect_signal,
-    Text,
-)
-
-from subiquitycore.ui.form import (
-    BooleanField,
-    ChoiceField,
-    Form,
-    NO_CAPTION,
-    NO_HELP,
-    PasswordField,
-    RadioButtonField,
-    SubForm,
-    SubFormField,
-)
-from subiquitycore.ui.buttons import other_btn
-from subiquitycore.ui.selector import Option
-from subiquitycore.ui.table import (
-    TablePile,
-    TableRow,
-)
-from subiquitycore.ui.utils import (
-    Color,
-    rewrap,
-    screen,
-)
-from subiquitycore.view import BaseView
+from urwid import Text, connect_signal
 
 from subiquity.common.types import (
     Gap,
@@ -56,7 +28,22 @@ from subiquity.common.types import (
     Partition,
 )
 from subiquity.models.filesystem import humanize_size
-
+from subiquitycore.ui.buttons import other_btn
+from subiquitycore.ui.form import (
+    NO_CAPTION,
+    NO_HELP,
+    BooleanField,
+    ChoiceField,
+    Form,
+    PasswordField,
+    RadioButtonField,
+    SubForm,
+    SubFormField,
+)
+from subiquitycore.ui.selector import Option
+from subiquitycore.ui.table import TablePile, TableRow
+from subiquitycore.ui.utils import Color, rewrap, screen
+from subiquitycore.view import BaseView
 
 log = logging.getLogger("subiquity.ui.views.filesystem.guided")
 

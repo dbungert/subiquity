@@ -17,12 +17,9 @@ from typing import Callable
 
 import urwid
 
-from subiquitycore.ui.buttons import (
-    back_btn,
-    done_btn,
-)
-from subiquitycore.ui.utils import button_pile
+from subiquitycore.ui.buttons import back_btn, done_btn
 from subiquitycore.ui.stretchy import Stretchy
+from subiquitycore.ui.utils import button_pile
 
 
 class ConfirmationOverlay(Stretchy):

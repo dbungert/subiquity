@@ -14,6 +14,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import logging
+
 from subiquity.server.controllers.locale import LocaleController
 
 log = logging.getLogger("system_setup.server.controllers.locale")

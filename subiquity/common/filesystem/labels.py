@@ -18,12 +18,12 @@ import functools
 from subiquity.common import types
 from subiquity.common.filesystem import boot, gaps
 from subiquity.models.filesystem import (
+    ZFS,
     Disk,
     LVM_LogicalVolume,
     LVM_VolGroup,
     Partition,
     Raid,
-    ZFS,
     ZPool,
 )
 

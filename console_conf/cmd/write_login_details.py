@@ -17,10 +17,9 @@
 import logging
 import sys
 
-from subiquitycore.log import setup_logger
-from subiquitycore import __version__ as VERSION
-
 from console_conf.controllers.identity import write_login_details_standalone
+from subiquitycore import __version__ as VERSION
+from subiquitycore.log import setup_logger
 
 
 def main():

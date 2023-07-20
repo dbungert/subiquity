@@ -13,17 +13,12 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from subprocess import CompletedProcess, CalledProcessError
 import unittest
+from subprocess import CalledProcessError, CompletedProcess
 from unittest import mock
 
 from subiquity.common.types import SSHFetchIdStatus
-from subiquity.server.ssh import (
-    DryRunSSHKeyFetcher,
-    SSHFetchError,
-    SSHKeyFetcher,
-)
-
+from subiquity.server.ssh import DryRunSSHKeyFetcher, SSHFetchError, SSHKeyFetcher
 from subiquitycore.tests.mocks import make_app
 
 

@@ -17,7 +17,6 @@ import logging
 
 import attr
 
-
 log = logging.getLogger("subiquity.models.identity")
 
 

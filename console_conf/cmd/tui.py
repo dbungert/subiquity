@@ -16,12 +16,13 @@
 
 import argparse
 import asyncio
-import sys
-import os
 import logging
-from subiquitycore.log import setup_logger
-from subiquitycore import __version__ as VERSION
+import os
+import sys
+
 from console_conf.core import ConsoleConf, RecoveryChooser
+from subiquitycore import __version__ as VERSION
+from subiquitycore.log import setup_logger
 
 
 def parse_options(argv):

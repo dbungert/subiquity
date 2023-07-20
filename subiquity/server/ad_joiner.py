@@ -14,17 +14,15 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import asyncio
-from contextlib import contextmanager
 import logging
 import os
+from contextlib import contextmanager
 from socket import gethostname
 from subprocess import CalledProcessError
-from subiquitycore.utils import arun_command, run_command
+
+from subiquity.common.types import AdConnectionInfo, AdJoinResult
 from subiquity.server.curtin import run_curtin_command
-from subiquity.common.types import (
-    AdConnectionInfo,
-    AdJoinResult,
-)
+from subiquitycore.utils import arun_command, run_command
 
 log = logging.getLogger("subiquity.server.ad_joiner")
 

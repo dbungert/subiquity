@@ -13,18 +13,19 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-import unittest
 import json
-import jsonschema
+import unittest
 from io import StringIO
 
+import jsonschema
+
 from console_conf.models.systems import (
-    RecoverySystemsModel,
-    RecoverySystem,
     Brand,
-    SystemModel,
-    SystemAction,
+    RecoverySystem,
+    RecoverySystemsModel,
     SelectedSystemAction,
+    SystemAction,
+    SystemModel,
 )
 
 

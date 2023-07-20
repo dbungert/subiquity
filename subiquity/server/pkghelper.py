@@ -20,9 +20,8 @@ from typing import Dict, Optional
 
 import apt
 
-from subiquitycore.utils import arun_command
-
 from subiquity.common.types import PackageInstallState
+from subiquitycore.utils import arun_command
 
 log = logging.getLogger("subiquity.server.pkghelper")
 

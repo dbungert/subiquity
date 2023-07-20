@@ -15,17 +15,9 @@
 
 import logging
 
-from urwid import (
-    int_scale,
-    SolidFill,
-    Text,
-)
+from urwid import SolidFill, Text, int_scale
 
-from subiquitycore.ui.container import (
-    Columns,
-    Pile,
-    WidgetWrap,
-)
+from subiquitycore.ui.container import Columns, Pile, WidgetWrap
 from subiquitycore.ui.utils import Color
 from subiquitycore.ui.width import widget_width
 

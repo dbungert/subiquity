@@ -14,13 +14,13 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import logging
-import attr
 
-from subiquitycore.context import with_context
+import attr
 
 from subiquity.common.apidef import API
 from subiquity.common.types import WSLSetupOptions
 from subiquity.server.controller import SubiquityController
+from subiquitycore.context import with_context
 
 log = logging.getLogger("system_setup.server.controllers.wslsetupoptions")
 

@@ -18,7 +18,6 @@ import logging
 from subiquitycore.ui.frame import SubiquityCoreUI
 from subiquitycore.view import BaseView
 
-
 log = logging.getLogger("subiquity.ui.frame")
 
 

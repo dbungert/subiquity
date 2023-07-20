@@ -17,11 +17,10 @@ import asyncio
 import logging
 from typing import List
 
-from subiquitycore.tuicontroller import Skip
-
-from subiquity.common.types import DriversPayload, DriversResponse
 from subiquity.client.controller import SubiquityTuiController
+from subiquity.common.types import DriversPayload, DriversResponse
 from subiquity.ui.views.drivers import DriversView, DriversViewStatus
+from subiquitycore.tuicontroller import Skip
 
 log = logging.getLogger("subiquity.client.controllers.drivers")
 
@@ -49,9 +48,7 @@ class DriversController(SubiquityTuiController):
         if "install" not in self.answers:
             return
 
-        from subiquitycore.testing.view_helpers import (
-            click,
-        )
+        from subiquitycore.testing.view_helpers import click
 
         view = self.app.ui.body
         while view.status == DriversViewStatus.WAITING:

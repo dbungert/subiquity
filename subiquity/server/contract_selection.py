@@ -16,16 +16,11 @@
 
 import asyncio
 import logging
-from typing import Any, List
 import time
+from typing import Any, List
 
-from subiquity.server.ubuntu_advantage import (
-    UAInterface,
-    APIUsageError,
-)
-
+from subiquity.server.ubuntu_advantage import APIUsageError, UAInterface
 from subiquitycore.async_helpers import schedule_task
-
 
 log = logging.getLogger("subiquity.server.contract_selection")
 

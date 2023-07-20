@@ -14,9 +14,9 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import asyncio
-from contextlib import suppress
 import os
 import subprocess
+from contextlib import suppress
 from typing import List, Optional
 
 from subiquitycore.utils import astart_command

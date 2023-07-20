@@ -1,4 +1,5 @@
 from subiquitycore.models.network import NetworkModel
+
 from .identity import IdentityModel
 
 

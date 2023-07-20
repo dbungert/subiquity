@@ -18,8 +18,8 @@
 #    Copyright (C) 2021 Canonical Ltd.
 
 import collections
-import os
 import logging
+import os
 from configparser import ConfigParser
 
 log = logging.getLogger("system_setup.common.wsl_conf")

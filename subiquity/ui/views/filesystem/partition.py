@@ -22,37 +22,35 @@ configuration.
 import logging
 import re
 
-from urwid import connect_signal, Text
+from urwid import Text, connect_signal
 
+from subiquity.common.filesystem import boot, gaps, labels
+from subiquity.models.filesystem import (
+    HUMAN_UNITS,
+    LVM_CHUNK_SIZE,
+    Disk,
+    LVM_VolGroup,
+    align_up,
+    dehumanize_size,
+    humanize_size,
+)
+from subiquity.ui.mount import (
+    MountField,
+    common_mountpoints,
+    suitable_mountpoints_for_existing_fs,
+)
+from subiquitycore.ui.container import Pile
 from subiquitycore.ui.form import (
     BooleanField,
     Form,
     FormField,
-    simple_field,
     WantsToKnowFormField,
+    simple_field,
 )
 from subiquitycore.ui.interactive import StringEditor
 from subiquitycore.ui.selector import Option, Selector
-from subiquitycore.ui.container import Pile
 from subiquitycore.ui.stretchy import Stretchy
 from subiquitycore.ui.utils import rewrap
-
-from subiquity.common.filesystem import boot, gaps, labels
-from subiquity.models.filesystem import (
-    align_up,
-    Disk,
-    HUMAN_UNITS,
-    dehumanize_size,
-    humanize_size,
-    LVM_CHUNK_SIZE,
-    LVM_VolGroup,
-)
-from subiquity.ui.mount import (
-    common_mountpoints,
-    MountField,
-    suitable_mountpoints_for_existing_fs,
-)
-
 
 log = logging.getLogger("subiquity.ui.views.filesystem.partition")
 

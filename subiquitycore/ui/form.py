@@ -17,45 +17,29 @@ import abc
 import logging
 from urllib.parse import urlparse
 
+from urwid import CheckBox, MetaSignals
+from urwid import Padding as UrwidPadding
 from urwid import (
-    CheckBox,
-    connect_signal,
-    delegate_to_widget_mixin,
-    emit_signal,
-    MetaSignals,
-    Padding as UrwidPadding,
     RadioButton,
     Text,
     WidgetDecoration,
+    connect_signal,
+    delegate_to_widget_mixin,
+    emit_signal,
 )
 
 from subiquitycore.ui.buttons import cancel_btn, done_btn
-from subiquitycore.ui.container import (
-    Pile,
-    WidgetWrap,
-)
+from subiquitycore.ui.container import Pile, WidgetWrap
 from subiquitycore.ui.interactive import (
-    PasswordEditor,
-    IntegerEditor,
-    StringEditor,
     EmailEditor,
+    IntegerEditor,
+    PasswordEditor,
+    StringEditor,
 )
 from subiquitycore.ui.selector import Selector
-from subiquitycore.ui.table import (
-    ColSpec,
-    TablePile,
-    TableRow,
-)
-from subiquitycore.ui.utils import (
-    button_pile,
-    Color,
-    disabled,
-    screen,
-)
-from subiquitycore.ui.width import (
-    widget_width,
-)
-
+from subiquitycore.ui.table import ColSpec, TablePile, TableRow
+from subiquitycore.ui.utils import Color, button_pile, disabled, screen
+from subiquitycore.ui.width import widget_width
 
 log = logging.getLogger("subiquitycore.ui.form")
 

@@ -13,17 +13,15 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from abc import ABC, abstractmethod
-import aiohttp
-import logging
 import enum
+import logging
+from abc import ABC, abstractmethod
 from xml.etree import ElementTree
 
-from subiquitycore.async_helpers import (
-    SingleInstanceTask,
-)
+import aiohttp
 
 from subiquity.server.types import InstallerChannels
+from subiquitycore.async_helpers import SingleInstanceTask
 
 log = logging.getLogger("subiquity.server.geoip")
 

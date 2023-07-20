@@ -20,32 +20,14 @@ Provides device activation and configuration on s390x
 """
 import logging
 
-from urwid import (
-    connect_signal,
-    Text,
-)
+from urwid import Text, connect_signal
 
 from subiquitycore.async_helpers import run_bg_task
-from subiquitycore.ui.actionmenu import (
-    ActionMenu,
-)
-from subiquitycore.ui.buttons import (
-    back_btn,
-    done_btn,
-)
-from subiquitycore.ui.container import (
-    WidgetWrap,
-)
-from subiquitycore.ui.table import (
-    ColSpec,
-    TableListBox,
-    TableRow,
-)
-from subiquitycore.ui.utils import (
-    Color,
-    make_action_menu_row,
-    screen,
-)
+from subiquitycore.ui.actionmenu import ActionMenu
+from subiquitycore.ui.buttons import back_btn, done_btn
+from subiquitycore.ui.container import WidgetWrap
+from subiquitycore.ui.table import ColSpec, TableListBox, TableRow
+from subiquitycore.ui.utils import Color, make_action_menu_row, screen
 from subiquitycore.view import BaseView
 
 log = logging.getLogger("subiquity.ui.views.zdev")

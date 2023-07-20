@@ -14,22 +14,18 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import asyncio
-from functools import partial
 import glob
 import json
 import logging
 import os
 import time
-from urllib.parse import (
-    quote_plus,
-    urlencode,
-)
-
-from subiquitycore.async_helpers import run_in_thread
-from subiquitycore.utils import run_command
+from functools import partial
+from urllib.parse import quote_plus, urlencode
 
 import requests_unixsocket
 
+from subiquitycore.async_helpers import run_in_thread
+from subiquitycore.utils import run_command
 
 log = logging.getLogger("subiquitycore.snapd")
 

@@ -15,36 +15,19 @@
 
 """ UI utilities """
 
-from functools import partialmethod
 import logging
+from functools import partialmethod
 
-from urwid import (
-    ACTIVATE,
-    AttrMap,
-    CompositeCanvas,
-    connect_signal,
-    LineBox,
-    Padding as _Padding,
-    SelectableIcon,
-    Text,
-    WidgetDecoration,
-    WidgetDisable,
-)
+from urwid import ACTIVATE, AttrMap, CompositeCanvas, LineBox
+from urwid import Padding as _Padding
+from urwid import SelectableIcon, Text, WidgetDecoration, WidgetDisable, connect_signal
 
-from subiquitycore.ui.buttons import (
-    cancel_btn,
-    other_btn,
-)
-from subiquitycore.ui.container import (
-    ListBox,
-    Pile,
-    WidgetWrap,
-)
+from subiquitycore.ui.buttons import cancel_btn, other_btn
+from subiquitycore.ui.container import ListBox, Pile, WidgetWrap
 from subiquitycore.ui.spinner import Spinner
 from subiquitycore.ui.stretchy import Stretchy
 from subiquitycore.ui.table import TableRow
 from subiquitycore.ui.width import widget_width
-
 
 log = logging.getLogger("subiquitycore.ui.utils")
 

@@ -16,44 +16,18 @@
 import asyncio
 import logging
 
-from urwid import (
-    connect_signal,
-    disconnect_signal,
-    Padding,
-    ProgressBar,
-    Text,
-)
+from urwid import Padding, ProgressBar, Text, connect_signal, disconnect_signal
 
+from subiquity.common.errorreport import ErrorReportKind, ErrorReportState
+from subiquity.common.types import CasperMd5Results
 from subiquitycore.async_helpers import run_bg_task
 from subiquitycore.ui.buttons import other_btn
-from subiquitycore.ui.container import (
-    Pile,
-)
+from subiquitycore.ui.container import Pile
 from subiquitycore.ui.spinner import Spinner
 from subiquitycore.ui.stretchy import Stretchy
-from subiquitycore.ui.table import (
-    ColSpec,
-    TablePile,
-    TableRow,
-)
-from subiquitycore.ui.utils import (
-    button_pile,
-    ClickableIcon,
-    Color,
-    disabled,
-    rewrap,
-)
-from subiquitycore.ui.width import (
-    widget_width,
-)
-
-from subiquity.common.errorreport import (
-    ErrorReportKind,
-    ErrorReportState,
-)
-
-from subiquity.common.types import CasperMd5Results
-
+from subiquitycore.ui.table import ColSpec, TablePile, TableRow
+from subiquitycore.ui.utils import ClickableIcon, Color, button_pile, disabled, rewrap
+from subiquitycore.ui.width import widget_width
 
 log = logging.getLogger("subiquity.ui.views.error")
 

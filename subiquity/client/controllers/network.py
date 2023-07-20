@@ -21,6 +21,10 @@ from typing import Optional
 
 from aiohttp import web
 
+from subiquity.client.controller import SubiquityTuiController
+from subiquity.common.api.server import make_server_at_path
+from subiquity.common.apidef import LinkAction, NetEventAPI
+from subiquity.common.types import ErrorReportKind, PackageInstallState
 from subiquitycore.async_helpers import run_bg_task
 from subiquitycore.controllers.network import NetworkAnswersMixin
 from subiquitycore.models.network import (
@@ -30,14 +34,6 @@ from subiquitycore.models.network import (
     WLANConfig,
 )
 from subiquitycore.ui.views.network import NetworkView
-
-from subiquity.client.controller import SubiquityTuiController
-from subiquity.common.api.server import make_server_at_path
-from subiquity.common.apidef import LinkAction, NetEventAPI
-from subiquity.common.types import (
-    ErrorReportKind,
-    PackageInstallState,
-)
 
 log = logging.getLogger("subiquity.client.controllers.network")
 

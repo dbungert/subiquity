@@ -14,15 +14,15 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import asyncio
-from collections import OrderedDict
 import functools
 import json
 import logging
 import os
-from typing import Any, Dict, Set
 import uuid
-import yaml
+from collections import OrderedDict
+from typing import Any, Dict, Set
 
+import yaml
 from cloudinit.config.schema import (
     SchemaValidationError,
     get_schema,
@@ -38,15 +38,10 @@ except ImportError:
 
 
 from curtin.config import merge_config
-
-from subiquitycore.file_util import (
-    generate_timestamped_header,
-    write_file,
-)
-from subiquitycore.lsb_release import lsb_release
-
 from subiquity.common.resources import get_users_and_groups
 from subiquity.server.types import InstallerChannels
+from subiquitycore.file_util import generate_timestamped_header, write_file
+from subiquitycore.lsb_release import lsb_release
 
 from .ad import AdModel
 from .codecs import CodecsModel
@@ -67,7 +62,6 @@ from .ssh import SSHModel
 from .timezone import TimeZoneModel
 from .ubuntu_pro import UbuntuProModel
 from .updates import UpdatesModel
-
 
 log = logging.getLogger("subiquity.models.subiquity")
 

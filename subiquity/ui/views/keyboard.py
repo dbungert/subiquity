@@ -16,29 +16,9 @@
 import locale
 import logging
 
-from urwid import connect_signal, LineBox, Text, Padding as UrwidPadding
-
-from subiquitycore.async_helpers import run_bg_task
-from subiquitycore.ui.buttons import (
-    cancel_btn,
-    ok_btn,
-    other_btn,
-)
-from subiquitycore.ui.container import (
-    Columns,
-    Pile,
-    WidgetWrap,
-)
-from subiquitycore.ui.form import (
-    ChoiceField,
-    Form,
-)
-from subiquitycore.ui.selector import Selector, Option
-from subiquitycore.ui.stretchy import (
-    Stretchy,
-)
-from subiquitycore.ui.utils import button_pile, Color, Padding, screen
-from subiquitycore.view import BaseView
+from urwid import LineBox
+from urwid import Padding as UrwidPadding
+from urwid import Text, connect_signal
 
 from subiquity.common.types import (
     KeyboardSetting,
@@ -46,6 +26,14 @@ from subiquity.common.types import (
     StepPressKey,
     StepResult,
 )
+from subiquitycore.async_helpers import run_bg_task
+from subiquitycore.ui.buttons import cancel_btn, ok_btn, other_btn
+from subiquitycore.ui.container import Columns, Pile, WidgetWrap
+from subiquitycore.ui.form import ChoiceField, Form
+from subiquitycore.ui.selector import Option, Selector
+from subiquitycore.ui.stretchy import Stretchy
+from subiquitycore.ui.utils import Color, Padding, button_pile, screen
+from subiquitycore.view import BaseView
 
 log = logging.getLogger("subiquity.ui.views.keyboard")
 

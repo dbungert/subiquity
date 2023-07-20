@@ -18,19 +18,17 @@ import unittest
 from unittest import mock
 
 from subiquity.common.filesystem.sizes import (
+    PartitionScaleFactors,
     bootfs_scale,
     calculate_guided_resize,
     calculate_suggested_install_min,
-    get_efi_size,
     get_bootfs_size,
-    PartitionScaleFactors,
+    get_efi_size,
     scale_partitions,
     uefi_scale,
 )
 from subiquity.common.types import GuidedResizeValues
-from subiquity.models.filesystem import (
-    MiB,
-)
+from subiquity.models.filesystem import MiB
 
 
 class TestPartitionSizeScaling(unittest.TestCase):

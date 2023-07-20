@@ -1,4 +1,5 @@
 import os
+
 import yaml
 
 TOP_DIR = os.path.join("/".join(__file__.split("/")[:-3]))

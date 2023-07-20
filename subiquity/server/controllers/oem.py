@@ -17,8 +17,6 @@ import asyncio
 import logging
 from typing import List, Optional
 
-from subiquitycore.context import with_context
-
 from subiquity.common.apidef import API
 from subiquity.common.types import OEMResponse
 from subiquity.models.oem import OEMMetaPkg
@@ -31,6 +29,7 @@ from subiquity.server.ubuntu_drivers import (
     CommandNotFoundError,
     get_ubuntu_drivers_interface,
 )
+from subiquitycore.context import with_context
 
 log = logging.getLogger("subiquity.server.controllers.oem")
 

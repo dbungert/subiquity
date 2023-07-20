@@ -14,13 +14,13 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import enum
-import os
 import logging
+import os
 
-from subiquitycore.async_helpers import run_bg_task
-from subiquitycore.context import with_context
 from subiquity.common.types import ShutdownMode
 from subiquity.server.controllers import ShutdownController
+from subiquitycore.async_helpers import run_bg_task
+from subiquitycore.context import with_context
 
 log = logging.getLogger("system_setup.server.controllers.shutdown")
 

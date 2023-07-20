@@ -27,26 +27,13 @@ from typing import Iterable, Set
 import apport
 import apport.crashdb
 import apport.hookutils
-
 import attr
-
 import bson
-
 import requests
-
 import urwid
 
-from subiquitycore.async_helpers import (
-    run_in_thread,
-    schedule_task,
-)
-
-from subiquity.common.types import (
-    ErrorReportKind,
-    ErrorReportRef,
-    ErrorReportState,
-)
-
+from subiquity.common.types import ErrorReportKind, ErrorReportRef, ErrorReportState
+from subiquitycore.async_helpers import run_in_thread, schedule_task
 
 log = logging.getLogger("subiquity.common.errorreport")
 

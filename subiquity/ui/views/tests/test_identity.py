@@ -16,12 +16,10 @@
 import unittest
 from unittest import mock
 
-from subiquitycore.testing import view_helpers
-
 from subiquity.client.controllers.identity import IdentityController
 from subiquity.common.types import IdentityData, UsernameValidation
 from subiquity.ui.views.identity import IdentityView
-
+from subiquitycore.testing import view_helpers
 
 valid_data = {
     "realname": "Real Name",

@@ -15,22 +15,12 @@
 
 import logging
 
-from urwid import (
-    Text,
-)
+from urwid import Text
 
-from subiquitycore.ui.buttons import (
-    other_btn,
-)
-from subiquitycore.ui.spinner import (
-    Spinner,
-)
-from subiquitycore.ui.utils import (
-    button_pile,
-    screen,
-)
+from subiquitycore.ui.buttons import other_btn
+from subiquitycore.ui.spinner import Spinner
+from subiquitycore.ui.utils import button_pile, screen
 from subiquitycore.view import BaseView
-
 
 log = logging.getLogger("subiquity.ui.views.filesystem.probing")
 

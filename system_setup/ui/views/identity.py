@@ -14,21 +14,15 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
-from urwid import (
-    connect_signal,
-)
 
+from urwid import connect_signal
 
+from subiquity.common.resources import resource_path
 from subiquity.common.types import IdentityData
-from subiquity.ui.views.identity import (
-    IdentityForm,
-    IdentityView,
-)
+from subiquity.ui.views.identity import IdentityForm, IdentityView
 from subiquitycore.ui.utils import screen
 from subiquitycore.utils import crypt_password
 from subiquitycore.view import BaseView
-
-from subiquity.common.resources import resource_path
 
 
 class WSLIdentityForm(IdentityForm):

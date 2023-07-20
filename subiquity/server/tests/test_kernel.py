@@ -17,10 +17,7 @@ import subprocess
 import unittest
 from unittest import mock
 
-from subiquity.server.kernel import (
-    flavor_to_pkgname,
-    list_installed_kernels,
-)
+from subiquity.server.kernel import flavor_to_pkgname, list_installed_kernels
 
 
 class TestFlavorToPkgname(unittest.TestCase):

@@ -19,7 +19,6 @@ import pwd
 
 from subiquitycore.utils import run_command
 
-
 log = logging.getLogger("subiquitycore.ssh")
 
 

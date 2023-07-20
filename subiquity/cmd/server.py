@@ -25,10 +25,7 @@ import attr
 
 from subiquitycore.log import setup_logger
 
-from .common import (
-    LOGDIR,
-    setup_environment,
-)
+from .common import LOGDIR, setup_environment
 
 
 @attr.s(auto_attribs=True)
@@ -145,8 +142,8 @@ def main():
     setup_environment()
     # setup_environment sets $APPORT_DATA_DIR which must be set before
     # apport is imported, which is done by this import:
-    from subiquity.server.server import SubiquityServer
     from subiquity.server.dryrun import DRConfig
+    from subiquity.server.server import SubiquityServer
 
     parser = make_server_args_parser()
     opts = parser.parse_args(sys.argv[1:])
