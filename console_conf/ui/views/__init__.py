@@ -18,11 +18,7 @@
 from .identity import IdentityView
 from .login import LoginView
 from .welcome import WelcomeView, ChooserWelcomeView
-from .chooser import (
-    ChooserView,
-    ChooserCurrentSystemView,
-    ChooserConfirmView
-    )
+from .chooser import ChooserView, ChooserCurrentSystemView, ChooserConfirmView
 
 __all__ = [
     "IdentityView",

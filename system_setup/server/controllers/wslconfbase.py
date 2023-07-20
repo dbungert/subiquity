@@ -25,24 +25,23 @@ from subiquity.server.controller import SubiquityController
 from system_setup.common.wsl_conf import default_loader
 from system_setup.common.wsl_utils import convert_if_bool
 
-log = logging.getLogger('system_setup.server.controllers.wslconfbase')
+log = logging.getLogger("system_setup.server.controllers.wslconfbase")
 
 
 class WSLConfigurationBaseController(SubiquityController):
-
     endpoint = API.wslconfbase
 
     autoinstall_key = model_name = "wslconfbase"
     autoinstall_schema = {
-        'type': 'object',
-        'properties': {
-            'automount_root': {'type': 'string'},
-            'automount_options': {'type': 'string'},
-            'network_generatehosts': {'type': 'boolean'},
-            'network_generateresolvconf': {'type': 'boolean'},
-            },
-        'additionalProperties': False,
-        }
+        "type": "object",
+        "properties": {
+            "automount_root": {"type": "string"},
+            "automount_options": {"type": "string"},
+            "network_generatehosts": {"type": "boolean"},
+            "network_generateresolvconf": {"type": "boolean"},
+        },
+        "additionalProperties": False,
+    }
 
     def __init__(self, app):
         super().__init__(app)
@@ -52,8 +51,7 @@ class WSLConfigurationBaseController(SubiquityController):
         data = default_loader(root_dir)
 
         if data:
-            proc_data = \
-                {key: convert_if_bool(value) for (key, value) in data.items()}
+            proc_data = {key: convert_if_bool(value) for (key, value) in data.items()}
             conf_data = WSLConfigurationBase(**proc_data)
             self.model.apply_settings(conf_data)
 
@@ -75,10 +73,10 @@ class WSLConfigurationBaseController(SubiquityController):
         if self.model.wslconfbase is not None:
             data.automount_root = self.model.wslconfbase.automount_root
             data.automount_options = self.model.wslconfbase.automount_options
-            data.network_generatehosts = \
-                self.model.wslconfbase.network_generatehosts
-            data.network_generateresolvconf = \
+            data.network_generatehosts = self.model.wslconfbase.network_generatehosts
+            data.network_generateresolvconf = (
                 self.model.wslconfbase.network_generateresolvconf
+            )
         return data
 
     async def POST(self, data: WSLConfigurationBase):

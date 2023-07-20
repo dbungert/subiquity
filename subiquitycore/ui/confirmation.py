@@ -20,19 +20,23 @@ import urwid
 from subiquitycore.ui.buttons import (
     back_btn,
     done_btn,
-    )
+)
 from subiquitycore.ui.utils import button_pile
 from subiquitycore.ui.stretchy import Stretchy
 
 
 class ConfirmationOverlay(Stretchy):
-    """ An overlay widget that asks the user to confirm or cancel an action.
-    """
-    def __init__(self, title: str, question: str,
-                 confirm_label: str, cancel_label: str,
-                 on_confirm: Callable[[], None],
-                 on_cancel: Callable[[], None]) -> None:
+    """An overlay widget that asks the user to confirm or cancel an action."""
 
+    def __init__(
+        self,
+        title: str,
+        question: str,
+        confirm_label: str,
+        cancel_label: str,
+        on_confirm: Callable[[], None],
+        on_cancel: Callable[[], None],
+    ) -> None:
         self.on_cancel_cb = on_cancel
         self.on_confirm_cb = on_confirm
         self.choice_made = False
@@ -40,12 +44,12 @@ class ConfirmationOverlay(Stretchy):
         widgets = [
             urwid.Text(question),
             urwid.Text(""),
-            button_pile([
-                back_btn(
-                    label=cancel_label, on_press=lambda u: self.on_cancel()),
-                done_btn(
-                    label=confirm_label, on_press=lambda u: self.on_confirm()),
-            ]),
+            button_pile(
+                [
+                    back_btn(label=cancel_label, on_press=lambda u: self.on_cancel()),
+                    done_btn(label=confirm_label, on_press=lambda u: self.on_confirm()),
+                ]
+            ),
         ]
 
         super().__init__(title, widgets, 0, 2)

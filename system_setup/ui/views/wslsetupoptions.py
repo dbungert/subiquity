@@ -34,11 +34,9 @@ CAPTION = _("Install packages for better {lang} language support")
 
 
 class WSLSetupOptionsForm(Form):
-    install_language_support_packages = \
-        BooleanField("",
-                     help=('info_minor',
-                           _("Not recommended for slow internet connections."))
-                     )
+    install_language_support_packages = BooleanField(
+        "", help=("info_minor", _("Not recommended for slow internet connections."))
+    )
 
 
 class WSLSetupOptionsView(BaseView):
@@ -49,14 +47,14 @@ class WSLSetupOptionsView(BaseView):
         self.controller = controller
 
         initial = {
-            'install_language_support_packages':
-                configuration_data.install_language_support_packages,
+            "install_language_support_packages": configuration_data.install_language_support_packages,
         }
         self.form = WSLSetupOptionsForm(initial=initial)
-        self.form.install_language_support_packages.caption = \
-            CAPTION.format(lang=cur_lang)
+        self.form.install_language_support_packages.caption = CAPTION.format(
+            lang=cur_lang
+        )
 
-        connect_signal(self.form, 'submit', self.done)
+        connect_signal(self.form, "submit", self.done)
         super().__init__(
             screen(
                 self.form.as_rows(),

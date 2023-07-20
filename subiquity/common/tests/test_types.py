@@ -23,11 +23,11 @@ from subiquity.common.types import (
 
 class TestSizingPolicy(unittest.TestCase):
     def test_all(self):
-        actual = SizingPolicy.from_string('all')
+        actual = SizingPolicy.from_string("all")
         self.assertEqual(SizingPolicy.ALL, actual)
 
     def test_scaled_size(self):
-        actual = SizingPolicy.from_string('scaled')
+        actual = SizingPolicy.from_string("scaled")
         self.assertEqual(SizingPolicy.SCALED, actual)
 
     def test_default(self):

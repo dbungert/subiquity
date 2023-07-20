@@ -19,8 +19,8 @@ from .wslconfadvanced import WSLConfigurationAdvancedView
 from .summary import SummaryView
 
 __all__ = [
-    'WSLIdentityView',
-    'WSLConfigurationBaseView',
-    'WSLConfigurationAdvancedView',
-    'SummaryView',
+    "WSLIdentityView",
+    "WSLConfigurationBaseView",
+    "WSLConfigurationAdvancedView",
+    "SummaryView",
 ]

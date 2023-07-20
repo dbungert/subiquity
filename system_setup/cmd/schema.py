@@ -28,11 +28,11 @@ from subiquity.server.server import NOPROBERARG
 
 def make_app():
     parser = make_server_args_parser()
-    opts, unknown = parser.parse_known_args(['--dry-run'])
+    opts, unknown = parser.parse_known_args(["--dry-run"])
     opts.machine_config = NOPROBERARG
     opts.kernel_cmdline = {}
     opts.snaps_from_examples = False
-    app = SystemSetupServer(opts, '')
+    app = SystemSetupServer(opts, "")
     app.base_model = app.make_model()
     app.controllers.load_all()
     return app
@@ -47,5 +47,5 @@ def main():
     asyncio.run(run_with_loop())
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())

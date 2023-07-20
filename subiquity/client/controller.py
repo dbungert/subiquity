@@ -18,7 +18,7 @@ from typing import Optional
 
 from subiquitycore.tuicontroller import (
     TuiController,
-    )
+)
 
 log = logging.getLogger("subiquity.client.controller")
 
@@ -28,7 +28,6 @@ class Confirm(Exception):
 
 
 class SubiquityTuiController(TuiController):
-
     endpoint_name: Optional[str] = None
 
     def __init__(self, app):

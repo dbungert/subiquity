@@ -9,7 +9,6 @@ from subiquity.ui.views.installprogress import ProgressView
 
 
 class IdentityViewTests(unittest.TestCase):
-
     def make_view(self):
         controller = mock.create_autospec(spec=ProgressController)
         controller.app = mock.Mock()

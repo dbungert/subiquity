@@ -30,12 +30,12 @@ class TestSingleInstanceTask(unittest.IsolatedAsyncioTestCase):
     async def test_cancellable(self, cancel_restart, expected_call_count):
         async def fn():
             await asyncio.sleep(3)
-            raise Exception('timeout')
+            raise Exception("timeout")
 
         mock_fn = AsyncMock(side_effect=fn)
         sit = SingleInstanceTask(mock_fn, cancel_restart=cancel_restart)
         await sit.start()
-        await asyncio.sleep(.01)
+        await asyncio.sleep(0.01)
         try:
             await sit.start()
         except TaskAlreadyRunningError:
@@ -53,6 +53,7 @@ class TestSITWait(unittest.IsolatedAsyncioTestCase):
     async def test_wait_started(self):
         async def fn():
             pass
+
         sit = SingleInstanceTask(fn)
         await sit.start()
         await asyncio.wait_for(sit.wait(), timeout=1.0)
@@ -60,7 +61,8 @@ class TestSITWait(unittest.IsolatedAsyncioTestCase):
 
     async def test_wait_not_started(self):
         async def fn():
-            self.fail('not supposed to be called')
+            self.fail("not supposed to be called")
+
         sit = SingleInstanceTask(fn)
         self.assertFalse(sit.done())
         with self.assertRaises(asyncio.TimeoutError):

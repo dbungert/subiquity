@@ -34,7 +34,8 @@ class TestSnapdSnapInfoLoader(unittest.IsolatedAsyncioTestCase):
         self.app.report_finish_event = Mock()
 
         self.loader = SnapdSnapInfoLoader(
-                self.model, self.app.snapd, "server", self.app.context)
+            self.model, self.app.snapd, "server", self.app.context
+        )
 
     async def test_list_task_not_started(self):
         self.assertFalse(self.loader.fetch_list_completed())

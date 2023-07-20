@@ -16,7 +16,7 @@
 import logging
 import attr
 
-log = logging.getLogger('system_setup.models.wslconfbase')
+log = logging.getLogger("system_setup.models.wslconfbase")
 
 
 @attr.s
@@ -28,8 +28,7 @@ class WSLConfigurationBase(object):
 
 
 class WSLConfigurationBaseModel(object):
-    """ Model representing basic wsl configuration
-    """
+    """Model representing basic wsl configuration"""
 
     def __init__(self):
         self._wslconfbase = None

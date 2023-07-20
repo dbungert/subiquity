@@ -19,7 +19,6 @@ from subiquitycore.tuicontroller import TuiController
 
 
 class WelcomeController(TuiController):
-
     welcome_view = WelcomeView
 
     def make_ui(self):
@@ -34,7 +33,6 @@ class WelcomeController(TuiController):
 
 
 class RecoveryChooserWelcomeController(WelcomeController):
-
     welcome_view = ChooserWelcomeView
 
     def __init__(self, app):

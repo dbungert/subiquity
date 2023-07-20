@@ -17,7 +17,6 @@ from subiquity.common.types import ErrorReportState, ErrorReportRef
 
 
 class ErrorController:
-
     def __init__(self, app):
         self.context = app.context.child("Error")
         self.error_reporter = app.error_reporter

@@ -35,7 +35,6 @@ class InstrumentedStretchy(Stretchy):
 
 
 class TestBaseView(SubiTestCase):
-
     def get_stretchy_chain(self, view):
         view = view._w
         r = []

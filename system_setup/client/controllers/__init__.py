@@ -24,10 +24,10 @@ from subiquity.client.controllers import WelcomeController
 
 
 __all__ = [
-    'WelcomeController',
-    'WSLSetupOptionsController',
-    'WSLIdentityController',
-    'WSLConfigurationBaseController',
-    'WSLConfigurationAdvancedController',
-    'SummaryController',
+    "WelcomeController",
+    "WSLSetupOptionsController",
+    "WSLIdentityController",
+    "WSLConfigurationBaseController",
+    "WSLConfigurationAdvancedController",
+    "SummaryController",
 ]

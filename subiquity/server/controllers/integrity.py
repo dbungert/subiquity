@@ -23,24 +23,22 @@ from subiquity.journald import journald_get_first_match
 from subiquity.server.controller import SubiquityController
 
 
-log = logging.getLogger('subiquity.server.controllers.integrity')
+log = logging.getLogger("subiquity.server.controllers.integrity")
 
-mock_pass = {'checksum_missmatch': [], 'result': 'pass'}
-mock_skip = {'checksum_missmatch': [], 'result': 'skip'}
-mock_fail = {'checksum_missmatch': ['./casper/initrd'], 'result': 'fail'}
+mock_pass = {"checksum_missmatch": [], "result": "pass"}
+mock_skip = {"checksum_missmatch": [], "result": "skip"}
+mock_fail = {"checksum_missmatch": ["./casper/initrd"], "result": "fail"}
 
 
 class IntegrityController(SubiquityController):
-
     endpoint = API.integrity
 
-    model_name = 'integrity'
-    result_filepath = '/run/casper-md5check.json'
+    model_name = "integrity"
+    result_filepath = "/run/casper-md5check.json"
 
     @property
     def result(self):
-        return CasperMd5Results(
-                self.model.md5check_results.get('result', 'unknown'))
+        return CasperMd5Results(self.model.md5check_results.get("result", "unknown"))
 
     async def GET(self) -> CasperMd5Results:
         return self.result
@@ -48,7 +46,8 @@ class IntegrityController(SubiquityController):
     async def wait_casper_md5check(self):
         if not self.app.opts.dry_run:
             await journald_get_first_match(
-                'systemd', 'UNIT=casper-md5check.service', 'JOB_RESULT=done')
+                "systemd", "UNIT=casper-md5check.service", "JOB_RESULT=done"
+            )
 
     async def get_md5check_results(self):
         if self.app.opts.dry_run:
@@ -57,10 +56,10 @@ class IntegrityController(SubiquityController):
             try:
                 ret = json.load(fp)
             except json.JSONDecodeError as jde:
-                log.debug(f'error reading casper-md5check results: {jde}')
+                log.debug(f"error reading casper-md5check results: {jde}")
                 return {}
             else:
-                log.debug(f'casper-md5check results: {ret}')
+                log.debug(f"casper-md5check results: {ret}")
                 return ret
 
     async def md5check(self):

@@ -26,7 +26,7 @@ class BaseController(ABC):
     model_name: Optional[str] = None
 
     def __init__(self, app):
-        self.name = type(self).__name__[:-len("Controller")]
+        self.name = type(self).__name__[: -len("Controller")]
         self.opts = app.opts
         self.app = app
         self.context = self.app.context.child(self.name, childlevel="DEBUG")
