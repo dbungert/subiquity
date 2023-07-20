@@ -93,9 +93,9 @@ def merge_cloud_init_config(target, source):
             target[k] = v
 
 
-def represent_dict_order(self, data):
+def represent_dict_order(dumper, data):
     """http://stackoverflow.com/a/8661021"""
-    return self.represent_mapping("tag:yaml.org,2002:map", data.items())
+    return dumper.represent_mapping("tag:yaml.org,2002:map", data.items())
 
 
 def setup_yaml():
