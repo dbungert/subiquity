@@ -13,7 +13,7 @@ SYSTEM_SETUP_DRYRUN?=--dry-run
 export PYTHONPATH
 CWD := $(shell pwd)
 
-CHECK_DIRS := console_conf/ subiquity/ subiquitycore/ system_setup/
+CHECK_DIRS := console_conf subiquity subiquitycore system_setup
 PYTHON := python3
 
 ifneq (,$(MACHINE))
@@ -111,3 +111,7 @@ schema: gitdeps
 .PHONY: clean
 clean:
 	./debian/rules clean
+
+.PHONY: black
+black:
+	black $(CHECK_DIRS)
