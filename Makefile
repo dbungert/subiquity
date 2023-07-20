@@ -115,3 +115,7 @@ clean:
 .PHONY: black
 black:
 	black $(CHECK_DIRS)
+
+.PHONY: isort
+isort:
+	isort $(CHECK_DIRS)
