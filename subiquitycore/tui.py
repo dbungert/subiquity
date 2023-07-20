@@ -298,7 +298,7 @@ class TuiApplication(Application):
             pop_ups=True,
             unhandled_input=self.unhandled_input,
             event_loop=urwid.AsyncioEventLoop(loop=asyncio.get_running_loop()),
-            **self.extra_urwid_loop_args()
+            **self.extra_urwid_loop_args(),
         )
         extend_dec_special_charmap()
         self.toggle_rich()

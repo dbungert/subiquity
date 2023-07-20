@@ -132,7 +132,7 @@ def with_context(name=None, description="", **context_kw):
             kw["context"] = context.child(
                 name=name.format(**kw),
                 description=description.format(self=self, **kw),
-                **context_kw
+                **context_kw,
             )
             return kw
 
