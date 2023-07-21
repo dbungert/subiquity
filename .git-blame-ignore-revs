@@ -1,0 +1,5 @@
+# Automatically apply to git blame with
+# `git config blame.ignorerevsfile .git-blame-ignore-revs`
+
+# inital format with black 23.x + isort 5.12.0
+77eae5a4e7f2d5b1a8f621096192ad45bc1ada09
