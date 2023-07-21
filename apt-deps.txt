@@ -48,6 +48,7 @@ python3-urwid
 python3-wheel
 python3-yaml
 ssh-import-id
+tox
 ubuntu-drivers-common
 umockdev
 xorriso
