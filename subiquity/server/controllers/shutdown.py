@@ -19,31 +19,23 @@ import os
 import platform
 import subprocess
 
-from subiquitycore.file_util import (
-    open_perms,
-    set_log_perms,
-)
-from subiquitycore.async_helpers import run_bg_task
-from subiquitycore.context import with_context
-from subiquitycore.utils import arun_command, run_command
-
 from subiquity.common.apidef import API
 from subiquity.common.types import ShutdownMode
 from subiquity.server.controller import SubiquityController
 from subiquity.server.controllers.install import ApplicationState
 from subiquity.server.types import InstallerChannels
+from subiquitycore.async_helpers import run_bg_task
+from subiquitycore.context import with_context
+from subiquitycore.file_util import open_perms, set_log_perms
+from subiquitycore.utils import arun_command, run_command
 
 log = logging.getLogger("subiquity.server.controllers.shutdown")
 
 
 class ShutdownController(SubiquityController):
-
     endpoint = API.shutdown
-    autoinstall_key = 'shutdown'
-    autoinstall_schema = {
-        'type': 'string',
-        'enum': ['reboot', 'poweroff']
-    }
+    autoinstall_key = "shutdown"
+    autoinstall_schema = {"type": "string", "enum": ["reboot", "poweroff"]}
 
     def __init__(self, app):
         super().__init__(app)
@@ -58,9 +50,9 @@ class ShutdownController(SubiquityController):
         self.mode = ShutdownMode.REBOOT
 
     def load_autoinstall_data(self, data):
-        if data == 'reboot':
+        if data == "reboot":
             self.mode = ShutdownMode.REBOOT
-        elif data == 'poweroff':
+        elif data == "poweroff":
             self.mode = ShutdownMode.POWEROFF
 
     async def POST(self, mode: ShutdownMode, immediate: bool = False):
@@ -94,42 +86,41 @@ class ShutdownController(SubiquityController):
 
     @with_context()
     async def copy_logs_to_target(self, context):
-        if self.opts.dry_run and 'copy-logs-fail' in self.app.debug_flags:
+        if self.opts.dry_run and "copy-logs-fail" in self.app.debug_flags:
             raise PermissionError()
         if self.app.controllers.Filesystem.reset_partition_only:
             return
-        target_logs = os.path.join(
-            self.app.base_model.target, 'var/log/installer')
+        target_logs = os.path.join(self.app.base_model.target, "var/log/installer")
         if self.opts.dry_run:
             os.makedirs(target_logs, exist_ok=True)
         else:
             # Preserve ephemeral boot cloud-init logs if applicable
             cloudinit_logs = [
-               cloudinit_log
-               for cloudinit_log in (
+                cloudinit_log
+                for cloudinit_log in (
                     "/var/log/cloud-init.log",
-                    "/var/log/cloud-init-output.log"
-               )
-               if os.path.exists(cloudinit_log)
+                    "/var/log/cloud-init-output.log",
+                )
+                if os.path.exists(cloudinit_log)
             ]
             if cloudinit_logs:
                 await arun_command(
-                    ['cp', '-a'] + cloudinit_logs + ['/var/log/installer'])
-            await arun_command(
-                ['cp', '-aT', '/var/log/installer', target_logs])
+                    ["cp", "-a"] + cloudinit_logs + ["/var/log/installer"]
+                )
+            await arun_command(["cp", "-aT", "/var/log/installer", target_logs])
             # Close the permissions from group writes on the target.
             set_log_perms(target_logs, isdir=True, group_write=False)
 
-        journal_txt = os.path.join(target_logs, 'installer-journal.txt')
+        journal_txt = os.path.join(target_logs, "installer-journal.txt")
         try:
             with open_perms(journal_txt) as output:
                 await arun_command(
-                    ['journalctl', '-b'],
-                    stdout=output, stderr=subprocess.STDOUT)
+                    ["journalctl", "-b"], stdout=output, stderr=subprocess.STDOUT
+                )
         except Exception:
             log.exception("saving journal failed")
 
-    @with_context(description='mode={self.mode.name}')
+    @with_context(description="mode={self.mode.name}")
     async def shutdown(self, context):
         await self.app.hub.abroadcast(InstallerChannels.PRE_SHUTDOWN)
         # As PRE_SHUTDOWN is supposed to be as close as possible to the
@@ -139,7 +130,7 @@ class ShutdownController(SubiquityController):
             self.app.exit()
         else:
             if self.app.state == ApplicationState.DONE:
-                if platform.machine() == 's390x':
+                if platform.machine() == "s390x":
                     run_command(["chreipl", "/target/boot"])
             if self.mode == ShutdownMode.REBOOT:
                 run_command(["/sbin/reboot"])
