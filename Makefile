@@ -114,7 +114,7 @@ clean:
 
 .PHONY: black
 black:
-	black $(CHECK_DIRS)
+	black --config .black.toml $(CHECK_DIRS)
 
 .PHONY: isort
 isort:
