@@ -136,7 +136,7 @@ setup(name='subiquity',
           ],
       },
       data_files=[
-          # ('po', ['po/POTFILES.in']),
+          ('po', ['po/POTFILES.in']),
       ],
       cmdclass={
           'build': build,
