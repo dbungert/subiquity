@@ -4,7 +4,9 @@ see:
 
 * Contributors will need to have signed the
   [CLA](https://ubuntu.com/legal/contributors/agreement).
-* Prerequisites for running tests locally can be installed with `make aptdeps`.
-* Format, lint, unit, integration, and API tests should be passing.  To
-  simulate that locally please run `make format lint check`.  This is a close
-  approximation to what is run in CI today.
+* Format, lint, unit, integration, and API tests should be passing.
+  * format - either run `make format` or
+    `[pre-commit](https://pre-commit.com/#install) install`
+  * lint/unit/integration - `make lint check`
+    Prerequisites for running these locally can be installed with
+    `make aptdeps`.
