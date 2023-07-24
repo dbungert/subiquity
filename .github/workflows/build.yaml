@@ -48,7 +48,7 @@ jobs:
       - uses: isort/isort-action@v1
         with:
           isort-version: "5.12.0"
-          configuration: "--check-only --diff --thirdparty curtin --thirdparty probert"
+          configuration: "--thirdparty probert"
           sort-paths: "console_conf/ subiquity/ subiquitycore/ system_setup"
 
   static-typing:
