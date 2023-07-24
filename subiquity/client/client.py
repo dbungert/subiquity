@@ -215,7 +215,7 @@ class SubiquityClient(TuiApplication):
         no = _("no")
         answer = no
         print(_("Confirmation is required to continue."))
-        print(_("Add 'autoinstall' to your kernel command line to avoid this"))
+        print(_("Add 'autoinstall' to your" "kernel command line to avoid this"))
         print()
         prompt = "\n\n{} ({}|{})".format(_("Continue with autoinstall?"), yes, no)
         while answer != yes:
