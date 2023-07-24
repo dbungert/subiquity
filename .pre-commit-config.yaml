@@ -3,3 +3,4 @@ repos:
     rev: 23.7.0
     hooks:
       - id: black
+files: "(console_conf|subiquity|subiquitycore|system_setup)"
