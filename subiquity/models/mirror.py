@@ -245,9 +245,9 @@ class MirrorModel(object):
         self.legacy_primary = False
         self.disabled_components: Set[str] = set()
         self.primary_elected: Optional[BasePrimaryEntry] = None
-        self.primary_candidates: List[
-            BasePrimaryEntry
-        ] = self._default_primary_entries()
+        self.primary_candidates: List[BasePrimaryEntry] = (
+            self._default_primary_entries()
+        )
 
         self.primary_staged: Optional[BasePrimaryEntry] = None
 
