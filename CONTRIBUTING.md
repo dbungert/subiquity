@@ -5,8 +5,9 @@ see:
 * Contributors will need to have signed the
   [CLA](https://ubuntu.com/legal/contributors/agreement).
 * Format, lint, unit, integration, and API tests should be passing.
-  * format - either run `make format` or
-    `[pre-commit](https://pre-commit.com/#install) install`
+  * format - either run `make format` or `pre-commit install`.
+    See [pre-commit](https://pre-commit.com/#install) for more details on that
+    tool.
   * lint/unit/integration - `make lint check`
     Prerequisites for running these locally can be installed with
     `make aptdeps`.
