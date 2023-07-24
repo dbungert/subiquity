@@ -4,3 +4,4 @@ preview = true
 
 [tool.isort]
 profile = "black"
+known_third_party = ["curtin", "probert"]
