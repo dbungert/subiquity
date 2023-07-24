@@ -1,5 +1,6 @@
 [tool.black]
 target-version = ['py38']
+preview = true
 
 [tool.isort]
 profile = "black"
