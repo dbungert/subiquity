@@ -85,11 +85,13 @@ MIRROR_CHECK_STATUS_TEXTS = {
     (True, None): _("The mirror location has not yet started."),
     (True, MirrorCheckStatus.RUNNING): _("The mirror location is being tested."),
     (True, MirrorCheckStatus.OK): _("This mirror location passed tests."),
-    (True, MirrorCheckStatus.FAILED): _("""\
+    (True, MirrorCheckStatus.FAILED): _(
+        """\
 This mirror location does not seem to work. The output below may help
 explain the problem. You can try again once the issue has been fixed
 (common problems are network issues or the system clock being wrong).
-"""),
+"""
+    ),
 }
 
 

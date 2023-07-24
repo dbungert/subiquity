@@ -20,7 +20,7 @@ from urwid import Text
 styles = {
     "dots": {
         "texts": [
-            t.replace("*", "\N{BULLET}")
+            t.replace("*", "\N{bullet}")
             for t in [
                 "|*----|",
                 "|-*---|",

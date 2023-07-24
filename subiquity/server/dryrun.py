@@ -81,9 +81,9 @@ class DRConfig:
 
     # If running ubuntu-drivers on the host, supply a file to
     # umockdev-wrapper.py
-    ubuntu_drivers_run_on_host_umockdev: Optional[str] = (
-        "examples/umockdev/dell-certified+nvidia.yaml"
-    )
+    ubuntu_drivers_run_on_host_umockdev: Optional[
+        str
+    ] = "examples/umockdev/dell-certified+nvidia.yaml"
 
     @classmethod
     def load(cls, stream):

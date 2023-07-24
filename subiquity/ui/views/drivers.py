@@ -150,7 +150,7 @@ class DriversView(BaseView):
         self.form = DriversForm(
             initial={
                 "install": bool(install),
-                "do_not_install": not install,
+                "do_not_install": (not install),
             }
         )
 

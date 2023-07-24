@@ -191,7 +191,8 @@ class OEMController(SubiquityController):
             # This should be a dialog or something rather than the content of
             # an exception, really. But this is a simple way to print out
             # something in autoinstall.
-            msg = _("""\
+            msg = _(
+                """\
 A specific kernel flavor was requested but it cannot be satistified when \
 installing on certified hardware.
 You should either disable the installation of OEM meta-packages using the \
@@ -199,7 +200,8 @@ following autoinstall snippet or let the installer decide which kernel to
 install.
   oem:
     install: false
-""")
+"""
+            )
             raise RuntimeError(msg)
 
     @with_context()

@@ -303,7 +303,8 @@ class PartitionForm(Form):
         return r
 
 
-bios_grub_partition_description = _("""\
+bios_grub_partition_description = _(
+    """\
 Bootloader partition
 
 {middle}
@@ -313,55 +314,72 @@ space after the MBR for GRUB to store its second-stage core.img, so a
 small unformatted partition is needed at the start of the disk. It
 will not contain a filesystem and will not be mounted, and cannot be
 edited here.
-""")
+"""
+)
 
-unconfigured_bios_grub_partition_middle = _("""\
+unconfigured_bios_grub_partition_middle = _(
+    """\
 If this disk is selected as a boot device, GRUB will be installed onto
-the target disk's MBR.""")
+the target disk's MBR."""
+)
 
-configured_bios_grub_partition_middle = _("""\
+configured_bios_grub_partition_middle = _(
+    """\
 As this disk has been selected as a boot device, GRUB will be
-installed onto the target disk's MBR.""")
+installed onto the target disk's MBR."""
+)
 
-unconfigured_boot_partition_description = _("""\
+unconfigured_boot_partition_description = _(
+    """\
 Bootloader partition
 
 This is an ESP / "EFI system partition" as required by UEFI. If this
 disk is selected as a boot device, Grub will be installed onto this
 partition, which must be formatted as fat32.
-""")
+"""
+)
 
-configured_boot_partition_description = _("""\
+configured_boot_partition_description = _(
+    """\
 Bootloader partition
 
 This is an ESP / "EFI system partition" as required by UEFI. As this
 disk has been selected as a boot device, Grub will be installed onto
 this partition, which must be formatted as fat32.
-""")
+"""
+)
 
-boot_partition_description_size = _("""\
+boot_partition_description_size = _(
+    """\
 The only aspect of this partition that can be edited is the size.
-""")
+"""
+)
 
-boot_partition_description_reformat = _("""\
+boot_partition_description_reformat = _(
+    """\
 You can choose whether to use the existing filesystem on this
 partition or reformat it.
-""")
+"""
+)
 
-unconfigured_prep_partition_description = _("""\
+unconfigured_prep_partition_description = _(
+    """\
 Required bootloader partition
 
 This is the PReP partion which is required on POWER. If this disk is
 selected as a boot device, Grub will be installed onto this partition.
-""")
+"""
+)
 
-configured_prep_partition_description = _("""\
+configured_prep_partition_description = _(
+    """\
 Required bootloader partition
 
 This is the PReP partion which is required on POWER. As this disk has
 been selected as a boot device, Grub will be installed onto this
 partition.
-""")
+"""
+)
 
 
 def initial_data_for_fs(fs):

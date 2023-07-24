@@ -22,7 +22,8 @@ from subiquitycore.lsb_release import lsb_release
 
 log = logging.getLogger("system_setup.client.client")
 
-ABOUT_UBUNTU_WSL = _("""
+ABOUT_UBUNTU_WSL = _(
+    """
 Welcome to the {id} Installer!
 
 A full Ubuntu environment, deeply integrated with Windows,
@@ -35,7 +36,8 @@ The installer only requires the up and down arrow keys, space (or
 return) and the occasional bit of typing.
 
 This is revision {snap_revision} of the installer.
-""")
+"""
+)
 
 
 def _about_msg(msg, dry_run):
