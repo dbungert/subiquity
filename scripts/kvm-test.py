@@ -13,16 +13,18 @@ import argparse
 import contextlib
 import copy
 import crypt
-import dataclasses
 import os
-import pathlib
 import shlex
+import shutil
 import socket
 import subprocess
 import sys
 import tempfile
-from typing import List, Optional, Tuple
+from typing import List, Tuple
 import yaml
+
+
+livefs_editor = os.environ['LIVEFS_EDITOR']
 
 
 cfg = '''
@@ -54,12 +56,23 @@ class Tap:
         self.ifname = ifname
 
 
+def get_project():
+    for filename in ('snapcraft.yaml', 'snap/snapcraft.yaml'):
+        if os.path.exists(filename):
+            with open(filename) as fp:
+                return yaml.safe_load(fp)['name']
+    return os.path.basename(os.getcwd())
+
+
 class Context:
     def __init__(self, args):
         self.config = self.load_config()
         self.args = args
         self.release = args.release
+        self.workdir = self.config.get('workdir', '/tmp/kvm-test')
+        self.project = args.project or get_project()
         self.default_mem = self.config.get('default_mem', '8G')
+        self.default_disk = self.config.get('default_disk', '12G')
         if not self.release:
             self.release = self.config["iso"]["default"]
         iso = self.config["iso"]
@@ -120,7 +133,7 @@ autoinstall:
 parser = argparse.ArgumentParser(
     formatter_class=argparse.RawDescriptionHelpFormatter,
     description='''\
-Test isos and images written to /tmp/kvm-test
+Test isos and images written to /tmp/kvm-test by default.
 
 Sample usage:
     kvm-test --build -q --install -o -a --boot
@@ -145,7 +158,7 @@ parser.add_argument('-B', '--bios', action='store_true', default=False,
                     help='boot in BIOS mode (default mode is UEFI)')
 parser.add_argument('-c', '--channel', action='store',
                     help='build iso with snap from channel')
-parser.add_argument('-d', '--disksize', default='12G', action='store',
+parser.add_argument('-d', '--disksize', default=None, action='store',
                     help='size of disk to create (12G default)')
 parser.add_argument('-i', '--img', action='store', help='use this img')
 parser.add_argument('-n', '--nets', action='store', default=1, type=int,
@@ -165,6 +178,7 @@ parser.add_argument('--nic', action="append", dest="nics",
                          ' - overrides --nets')
 parser.add_argument('-o', '--overwrite', default=False, action='store_true',
                     help='allow overwrite of the target image')
+parser.add_argument('--project', action='store', help='project name')
 parser.add_argument('-q', '--quick', default=False, action='store_true',
                     help='build iso with quick-test-this-branch')
 parser.add_argument('-r', '--release', action='store', help='target release')
@@ -186,6 +200,7 @@ parser.add_argument('--build', default=False, action='store_true',
 parser.add_argument('--install', default=False, action='store_true',
                     help='''install from iso - one must either build a test
                     iso, use a base iso, or reuse previous test iso''')
+parser.add_argument('--video', default=None, action='store')
 parser.add_argument('--boot', default=False, action='store_true',
                     help='boot test image')
 parser.add_argument('--force-autoinstall', default=None,
@@ -207,6 +222,7 @@ cc_group.add_argument('--cloud-config', action='store',
 cc_group.add_argument('--cloud-config-default',
                       action="store_true",
                       help='use hardcoded cloud-config template')
+
 
 def parse_args():
     ctx = Context(parser.parse_args())
@@ -270,25 +286,28 @@ def mounter(src, dest):
 
 
 def livefs_edit(ctx, *args):
-    livefs_editor = os.environ['LIVEFS_EDITOR']
-    run(['sudo', f'PYTHONPATH={livefs_editor}', 'python3', '-m', 'livefs_edit',
-         ctx.baseiso, ctx.iso, *args])
+    livefs_edit = shutil.which('livefs-edit')
+    if livefs_edit is None:
+        raise Exception('Failed to find livefs-edit in PATH')
+    run(['sudo', livefs_edit, ctx.baseiso, ctx.iso, *args])
 
 
 def build(ctx):
     remove_if_exists(ctx.iso)
-    project = os.path.basename(os.getcwd())
 
     snapargs = '--debug'
-    http_proxy = os.environ.get('DEBOOTSTRAP_PROXY')
-    if http_proxy:
-        snapargs += f' --http-proxy={http_proxy}'
+    # http_proxy = os.environ.get('DEBOOTSTRAP_PROXY')
+    # if http_proxy:
+    #     snapargs += f' --http-proxy={http_proxy}'
 
     snap_manager = noop if ctx.args.save else delete_later
-    if project == 'subiquity':
+    if ctx.project == 'subiquity':
         if ctx.args.quick:
-            run(f'sudo ./scripts/quick-test-this-branch.sh {ctx.baseiso} \
-                {ctx.iso}')
+            run(['sudo',
+                 f'LIVEFS_EDITOR={livefs_editor}',
+                 './scripts/quick-test-this-branch.sh',
+                 ctx.baseiso,
+                 ctx.iso])
         elif ctx.args.basesnap:
             with snap_manager('subiquity_test.snap') as snap:
                 run(f'sudo ./scripts/slimy-update-snap.sh {ctx.args.basesnap} \
@@ -299,25 +318,30 @@ def build(ctx):
             run(f'sudo ./scripts/inject-subiquity-snap.sh {ctx.baseiso} \
                 {ctx.args.snap} {ctx.iso}')
         elif ctx.args.channel:
-            livefs_edit(ctx, '--add-snap-from-store', 'core20', 'stable',
-                        '--add-snap-from-store', 'subiquity',
+            livefs_edit(ctx, '--add-snap-from-store', 'subiquity',
                         ctx.args.channel)
         else:
             with snap_manager('subiquity_test.snap') as snap:
                 if not ctx.args.reuse:
                     run('snapcraft clean --use-lxd')
-                    run(f'snapcraft snap --use-lxd --output {snap} {snapargs}')
+                    run(f'snapcraft pack --use-lxd --output {snap} {snapargs}')
                 assert_exists(snap)
-                livefs_edit(ctx, '--add-snap-from-store', 'core20', 'stable',
-                            '--inject-snap', snap)
-    elif project == 'ubuntu-desktop-installer':
-        with snap_manager('udi_test.snap') as snap:
-            run('snapcraft clean --use-lxd')
-            run(f'snapcraft snap --use-lxd --output {snap} {snapargs}')
-            assert_exists(snap)
-            run(f'sudo ./scripts/inject-snap {ctx.baseiso} {ctx.iso} {snap}')
+                livefs_edit(ctx, '--inject-snap', snap)
+    elif ctx.project == 'ubuntu-desktop-installer':
+        if ctx.args.quick:
+            run(f'sudo ../quick-test-this-branch-udi.sh {ctx.baseiso} \
+                {ctx.iso} ubuntu-desktop-installer')
+        else:
+            with snap_manager('udi_test.snap') as snap:
+                if not ctx.args.reuse:
+                    run('snapcraft clean --use-lxd')
+                    run(f'snapcraft pack --use-lxd --output {snap} '
+                        f'{snapargs}')
+                assert_exists(snap)
+                run(f'sudo ./scripts/inject-snap {ctx.baseiso} {ctx.iso} '
+                    f'{snap}')
     else:
-        raise Exception(f'do not know how to build {project}')
+        raise Exception(f'do not know how to build {ctx.project}')
 
     assert_exists(ctx.iso)
 
@@ -594,7 +618,7 @@ def main() -> None:
     if ctx.args.base and ctx.args.build:
         raise Exception('cannot use base iso and build')
 
-    os.makedirs('/tmp/kvm-test', exist_ok=True)
+    os.makedirs(ctx.workdir, exist_ok=True)
 
     if ctx.args.build:
         build(ctx)
