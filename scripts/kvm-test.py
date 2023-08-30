@@ -13,14 +13,16 @@ import argparse
 import contextlib
 import copy
 import crypt
+import dataclasses
 import os
+import pathlib
 import shlex
 import shutil
 import socket
 import subprocess
 import sys
 import tempfile
-from typing import List, Tuple
+from typing import List, Tuple, Optional
 import yaml
 
 
@@ -497,7 +499,8 @@ def kvm_prepare_common(ctx):
         ret.extend(('-vga', 'virtio'))
 
     if ctx.args.with_tpm2:
-        tpm_emulator_context = tpm_emulator()
+        tpmdir = pathlib.Path(ctx.workdir) / "tpm"
+        tpm_emulator_context = tpm_emulator(tpmdir)
     else:
         tpm_emulator_context = contextlib.nullcontext()
 
@@ -525,7 +528,7 @@ def install(ctx):
         mntdir = f'{tempdir}/mnt'
         os.makedirs(mntdir, exist_ok=True)
 
-        with kvm_prepare_common(ctx) as kvm, appends:
+        with kvm_prepare_common(ctx) as (kvm, appends):
             if ctx.args.iso:
                 iso = ctx.args.iso
             elif ctx.args.base:
@@ -600,7 +603,7 @@ def boot(ctx):
     if ctx.args.img:
         target = ctx.args.img
 
-    with kvm_prepare_common(ctx) as kvm, appends:
+    with kvm_prepare_common(ctx) as (kvm, appends):
         kvm.extend(drive(target))
         run(kvm)
 
