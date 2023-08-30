@@ -519,16 +519,13 @@ def install(ctx):
         if ctx.args.overwrite:
             os.remove(ctx.target)
         else:
-            raise Exception('refusing to overwrite existing image, use the ' +
-                            '-o option to allow overwriting')
+            print(f'reusing existing image {ctx.target}')
 
     with tempfile.TemporaryDirectory() as tempdir:
         mntdir = f'{tempdir}/mnt'
-        os.mkdir(mntdir)
-        appends = []
+        os.makedirs(mntdir, exist_ok=True)
 
-        with kvm_prepare_common(ctx) as kvm:
-
+        with kvm_prepare_common(ctx) as kvm, appends:
             if ctx.args.iso:
                 iso = ctx.args.iso
             elif ctx.args.base:
@@ -537,10 +534,6 @@ def install(ctx):
                 iso = ctx.iso
 
             kvm.extend(('-cdrom', iso))
-
-            if ctx.args.serial:
-                kvm.append('-nographic')
-                appends.append('console=ttyS0')
 
             if ctx.args.cloud_config is not None or ctx.args.cloud_config_default:
                 if ctx.args.cloud_config is not None:
@@ -556,13 +549,13 @@ def install(ctx):
                 if autoinstall:
                     appends.append('autoinstall')
 
-
             if ctx.args.update:
                 appends.append('subiquity-channel=' + ctx.args.update)
 
             kvm.extend(drive(ctx.target))
             if not os.path.exists(ctx.target) or ctx.args.overwrite:
-                run(f'qemu-img create -f qcow2 {ctx.target} {ctx.args.disksize}')
+                disksize = ctx.args.disksize or ctx.default_disk
+                run(f'qemu-img create -f qcow2 {ctx.target} {disksize}')
 
             if len(appends) > 0:
                 with mounter(iso, mntdir):
