@@ -480,12 +480,21 @@ def memory(ctx):
 def kvm_prepare_common(ctx):
     '''Spawn needed background processes and return the CLI options for QEMU'''
     ret = ['kvm', '-no-reboot']
-    ret.extend(('-vga', 'virtio'))
+    appends = []
     ret.extend(memory(ctx))
     ret.extend(bios(ctx))
     ret.extend(nets(ctx))
     if ctx.args.sound:
         ret.extend(('-device', 'AC97', '-device', 'usb-ehci'))
+    if ctx.args.serial:
+        ret.append('-nographic')
+        appends = ['console=ttyS0']
+    elif ctx.args.video == 'qxl':
+        ret.extend(('-device', 'qxl'))
+    elif ctx.args.video is not None:
+        ret.extend(('-vga', ctx.args.video))
+    else:
+        ret.extend(('-vga', 'virtio'))
 
     if ctx.args.with_tpm2:
         tpm_emulator_context = tpm_emulator()
@@ -494,7 +503,7 @@ def kvm_prepare_common(ctx):
 
     with tpm_emulator_context as tpm_emulator_cm:
         ret.extend(tpm(tpm_emulator_cm))
-        yield ret
+        yield ret, appends
 
 
 def get_initrd(mntdir):
@@ -598,7 +607,7 @@ def boot(ctx):
     if ctx.args.img:
         target = ctx.args.img
 
-    with kvm_prepare_common(ctx) as kvm:
+    with kvm_prepare_common(ctx) as kvm, appends:
         kvm.extend(drive(target))
         run(kvm)
 
