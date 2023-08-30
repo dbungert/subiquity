@@ -461,16 +461,32 @@ def tpm(emulator: Optional[TPMEmulator]) -> List[str]:
     if emulator is None:
         return []
 
-    return ['-chardev', f'socket,id=chrtpm,path={emulator.socket}',
-            '-tpmdev', 'emulator,id=tpm0,chardev=chrtpm',
-            '-device', 'tpm-tis,tpmdev=tpm0']
+    OVMF_CODE = '/usr/share/OVMF/OVMF_CODE_4M.ms.fd'
+    OVMF_VARS_TEMPLATE = pathlib.Path('/usr/share/OVMF/OVMF_VARS_4M.ms.fd')
+    OVMF_VARS = emulator.tpmstate / OVMF_VARS_TEMPLATE.name
+    if not OVMF_VARS.exists():
+        shutil.copy(OVMF_VARS_TEMPLATE, OVMF_VARS)
+
+    return [
+        '-chardev', f'socket,id=chrtpm,path={emulator.socket}',
+        '-tpmdev', 'emulator,id=tpm0,chardev=chrtpm',
+        '-device', 'tpm-tis,tpmdev=tpm0',
+        '-object', 'rng-random,filename=/dev/urandom,id=rng0',
+        '-device', 'virtio-rng-pci,rng=rng0',
+        '-machine', 'q35,smm=on',
+        '-global', 'driver=cfi.pflash01,property=secure,value=on',
+        '-drive', f'if=pflash,format=raw,unit=0,file={OVMF_CODE},readonly=on',
+        '-drive', f'if=pflash,format=raw,unit=1,file={OVMF_VARS}',
+    ]
+
 
 
 def bios(ctx):
     ret = []
-    # https://help.ubuntu.com/community/UEFI
-    if not ctx.args.bios:
-        ret = ['-bios', '/usr/share/qemu/OVMF.fd']
+    if ctx.args.bios or ctx.args.with_tpm2:
+        return ret
+
+    ret = ['-bios', '/usr/share/qemu/OVMF.fd']
     return ret
 
 
@@ -500,6 +516,7 @@ def kvm_prepare_common(ctx):
 
     if ctx.args.with_tpm2:
         tpmdir = pathlib.Path(ctx.workdir) / "tpm"
+        tpmdir.mkdir(parents=True, exist_ok=True)
         tpm_emulator_context = tpm_emulator(tpmdir)
     else:
         tpm_emulator_context = contextlib.nullcontext()
