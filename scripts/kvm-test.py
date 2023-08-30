@@ -82,9 +82,9 @@ class Context:
         except KeyError:
             pass
         self.curdir = os.getcwd()
-        self.iso = f'/tmp/kvm-test/{self.release}-test.iso'
+        self.iso = f'{self.workdir}/{self.release}-test.iso'
         self.hostname = f'{self.release}-test'
-        self.target = f'/tmp/kvm-test/{self.hostname}.img'
+        self.target = f'{self.workdir}/{self.hostname}.img'
         self.password = salted_crypt('ubuntu')
         self.cloudconfig = f'''\
 #cloud-config
