@@ -350,20 +350,23 @@ Storage configuration is a complex topic, and the description of the desired con
 Supported layouts
 ^^^^^^^^^^^^^^^^^
 
-The three supported layouts at the time of writing are ``lvm``, ``direct`` and ``zfs``.
+The four supported layouts at the time of writing are:
+
+* ``lvm``
+* ``direct``
+* ``zfs``
+* ``btrfs``
+
+Example: select layout ``zfs``
 
 .. code-block:: yaml
 
     storage:
       layout:
-        name: lvm
-    storage:
-      layout:
-        name: direct
-    storage:
-      layout:
         name: zfs
 
+
+The ``zfs`` layout creates a hardcoded set of zfs datasets.
 
 By default, these layouts install to the largest disk in a system, but you can supply a match spec (see below) to indicate which disk to use:
 

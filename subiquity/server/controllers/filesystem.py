@@ -506,9 +506,12 @@ class FilesystemController(SubiquityController, FilesystemManipulator):
                 if action in self._device_to_structure:
                     self._device_to_structure[action].device = path
 
-    def guided_direct(self, gap):
-        spec = dict(fstype="ext4", mount="/")
+    def guided_direct(self, gap, *, fstype):
+        spec = dict(fstype=fstype, mount="/")
         self.create_partition(device=gap.device, gap=gap, spec=spec)
+
+    def guided_direct_ext4(self, gap):
+        self.guided_direct(gap, fstype="ext4")
 
     def guided_dd(self, disk: ModelDisk):
         self.model.dd_target = disk
@@ -556,6 +559,9 @@ class FilesystemController(SubiquityController, FilesystemManipulator):
         )
         self.model.load_or_generate_recovery_keys()
         self.model.expose_recovery_keys()
+
+    def guided_direct_btrfs(self, gap, choice: GuidedChoiceV2):
+        self.guided_direct(gap, fstype="btrfs")
 
     def guided_zfs(self, gap, choice: GuidedChoiceV2):
         device = gap.device
@@ -732,7 +738,9 @@ class FilesystemController(SubiquityController, FilesystemManipulator):
         elif choice.capability.is_zfs():
             self.guided_zfs(gap, choice)
         elif choice.capability == GuidedCapability.DIRECT:
-            self.guided_direct(gap)
+            self.guided_direct_ext4(gap)
+        elif choice.capability == GuidedCapability.BTRFS:
+            self.guided_direct_btrfs(gap)
         elif choice.capability == GuidedCapability.DD:
             self.guided_dd(disk)
         else:
@@ -1382,6 +1390,8 @@ class FilesystemController(SubiquityController, FilesystemManipulator):
                 assert mode == "reformat_disk"
             elif name == "zfs":
                 capability = GuidedCapability.ZFS
+            elif name == "btrfs":
+                capability = GuidedCapability.BTRFS
             else:
                 capability = GuidedCapability.DIRECT
 
