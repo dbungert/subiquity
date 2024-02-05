@@ -55,6 +55,12 @@ from subiquitycore.utils import arun_command, log_process_streams
 log = logging.getLogger("subiquity.server.controllers.install")
 
 
+def do_the_thing(data):
+    if len(data) == 2:
+        return True
+    return False
+
+
 class CurtinInstallError(Exception):
     def __init__(self, *, stages: List[str]) -> None:
         super().__init__()
