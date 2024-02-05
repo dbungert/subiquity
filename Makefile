@@ -79,6 +79,11 @@ flake8:
 unit: gitdeps
 	timeout 120 \
 	$(PYTHON) -m pytest --ignore curtin --ignore probert \
+		--cov-report xml:coverage.xml \
+		--cov=console_conf \
+		--cov=subiquity \
+		--cov=subiquitycore \
+		--cov=system_setup \
 		--ignore subiquity/tests/api
 
 .PHONY: api
