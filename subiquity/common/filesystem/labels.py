@@ -218,12 +218,12 @@ def _label_gap(gap, *, short=False):
 
 
 @label.register(ZPool)
-def _label_gap(zpool, *, short=False):
+def _label_zpool(zpool, *, short=False):
     return _("ZFS pool")
 
 
 @label.register(ZFS)
-def _label_gap(zpool, *, short=False):
+def _label_zfs(zfs, *, short=False):
     return _("ZFS dataset")
 
 
