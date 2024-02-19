@@ -217,6 +217,16 @@ def _label_gap(gap, *, short=False):
     return r
 
 
+@label.register(ZPool)
+def _label_gap(zpool, *, short=False):
+    return _("ZFS pool")
+
+
+@label.register(ZFS)
+def _label_gap(zpool, *, short=False):
+    return _("ZFS dataset")
+
+
 def _usage_labels_generic(device, *, exclude_final_unused=False):
     cd = device.constructed_device()
     if cd is not None:
