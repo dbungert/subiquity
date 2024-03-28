@@ -158,6 +158,12 @@ def main():
         opts.storage_version = int(
             opts.kernel_cmdline.get("subiquity-storage-version", 1)
         )
+    if opts.bootloader is None:
+        # undocumented and unsupported feature: overriding the bootloader is
+        # not likely to go well, but if you want to try anyhow use kernel
+        # command line "subiquity-bootloader=FOO", where FOO is one of the
+        # subiquity.common.types.Bootloader strings.
+        opts.bootloader = opts.kernel_cmdline.get("subiquity-bootloader", "NONE")
     logdir = LOGDIR
     if opts.dry_run:
         if opts.dry_run_config:
