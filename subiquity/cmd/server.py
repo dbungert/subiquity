@@ -163,8 +163,7 @@ def main():
         # not likely to go well, but if you want to try anyhow use kernel
         # command line "subiquity-bootloader=FOO", where FOO is one of the
         # subiquity.common.types.Bootloader strings.
-        opts.bootloader = opts.kernel_cmdline.get("subiquity-bootloader", "NONE")
-        log.debug("kernel_cmdline says to use bootloader {opts.bootloader}")
+        opts.bootloader = opts.kernel_cmdline.get("subiquity-bootloader")
     logdir = LOGDIR
     if opts.dry_run:
         if opts.dry_run_config:
@@ -212,6 +211,7 @@ def main():
     logger.info(f"Arguments passed: {sys.argv}")
     logger.debug(f"Kernel commandline: {opts.kernel_cmdline}")
     logger.debug(f"Environment: {os.environ}")
+    logger.debug(f"booloader value: {opts.bootloader}")
 
     async def run_with_loop():
         server = SubiquityServer(opts, block_log_dir)
