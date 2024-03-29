@@ -130,7 +130,9 @@ class TestSubiquityModel(unittest.IsolatedAsyncioTestCase):
 
     async def test_configure(self):
         hub = MessageHub()
-        model = SubiquityModel("test", hub, ModelNames({"a", "b"}), ModelNames(set()))
+        model = SubiquityModel(
+            mock.Mock(), "test", hub, ModelNames({"a", "b"}), ModelNames(set())
+        )
         model.set_source_variant("var")
         await hub.abroadcast((InstallerChannels.CONFIGURED, "a"))
         self.assertFalse(model._install_event.is_set())
@@ -139,7 +141,11 @@ class TestSubiquityModel(unittest.IsolatedAsyncioTestCase):
 
     def make_model(self):
         return SubiquityModel(
-            "test", MessageHub(), INSTALL_MODEL_NAMES, POSTINSTALL_MODEL_NAMES
+            mock.Mock(),
+            "test",
+            MessageHub(),
+            INSTALL_MODEL_NAMES,
+            POSTINSTALL_MODEL_NAMES,
         )
 
     def test_proxy_set(self):
@@ -440,7 +446,9 @@ class TestUserCreationFlows(unittest.IsolatedAsyncioTestCase):
     def setUp(self):
         install = ModelNames(set())
         postinstall = ModelNames({"userdata"})
-        self.model = SubiquityModel("test", MessageHub(), install, postinstall)
+        self.model = SubiquityModel(
+            mock.Mock(), "test", MessageHub(), install, postinstall
+        )
         self.user = dict(name="user", passwd="passw0rd")
         self.user_identity = IdentityData(
             username=self.user["name"], crypted_password=self.user["passwd"]
