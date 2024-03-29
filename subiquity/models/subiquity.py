@@ -170,7 +170,8 @@ class SubiquityModel:
     target = "/target"
     chroot_prefix = ["chroot", target]
 
-    def __init__(self, root, hub, install_model_names, postinstall_model_names):
+    def __init__(self, opts, root, hub, install_model_names, postinstall_model_names):
+        self.opts = opts
         self.root = root
         self.hub = hub
         if root != "/":
@@ -184,7 +185,7 @@ class SubiquityModel:
         self.codecs = CodecsModel()
         self.debconf_selections = DebconfSelectionsModel()
         self.drivers = DriversModel()
-        self.filesystem = FilesystemModel(root=root)
+        self.filesystem = FilesystemModel(bootloader=opts.bootloader, root=root)
         self.identity = IdentityModel()
         self.integrity = IntegrityModel()
         self.kernel = KernelModel()
