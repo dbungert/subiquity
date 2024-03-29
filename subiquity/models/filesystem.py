@@ -1478,6 +1478,9 @@ class FilesystemModel:
     def __init__(self, bootloader=None, *, root: str):
         if bootloader is None:
             bootloader = self._probe_bootloader()
+            log.debug("using probed bootloader {bootloader}")
+        else:
+            log.debug("using supplied bootloader {bootloader}")
         self.bootloader = bootloader
         self.root = root
         self.storage_version = 1
