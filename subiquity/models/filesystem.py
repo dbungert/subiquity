@@ -1481,7 +1481,7 @@ class FilesystemModel:
             log.debug(f"using probed bootloader {bootloader}")
         else:
             log.debug(f"using supplied bootloader {bootloader}")
-        self.bootloader = bootloader
+        self.bootloader = Bootloader(bootloader)
         self.root = root
         self.storage_version = 1
         self._probe_data = None
