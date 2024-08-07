@@ -290,6 +290,9 @@ class MirrorController(SubiquityController):
         if self.autoinstall_apply_started:
             # Alternatively, we should cancel and restart the
             # apply_autoinstall_config but this is out of scope.
+            # if we're hitting this in API test, then we have some autoinstall,
+            # and source gets configured.  Why didn't this trigger before, why
+            # is it different now?
             raise RuntimeError(
                 "source model has changed but autoinstall"
                 " configuration is already being applied"
