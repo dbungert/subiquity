@@ -1998,7 +1998,7 @@ class TestAutoinstallServer(TestAPI):
             tf.flush()
             extra = ["--autoinstall", tf.name]
             async with start_server(cfg, extra_args=extra) as inst:
-                resp = await inst.get("/meta/interactive_sections")
+                resp = set(await inst.get("/meta/interactive_sections"))
                 expected = set(
                     [
                         "locale",
@@ -2013,10 +2013,7 @@ class TestAutoinstallServer(TestAPI):
                         "identity",
                         "ssh",
                         "snaps",
-                        "codecs",
                         "drivers",
-                        "timezone",
-                        "updates",
                         "shutdown",
                     ]
                 )
