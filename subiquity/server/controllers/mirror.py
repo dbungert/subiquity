@@ -278,7 +278,7 @@ class MirrorController(SubiquityController):
 
     @with_context()
     async def apply_autoinstall_config(self, context):
-        self.autoinstall_apply_started = True
+        # self.autoinstall_apply_started = True
         await self.run_mirror_selection_or_fallback(context)
 
     def on_geoip(self):
