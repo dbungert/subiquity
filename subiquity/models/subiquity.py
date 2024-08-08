@@ -315,6 +315,9 @@ class SubiquityModel:
         )
 
     def is_model_required(self, model_name):
+        log.debug(
+            f"is_model_required: {model_name=} {self._cur_install_model_names=} {self._cur_postinstall_model_names}"
+        )
         return (
             model_name in self._cur_install_model_names
             or model_name in self._cur_postinstall_model_names

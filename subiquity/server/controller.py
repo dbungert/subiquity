@@ -114,27 +114,46 @@ class SubiquityController(BaseController):
         """
         if self.interactive_for_variants is None:
             if self.model_name is None:
+                log.debug(f"_active {self.name}: True because !model_name")
                 return True
-            return self.app.base_model.is_model_required(self.model_name)
+
+            result = self.app.base_model.is_model_required(self.model_name)
+            log.debug(f"_active {self.name}: {result} because is_model_required")
+            return result
         variant = self.app.base_model.source.current.variant
-        return variant in self.interactive_for_variants
+        result = variant in self.interactive_for_variants
+        log.debug(f"_active {self.name}: {result} because interactive_for_variants")
+        return result
 
     def interactive(self):
         if not self.app.autoinstall_config:
+            log.debug(
+                f"interactive {self.name}: return {self._active} because autoinstall_config"
+            )
             return self._active
         i_sections = self.app.autoinstall_config.get("interactive-sections", [])
 
         if "*" in i_sections:
+            log.debug(
+                f'interactive {self.name}: return {self._active} because "*" in i_sections'
+            )
             return self._active
 
         if self.autoinstall_key in i_sections:
+            log.debug(
+                f"interactive {self.name}: return {self._active} because key {self.autoinstall_key} in i_sections"
+            )
             return self._active
 
         if (
             self.autoinstall_key_alias is not None
             and self.autoinstall_key_alias in i_sections
         ):
+            log.debug(
+                f"interactive {self.name}: return {self._active} because alias {self.autoinstall_key_alias} in i_sections"
+            )
             return self._active
+        log.debug(f"interactive {self.name}: return default False")
         return False
 
     async def configured(self):

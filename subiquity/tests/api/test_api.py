@@ -245,7 +245,8 @@ def tempdirs(*args, **kwargs):
 
 @contextlib.asynccontextmanager
 async def start_server_factory(factory, *args, allow_error: bool = False, **kwargs):
-    with tempfile.TemporaryDirectory() as tempdir:
+    # with tempfile.TemporaryDirectory() as tempdir:
+    with tempdirs() as tempdir:
         socket_path = f"{tempdir}/socket"
         conn = aiohttp.UnixConnector(path=socket_path)
         async with aiohttp.ClientSession(connector=conn) as session:
@@ -1703,7 +1704,9 @@ class TestDrivers(TestAPI):
         with patch.dict(os.environ, {"SUBIQUITY_DEBUG": "has-drivers"}):
             cfg = "examples/machines/simple.json"
             extra = ["--source-catalog", "examples/sources/mixed.yaml"]
-            async with start_server(cfg, extra_args=extra) as inst:
+            async with start_server(
+                cfg, set_first_source=False, extra_args=extra
+            ) as inst:
                 await inst.post("/source", source_id=source_id, search_drivers=True)
 
                 names = [
