@@ -457,7 +457,8 @@ class SubiquityModel:
 
     def render(self):
         config = {
-            "grub": {
+            "boot": {
+                "bootloaders": ["extlinux"],
                 "terminal": "unmodified",
                 "probe_additional_os": True,
                 "reorder_uefi": False,
