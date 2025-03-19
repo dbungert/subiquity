@@ -129,7 +129,7 @@ for answers in examples/answers/*.yaml; do
     fi
     # The --foreground is important to avoid subiquity getting SIGTTOU-ed.
     LANG=C.UTF-8 timeout --foreground 60 \
-        python3 -m subiquity.cmd.tui < "$tty" \
+        python3 -m subiquity.cmd.tui \
         --dry-run \
         --output-base "$tmpdir" \
         --answers "$answers" \
