@@ -1,6 +1,7 @@
 # subiquity & console-conf
 > Ubuntu Server Installer & Snappy first boot experience
 
+
 The repository contains the source for the new server installer (the
 "subiquity" part, aka "ubiquity for servers") and for the snappy first
 boot experience (the "console-conf" part).
