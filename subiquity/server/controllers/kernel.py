@@ -111,12 +111,15 @@ class KernelController(NonInteractiveController):
         self.app.hub.broadcast(InstallerChannels.BRIDGE_KERNEL_DECIDED)
 
     def _confirmed(self):
-        fs_model = self.app.base_model.filesystem
         if not self.app.base_model.source.catalog.kernel.bridge_reasons:
             self.app.hub.broadcast(InstallerChannels.BRIDGE_KERNEL_DECIDED)
+            return
+        fs_model = self.app.base_model.filesystem
         self._maybe_set_bridge_kernel(BridgeKernelReason.ZFS, fs_model.uses_zfs())
         if not self.app.base_model.source.search_drivers:
             self._maybe_set_bridge_kernel(BridgeKernelReason.DRIVERS, False)
+        offline = self.app.base_model.network.has_network
+        self._maybe_set_bridge_kernel(BridgeKernelReason.OFFLINE, offline)
 
     def _drivers_decided(self):
         drivers_controller = self.app.controllers.Drivers

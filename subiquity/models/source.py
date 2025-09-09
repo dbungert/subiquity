@@ -74,6 +74,11 @@ class BridgeKernelReason(enum.Enum):
     # the default kernel is not yet known to the kernel team to be sufficiently
     # stable.
     ZFS = "zfs"
+    # A hidden extra reason is that we are fully offline, so the kernel in
+    # minimal, the bridge kernel, is the only one we have.  This is never
+    # listed in the install-sources.yaml but always plausible if we have a
+    # bridge kernel.
+    OFFLINE = "offline"
 
 
 @attr.s(auto_attribs=True, kw_only=True)
@@ -138,6 +143,12 @@ class SourceModel:
         log.debug("loaded %d sources from %r", len(self.catalog.sources), fp.name)
         if self.current is None:
             self.current = self.catalog.sources[0]
+
+        # when we have a bridge kernel, we also use it if we're offline
+        if bool(self.catalog.kernel.bridge):
+            if self.catalog.kernel.bridge_reasons is None:
+                self.catalog.kernel.bridge_reasons = []
+            self.catalog.kernel.bridge_reasons.append(BridgeKernelReason.OFFLINE)
 
     def get_matching_source(self, id_: str) -> CatalogEntry:
         """Return a source object that has the ID requested."""
