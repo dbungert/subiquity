@@ -41,6 +41,7 @@ class CatalogEntry:
     description: typing.Dict[str, str]
     path: str = ""
     size: int
+    location: str = "local"
     type: typing.Optional[str]
     default: bool = False
     locale_support: str = attr.ib(default="locale-only")
@@ -160,19 +161,26 @@ class SourceModel:
         scheme = source.type
         if scheme is None:
             return None
-        if variation_name is None:
-            variation = next(iter(source.variations.values()))
-        else:
-            variation = source.variations[variation_name]
-        path = os.path.join(self._dir, variation.path)
-        if source.preinstalled_langs:
-            base, ext = os.path.splitext(path)
-            if self.lang in source.preinstalled_langs:
-                suffix = self.lang
+        if source.location == "local":
+            if variation_name is None:
+                variation = next(iter(source.variations.values()))
             else:
-                suffix = "no-languages"
-            path = base + "." + suffix + ext
-        return f"{scheme}://{path}"
+                variation = source.variations[variation_name]
+            path = os.path.join(self._dir, variation.path)
+            if source.preinstalled_langs:
+                base, ext = os.path.splitext(path)
+                if self.lang in source.preinstalled_langs:
+                    suffix = self.lang
+                else:
+                    suffix = "no-languages"
+                path = base + "." + suffix + ext
+            return f"{scheme}://{path}"
+        elif source.location == "network":
+            server = "https://10.0.2.2:12345"
+            path = source.path
+            return f"{scheme}:{server}/{path}"
+        else:
+            raise Exception(f"unsupported {source.location=}")
 
     def render(self):
         return {}
