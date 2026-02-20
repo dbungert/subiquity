@@ -114,7 +114,7 @@ class AptConfigurer:
     #    system, or if it is not, just copy /var/lib/apt/lists from the
     #    'configured_tree' overlay.
 
-    def __init__(self, app, mounter: Mounter, source_handler: AbstractSourceHandler):
+    def __init__(self, app, mounter: Mounter, source_handler: Optional[AbstractSourceHandler]):
         self.app = app
         self.mounter = mounter
         self.source_handler: AbstractSourceHandler = source_handler
@@ -497,7 +497,7 @@ Reading package lists...
         await strategy(output)
 
 
-def get_apt_configurer(app, source: str):
+def get_apt_configurer(app, source: Optional[AbstractSourceHandler]):
     if app.opts.dry_run:
         return DryRunAptConfigurer(app, DryRunMounter(app), source)
     else:
