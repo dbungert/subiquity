@@ -176,7 +176,7 @@ class SourceModel:
                 path = base + "." + suffix + ext
             return f"{scheme}://{path}"
         elif source.location == "network":
-            server = "https://10.0.2.2:12345"
+            server = "http://10.0.2.2:12345"
             path = source.path
             return f"{scheme}:{server}/{path}"
         else:
