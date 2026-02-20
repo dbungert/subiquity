@@ -169,10 +169,11 @@ class InstallController(SubiquityController):
             shutil.rmtree(target)
 
     def supports_apt(self) -> bool:
-        return (
-            self.model.target is not None
-            and self.model.source.current.variant != "core"
-        )
+        return False
+        # return (
+        #     self.model.target is not None
+        #     and self.model.source.current.variant != "core"
+        # )
 
     def write_autoinstall_config(self) -> None:
         autoinstall_path = os.path.join(
