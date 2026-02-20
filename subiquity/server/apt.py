@@ -125,6 +125,8 @@ class AptConfigurer:
 
     @property
     def source_path(self):
+        if self.source_handler is None:
+            return None
         if self._source_path is None:
             self._source_path = self.source_handler.setup()
         return self._source_path
@@ -144,6 +146,9 @@ class AptConfigurer:
         return {"apt": cfg}
 
     async def apply_apt_config(self, context, final: bool):
+        if self.source_path is None:
+            return
+
         self.configured_tree = await self.mounter.setup_overlay([self.source_path])
 
         config_location = pathlib.Path(self.app.root).joinpath(
@@ -170,6 +175,9 @@ class AptConfigurer:
         written to the output parameter.
         Raises a AptConfigCheckError exception if the apt-get command exited
         with non-zero."""
+        if self.source_path is None:
+            return
+
         assert self.configured_tree is not None
 
         pfx = self.configured_tree.pp()
