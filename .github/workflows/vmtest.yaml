@@ -27,15 +27,6 @@ jobs:
           cd ${{ github.workspace }}
           PYTHONPATH=. pytest-3 --iso=${{ runner.temp }}/subiquity.iso -k test_bios_direct vmtests
 
-      - name: capture console logs on failure
-        if: failure()
-        run: |
-          virsh list --all || true
-          for vm in $(virsh list --all --name 2>/dev/null || true); do
-            echo "=== Console log for $vm ==="
-            virsh console $vm 2>/dev/null || virsh domstats $vm || true
-          done
-
       - name: cleanup
         if: always()
         run: rm -f ${{ runner.temp }}/subiquity.iso
