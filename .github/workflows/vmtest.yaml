@@ -18,7 +18,7 @@ jobs:
       - name: install vmtest dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y python3-pytest virtinst fuseiso fuse3 libvirt-clients openssh-client
+          sudo apt-get install -y python3-pytest virtinst fuseiso fuse3 libvirt-clients libvirt-daemon libvirt-daemon-driver-qemu libvirt-daemon-system openssh-client
 
       - name: download ISO
         run: |
