@@ -22,7 +22,7 @@ class VM:
         self,
         vmm,
         firmware=Firmware.UEFI,
-        memory_GiB=4,
+        memory_GiB=2,
         disk_sizes_GiB=[10],
         cloud_config=None,
     ):
