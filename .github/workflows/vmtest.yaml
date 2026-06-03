@@ -23,18 +23,18 @@ jobs:
       - name: download ISO
         run: |
           cd ${{ runner.temp }}
-          wget -nv -O subiquity.iso \
+          wget -nv -O stonking-live-server-amd64.iso \
             https://cdimage.ubuntu.com/ubuntu-server/daily-live/current/stonking-live-server-amd64.iso
           wget -nv -O SHA256SUMS \
             https://cdimage.ubuntu.com/ubuntu-server/daily-live/current/SHA256SUMS
-          grep stonking-live-server-amd64.iso SHA256SUMS | sha256sum -c
-          ls -lh subiquity.iso
+          sha256sum -c SHA256SUMS --ignore-missing
+          ls -lh stonking-live-server-amd64.iso
 
       - name: run vmtest
         run: |
           cd ${{ github.workspace }}
-          PYTHONPATH=. pytest-3 --iso=${{ runner.temp }}/subiquity.iso -k test_bios_direct vmtests
+          PYTHONPATH=. pytest-3 --iso=${{ runner.temp }}/stonking-live-server-amd64.iso -k test_bios_direct vmtests
 
       - name: cleanup
         if: always()
-        run: rm -f ${{ runner.temp }}/subiquity.iso
+        run: rm -f ${{ runner.temp }}/stonking-live-server-amd64.iso
