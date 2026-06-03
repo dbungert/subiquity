@@ -23,9 +23,9 @@ jobs:
       - name: download ISO
         run: |
           cd ${{ runner.temp }}
-          wget -q -O subiquity.iso \
+          wget -nv -O subiquity.iso \
             https://cdimage.ubuntu.com/ubuntu-server/daily-live/current/stonking-live-server-amd64.iso
-          wget -q -O SHA256SUMS \
+          wget -nv -O SHA256SUMS \
             https://cdimage.ubuntu.com/ubuntu-server/daily-live/current/SHA256SUMS
           grep stonking-live-server-amd64.iso SHA256SUMS | sha256sum -c
           ls -lh subiquity.iso
