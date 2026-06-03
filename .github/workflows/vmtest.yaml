@@ -18,7 +18,7 @@ jobs:
       - name: install vmtest dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y pytest-3 virt-install
+          sudo apt-get install -y pytest-3 virtinst
 
       - name: download ISO
         run: |
