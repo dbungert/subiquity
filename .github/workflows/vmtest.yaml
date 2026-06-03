@@ -1,0 +1,41 @@
+name: VM Tests
+
+on:
+  pull_request:
+    paths-ignore:
+      - 'doc/**'
+
+jobs:
+  vmtest:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: install vmtest dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y pytest-3 virt-install
+
+      - name: download ISO
+        run: |
+          wget -O ${{ runner.temp }}/subiquity.iso \
+            https://cdimage.ubuntu.com/ubuntu-server/daily-live/current/stonking-live-server-amd64.iso
+
+      - name: run vmtest
+        run: |
+          cd ${{ github.workspace }}
+          PYTHONPATH=. pytest-3 --iso=${{ runner.temp }}/subiquity.iso -k test_bios_direct vmtests
+
+      - name: capture console logs on failure
+        if: failure()
+        run: |
+          virsh list --all || true
+          for vm in $(virsh list --all --name 2>/dev/null || true); do
+            echo "=== Console log for $vm ==="
+            virsh console $vm 2>/dev/null || virsh domstats $vm || true
+          done
+
+      - name: cleanup
+        if: always()
+        run: rm -f ${{ runner.temp }}/subiquity.iso
