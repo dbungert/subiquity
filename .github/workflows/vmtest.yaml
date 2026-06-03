@@ -33,7 +33,7 @@ jobs:
       - name: run vmtest
         run: |
           cd ${{ github.workspace }}
-          PYTHONPATH=. pytest-3 --iso=${{ runner.temp }}/stonking-live-server-amd64.iso -k test_bios_direct vmtests
+          sudo env PYTHONPATH=. pytest-3 --iso=${{ runner.temp }}/stonking-live-server-amd64.iso -k test_bios_direct vmtests
 
       - name: cleanup
         if: always()
