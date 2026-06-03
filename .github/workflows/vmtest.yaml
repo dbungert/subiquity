@@ -18,12 +18,17 @@ jobs:
       - name: install vmtest dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y python3-pytest virtinst
+          sudo apt-get install -y python3-pytest virtinst fuseiso fuse3 libvirt-clients openssh-client
 
       - name: download ISO
         run: |
-          wget -O ${{ runner.temp }}/subiquity.iso \
+          cd ${{ runner.temp }}
+          wget -q -O subiquity.iso \
             https://cdimage.ubuntu.com/ubuntu-server/daily-live/current/stonking-live-server-amd64.iso
+          wget -q -O SHA256SUMS \
+            https://cdimage.ubuntu.com/ubuntu-server/daily-live/current/SHA256SUMS
+          grep stonking-live-server-amd64.iso SHA256SUMS | sha256sum -c
+          ls -lh subiquity.iso
 
       - name: run vmtest
         run: |
