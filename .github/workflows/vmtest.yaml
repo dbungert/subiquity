@@ -11,14 +11,51 @@ on:
 jobs:
   vmtest:
     runs-on: ubuntu-24.04
-    timeout-minutes: 30
+    # Standard GitHub-hosted runners do not expose /dev/kvm, so QEMU runs
+    # under TCG (software emulation).  A full Ubuntu server install under
+    # TCG is slow, so allow plenty of time.
+    timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
 
       - name: install vmtest dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y python3-pytest virtinst fuseiso fuse3 libvirt-clients libvirt-daemon libvirt-daemon-driver-qemu libvirt-daemon-system openssh-client
+          sudo apt-get install -y \
+            python3-pytest \
+            virtinst \
+            fuseiso fuse3 \
+            libvirt-clients \
+            libvirt-daemon \
+            libvirt-daemon-driver-qemu \
+            libvirt-daemon-system \
+            libvirt-daemon-config-network \
+            dnsmasq-base \
+            openssh-client
+
+      - name: configure libvirt
+        run: |
+          # QEMU runs under an AppArmor profile that only allows reading
+          # files from a small set of paths.  The ISO lives under
+          # $RUNNER_TEMP, so disable the security driver entirely.
+          sudo tee -a /etc/libvirt/qemu.conf >/dev/null <<'EOF'
+          security_driver = "none"
+          EOF
+          sudo systemctl enable --now libvirtd
+          # Bring up the default NAT network (needed for domifaddr/DHCP).
+          sudo virsh net-start default || true
+          sudo virsh net-autostart default || true
+
+      - name: check virt capabilities
+        run: |
+          if [ -e /dev/kvm ]; then
+            ls -l /dev/kvm
+            echo "KVM available"
+          else
+            echo "no /dev/kvm - QEMU will use TCG (slow)"
+          fi
+          sudo virsh net-list --all
+          sudo virsh capabilities | head -40
 
       - name: download ISO
         run: |
@@ -33,8 +70,34 @@ jobs:
       - name: run vmtest
         run: |
           cd ${{ github.workspace }}
-          sudo env PYTHONPATH=. pytest-3 --iso=${{ runner.temp }}/stonking-live-server-amd64.iso -k test_bios_direct vmtests
+          sudo env PYTHONPATH=. pytest-3 -v \
+            --iso=${{ runner.temp }}/stonking-live-server-amd64.iso \
+            -k test_bios_direct vmtests
+
+      - name: dump diagnostics on failure
+        if: failure()
+        run: |
+          echo '== virsh list --all =='
+          sudo virsh list --all || true
+          echo '== running domains =='
+          for d in $(sudo virsh list --name || true); do
+            echo "-- $d --"
+            sudo virsh dominfo "$d" || true
+            sudo virsh domifaddr "$d" || true
+          done
+          echo '== collected logs =='
+          sudo find /tmp -maxdepth 2 -name 'subiquity-vmtest-*' -print 2>/dev/null || true
+          sudo find /tmp -maxdepth 2 -name 'subiquity-vmtest-*.tgz' -exec ls -lh {} \; 2>/dev/null || true
 
       - name: cleanup
         if: always()
-        run: rm -f ${{ runner.temp }}/stonking-live-server-amd64.iso
+        run: |
+          rm -f ${{ runner.temp }}/stonking-live-server-amd64.iso
+          for d in $(sudo virsh list --all --name || true); do
+            case "$d" in
+              subiquity-vmtest-*)
+                sudo virsh destroy "$d" 2>/dev/null || true
+                sudo virsh undefine "$d" --remove-all-storage 2>/dev/null || true
+                ;;
+            esac
+          done
