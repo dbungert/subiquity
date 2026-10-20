@@ -22,7 +22,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y \
-            python3-pytest \
+            python3-pytest python3-yaml \
             virtinst \
             fuseiso fuse3 \
             libvirt-clients \
@@ -31,7 +31,17 @@ jobs:
             libvirt-daemon-system \
             libvirt-daemon-config-network \
             dnsmasq-base \
-            openssh-client
+            openssh-client \
+            snapd \
+            xorriso squashfs-tools liblz4-tool python3-debian gpg \
+            rsync
+
+      - name: install snapcraft
+        run: |
+          if ! command -v snapcraft >/dev/null 2>&1; then
+            sudo snap install snapcraft --classic
+          fi
+          snapcraft --version
 
       - name: configure libvirt
         run: |
@@ -66,11 +76,24 @@ jobs:
           sha256sum -c SHA256SUMS --ignore-missing
           ls -lh stonking-live-server-amd64.iso
 
+      - name: build test ISO from this branch
+        run: |
+          cd ${{ github.workspace }}
+          # quick-test-this-branch.sh uses livefs-editor + slimy-update-snap.sh
+          # to swap the subiquity snap on the ISO for one built from this
+          # branch.  It needs root for the mounts, and snapcraft for the
+          # repack.
+          sudo env PYTHONPATH=. \
+            ./scripts/quick-test-this-branch.sh \
+            ${{ runner.temp }}/stonking-live-server-amd64.iso \
+            ${{ runner.temp }}/stonking-live-server-amd64-test.iso
+          ls -lh ${{ runner.temp }}/stonking-live-server-amd64-test.iso
+
       - name: run vmtest
         run: |
           cd ${{ github.workspace }}
           sudo env PYTHONPATH=. pytest-3 -v \
-            --iso=${{ runner.temp }}/stonking-live-server-amd64.iso \
+            --iso=${{ runner.temp }}/stonking-live-server-amd64-test.iso \
             -k test_bios_direct vmtests
 
       - name: dump diagnostics on failure
@@ -91,7 +114,8 @@ jobs:
       - name: cleanup
         if: always()
         run: |
-          rm -f ${{ runner.temp }}/stonking-live-server-amd64.iso
+          rm -f ${{ runner.temp }}/stonking-live-server-amd64.iso \
+                ${{ runner.temp }}/stonking-live-server-amd64-test.iso
           for d in $(sudo virsh list --all --name || true); do
             case "$d" in
               subiquity-vmtest-*)
