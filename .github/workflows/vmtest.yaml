@@ -13,7 +13,8 @@ jobs:
     # Expects a self-hosted runner with /dev/kvm available (i.e. real
     # hardware virtualization, not nested).  Narrow the label below to
     # match the runner you register (e.g. [self-hosted, ubuntu-24.04]).
-    runs-on: [self-hosted, linux, amd64, resolute, large]
+    # runs-on: [self-hosted, linux, amd64, resolute, large]
+    runs-on: [self-hosted, linux, amd64, noble, medium]
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
