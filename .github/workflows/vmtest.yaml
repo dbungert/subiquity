@@ -10,11 +10,11 @@ on:
 
 jobs:
   vmtest:
-    runs-on: ubuntu-24.04
-    # Standard GitHub-hosted runners do not expose /dev/kvm, so QEMU runs
-    # under TCG (software emulation).  A full Ubuntu server install under
-    # TCG is slow, so allow plenty of time.
-    timeout-minutes: 90
+    # Expects a self-hosted runner with /dev/kvm available (i.e. real
+    # hardware virtualization, not nested).  Narrow the label below to
+    # match the runner you register (e.g. [self-hosted, ubuntu-24.04]).
+    runs-on: [self-hosted, linux]
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
 
@@ -48,12 +48,11 @@ jobs:
 
       - name: check virt capabilities
         run: |
-          if [ -e /dev/kvm ]; then
-            ls -l /dev/kvm
-            echo "KVM available"
-          else
-            echo "no /dev/kvm - QEMU will use TCG (slow)"
+          if [ ! -e /dev/kvm ]; then
+            echo "no /dev/kvm on this runner - vmtest requires real KVM" >&2
+            exit 1
           fi
+          ls -l /dev/kvm
           sudo virsh net-list --all
           sudo virsh capabilities | head -40
 
