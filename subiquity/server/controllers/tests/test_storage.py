@@ -67,7 +67,7 @@ from subiquity.common.types.storage import (
     StorageRequirementStatus,
 )
 from subiquity.models.source import CatalogEntryVariation
-from subiquity.models.storage import dehumanize_size
+from subiquity.models.storage import align_up, dehumanize_size
 from subiquity.models.tests.test_storage import (
     FakeStorageInfo,
     make_disk,
@@ -3235,7 +3235,9 @@ class TestGuidedV2(IsolatedAsyncioTestCase):
         self.app.opts.experimental_use_gap_tpm_fde = True
         with mock.patch.object(self.ctrler, "guided_core_boot", return_value=None):
             await self.ctrler.guided(choice)
-            self.ctrler.guided_core_boot.assert_called_once_with(self.disk, choice)
+            self.ctrler.guided_core_boot.assert_called_once_with(
+                self.disk, choice, reset_partition_only=False
+            )
 
 
 class TestManualBoot(IsolatedAsyncioTestCase):
@@ -3490,7 +3492,79 @@ class TestCoreBootInstallMethods(IsolatedAsyncioTestCase):
         self.assertEqual(part.fs().mount().path, "/")
         self.assertEqual(part.wipe, "superblock")
 
-    async def test_from_sample_data(self):
+    def _core_boot_system_data_structures(self):
+        return [
+            snapdtypes.VolumeStructure(
+                type="21686148-6449-6E6F-744E-656564454649",
+                offset=1 << 20,
+                name="BIOS Boot",
+                size=1 << 20,
+                role="",
+                filesystem="",
+            ),
+            snapdtypes.VolumeStructure(
+                type=GPT_LINUX_TYPE,
+                offset=2 << 20,
+                name="ptname",
+                size=2 << 30,
+                role=snapdtypes.Role.SYSTEM_DATA,
+                filesystem="ext4",
+            ),
+        ]
+
+    async def test_guided_core_boot_reset_partition(self):
+        disk = make_disk(self.ctrler.model)
+        self._add_details_for_structures(self._core_boot_system_data_structures())
+        fixed_reset_size = align_up(12 << 30, disk.alignment_data().part_align)
+        choice = GuidedChoiceV2(
+            target=GuidedStorageTargetReformat(
+                disk_id=disk.id,
+            ),
+            capability=self.capability,
+            reset_partition=True,
+            reset_partition_size=fixed_reset_size,
+        )
+        await self.ctrler.guided_core_boot(disk, choice)
+        [bios_part, part, rp_part] = disk.partitions()
+        # The reset partition is carved out of the space that would otherwise
+        # have been given to SYSTEM_DATA, which is placed right before it.
+        self.assertEqual(part.offset, 2 << 20)
+        self.assertEqual(
+            part.size,
+            disk.size
+            - (2 << 20)
+            - disk.alignment_data().min_end_offset
+            - fixed_reset_size,
+        )
+        self.assertEqual(rp_part.offset, part.offset + part.size)
+        self.assertEqual(rp_part.size, fixed_reset_size)
+        self.assertEqual(rp_part.flag, "msftres")
+        self.assertEqual(rp_part.wipe, "superblock")
+        self.assertEqual(rp_part.fs().fstype, "fat32")
+        self.assertIsNone(rp_part.fs().mount())
+        self.assertIs(self.ctrler.model.reset_partition, rp_part)
+        self.assertFalse(self.ctrler.reset_partition_only)
+
+    async def test_guided_core_boot_reset_partition_only(self):
+        disk = make_disk(self.ctrler.model)
+        self._add_details_for_structures(self._core_boot_system_data_structures())
+        fixed_reset_size = align_up(12 << 30, disk.alignment_data().part_align)
+        choice = GuidedChoiceV2(
+            target=GuidedStorageTargetReformat(
+                disk_id=disk.id,
+            ),
+            capability=self.capability,
+            reset_partition=True,
+            reset_partition_size=fixed_reset_size,
+        )
+        await self.ctrler.guided_core_boot(disk, choice, reset_partition_only=True)
+        self.assertTrue(self.ctrler.reset_partition_only)
+        self.assertIsNone(self.ctrler.model.target)
+        # The reset partition is still configured...
+        self.assertIsNotNone(self.ctrler.model.reset_partition)
+        # ...but no mounts are left on the model.
+        self.assertEqual([], list(self.ctrler.model._all(type="mount")))
+
         # calling this a unit test is definitely questionable. but it
         # runs much more quickly than the integration test!
         self.app.base_model.keyboard.setting.layout = "us"
@@ -3597,6 +3671,44 @@ class TestCoreBootInstallMethods(IsolatedAsyncioTestCase):
             ]
         )
         self.assertEqual(partition_count, len(disk.partitions()))
+
+    async def test_from_sample_data_autoinstall_reset_partition(self):
+        self.ctrler.model = model = make_model(FirmwareType.UEFI)
+        disk = make_disk(model)
+        self.app.base_model.source.current.variations = {
+            "default": CatalogEntryVariation(
+                path="", size=1, snapd_system_label="prefer-encrypted"
+            ),
+        }
+
+        self.app.dr_cfg.systems_dir_exists = True
+
+        await self.ctrler._examine_systems_task.start()
+        await self.ctrler._examine_systems_task.wait()
+        self.ctrler.start()
+
+        reset_size = align_up(12 << 30, disk.alignment_data().part_align)
+        await self.ctrler.run_autoinstall_guided(
+            {"name": "hybrid", "reset-partition": "12G"}
+        )
+
+        self.assertEqual(model.storage_version, 2)
+        self.assertIsNotNone(model.reset_partition)
+        rp = model.reset_partition
+        self.assertEqual(rp.size, reset_size)
+        self.assertEqual(rp.flag, "msftres")
+        self.assertEqual(rp.fs().fstype, "fat32")
+        # One extra partition (the reset partition) is created on top of the
+        # partitions described by the gadget volume structure.
+        base_partition_count = len(
+            [
+                structure
+                for structure in self.ctrler._info.system.volumes["pc"].structure
+                if structure.role != snapdtypes.Role.MBR
+            ]
+        )
+        self.assertEqual(base_partition_count + 1, len(disk.partitions()))
+        self.assertFalse(self.ctrler.reset_partition_only)
 
     async def test_autoinstall_hybrid_use_gap_flag_disabled(self):
         self.ctrler.model = model = make_model(FirmwareType.UEFI)

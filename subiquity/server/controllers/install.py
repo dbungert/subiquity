@@ -804,7 +804,10 @@ class InstallController(SubiquityController):
             await self.configure_cloud_init(context=context)
 
         storage_controller = self.app.controllers.Storage
-        if storage_controller.use_snapd_install_api():
+        if (
+            storage_controller.use_snapd_install_api()
+            and not storage_controller.reset_partition_only
+        ):
             installer = CoreBootInstaller(self.app, storage_controller.core_boot_data)
             if storage_controller.use_tpm:
                 # This will generate a recovery key which will initially expire
