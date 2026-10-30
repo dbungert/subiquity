@@ -1256,9 +1256,12 @@ class StorageController(SubiquityController, StorageManipulator):
 
         if choice.reset_partition:
             # Create the reset partition right after the SYSTEM_DATA
-            # partition, in the space that was reserved for it above. It is a
-            # plain FAT32 partition (with the msftres flag) that snapd does not
-            # manage, so it is intentionally not part of on_volume.
+            # partition, in the space that was reserved for it above.
+            # For core boot classic (TPM/FDE), the target has no grub, so
+            # the reset partition cannot be made bootable via a grub menu
+            # entry.  Instead it is declared as a structure in the snapd
+            # gadget volume (on_volume) so that snapd is aware of it and
+            # can manage its boot entry through snapd-approved mechanisms.
             assert system_data_part is not None
             rp_offset = system_data_part.offset + system_data_part.size
             rp_part = self.model.add_partition(
@@ -1271,6 +1274,20 @@ class StorageController(SubiquityController, StorageManipulator):
             rp_part.wipe = "superblock"
             self.model.add_filesystem(rp_part, "fat32")
             self.model.reset_partition = rp_part
+            # Declare the reset partition as a structure in on_volume so
+            # that snapd sees it as part of the gadget volume.  update_devices
+            # will annotate the structure with the real device path of the
+            # partition (via _device_to_structure) when curtin reports it.
+            rp_structure = snapdtypes.OnVolumeStructure(
+                name="factory-reset",
+                offset=rp_offset,
+                size=reset_size,
+                type="E3C9E316-0B5C-4DB8-817D-F92DF00215AE",
+                role=snapdtypes.Role.NONE,
+                filesystem="vfat",
+            )
+            on_volume.structure.append(rp_structure)
+            self._device_to_structure[rp_part] = rp_structure
             self._apply_reset_partition_only(reset_partition_only)
             if reset_partition_only:
                 return

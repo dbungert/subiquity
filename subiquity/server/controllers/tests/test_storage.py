@@ -3544,6 +3544,13 @@ class TestCoreBootInstallMethods(IsolatedAsyncioTestCase):
         self.assertIsNone(rp_part.fs().mount())
         self.assertIs(self.ctrler.model.reset_partition, rp_part)
         self.assertFalse(self.ctrler.reset_partition_only)
+        # The reset partition is declared as a structure in on_volume so
+        # that snapd is aware of it and can manage its boot entry.
+        rp_structure = self.ctrler._device_to_structure.get(rp_part)
+        self.assertIsNotNone(rp_structure)
+        self.assertIn(rp_structure, self.ctrler.core_boot_data.on_volume.structure)
+        self.assertEqual(rp_structure.role, snapdtypes.Role.NONE)
+        self.assertEqual(rp_structure.filesystem, "vfat")
 
     async def test_guided_core_boot_reset_partition_only(self):
         disk = make_disk(self.ctrler.model)
