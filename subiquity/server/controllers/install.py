@@ -477,10 +477,10 @@ class InstallController(SubiquityController):
                 stages=["curthooks"],
                 step_config=self.generic_config(),
             )
-            # If the current source has a snapd_system_label here we should
-            # really write recovery_system={snapd_system_label} to
-            # {target}/var/lib/snapd/modeenv to get snapd to pick it up on
-            # first boot. But not needed for now.
+            # Note: for a core boot classic install with a reset partition,
+            # the recovery_system modeenv entry that designates the reset
+            # partition as the snapd recovery system is written below in
+            # configure_rp_boot_snapd() (rather than here unconditionally).
         rp = storage_controller.model.reset_partition
         if rp is not None:
             mounter = Mounter(self.app)
@@ -574,8 +574,46 @@ class InstallController(SubiquityController):
         )
 
     async def configure_rp_boot(self, context, rp: Partition, casper_uuid: str):
-        if self.model.target is not None and not self.opts.dry_run:
+        if self.model.target is None or self.opts.dry_run:
+            return
+        storage_controller = self.app.controllers.Storage
+        if storage_controller.use_snapd_install_api():
+            # A core boot classic (TPM/FDE) target has no grub, so the
+            # factory-reset boot entry cannot be added with a grub menu
+            # entry.  Instead, the reset partition -- a copy of the
+            # installer, which is itself a snapd system -- is designated as
+            # the recovery system by recording its snapd system label in the
+            # target's snapd modeenv.  snapd picks this up on first boot and
+            # exposes the reset partition as a recovery / factory-reset
+            # system.
+            await self.configure_rp_boot_snapd(context=context, rp=rp)
+        else:
             await self.configure_rp_boot_grub(context=context, rp=rp)
+
+    @with_context(description="designating reset partition as snapd recovery system")
+    async def configure_rp_boot_snapd(self, context, rp: Partition):
+        storage_controller = self.app.controllers.Storage
+        label = getattr(storage_controller._info, "label", None)
+        if not label:
+            log.warning(
+                "cannot configure snapd recovery system: "
+                "no snapd system label for the reset partition"
+            )
+            return
+        # The snapd modeenv is a key=value file.  Setting
+        # `recovery_system=<snapd system label>` tells snapd, on first
+        # boot of the installed system, that the system identified by this
+        # label is the recovery system -- i.e. the reset partition.
+        modeenv_path = Path(self.tpath("var/lib/snapd/modeenv"))
+        modeenv_path.parent.mkdir(parents=True, exist_ok=True)
+        entries: Dict[str, str] = {}
+        if modeenv_path.exists():
+            for line in modeenv_path.read_text().splitlines():
+                if "=" in line:
+                    key, _, value = line.partition("=")
+                    entries[key] = value
+        entries["recovery_system"] = label
+        modeenv_path.write_text("".join(f"{k}={v}\n" for k, v in entries.items()))
 
     async def maybe_configure_existing_rp_boot(self, context):
         # We are not creating a reset partition here if we are running

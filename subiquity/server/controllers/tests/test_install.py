@@ -20,7 +20,7 @@ import tempfile
 import unittest
 import uuid
 from pathlib import Path
-from unittest.mock import ANY, AsyncMock, Mock, call, mock_open, patch
+from unittest.mock import ANY, AsyncMock, MagicMock, Mock, call, mock_open, patch
 
 from curtin.util import EFIBootEntry, EFIBootState
 
@@ -321,6 +321,70 @@ class TestInstallController(unittest.IsolatedAsyncioTestCase):
         with open(self.controller.tpath("etc/grub.d/99_reset")) as fp:
             cfg = fp.read()
         self.assertIn("--fs-uuid fsuuid", cfg)
+
+    async def test_configure_rp_boot_snapd(self):
+        # A core boot classic (TPM/FDE) target has no grub; the reset
+        # partition is instead designated as the snapd recovery system by
+        # writing `recovery_system=<snapd system label>` to the target's
+        # snapd modeenv.
+        self.setup_rp_test()
+        storage_ctrler = self.controller.app.controllers.Storage
+        storage_ctrler.use_snapd_install_api = Mock(return_value=True)
+        storage_ctrler._info.label = "my-system-label"
+        await self.controller.configure_rp_boot(
+            context=MagicMock(), rp=self.part, casper_uuid="ignored"
+        )
+        with open(self.controller.tpath("var/lib/snapd/modeenv")) as fp:
+            modeenv = fp.read()
+        self.assertIn("recovery_system=my-system-label", modeenv)
+
+    async def test_configure_rp_boot_snapd_no_label(self):
+        # Without a snapd system label, we cannot designate a recovery
+        # system; configure_rp_boot_snapd must not raise (and must not
+        # write a bogus entry).
+        self.setup_rp_test()
+        storage_ctrler = self.controller.app.controllers.Storage
+        storage_ctrler.use_snapd_install_api = Mock(return_value=True)
+        storage_ctrler._info.label = None
+        await self.controller.configure_rp_boot_snapd(context=MagicMock(), rp=self.part)
+        self.assertFalse(os.path.exists(self.controller.tpath("var/lib/snapd/modeenv")))
+
+    async def test_configure_rp_boot_routes_snapd(self):
+        # When the storage controller uses the snapd install API (i.e. a
+        # core boot classic install), configure_rp_boot must not touch grub.
+        self.setup_rp_test()
+        storage_ctrler = self.controller.app.controllers.Storage
+        storage_ctrler.use_snapd_install_api = Mock(return_value=True)
+        storage_ctrler._info.label = "my-system-label"
+        with (
+            patch.object(self.controller, "configure_rp_boot_grub") as m_grub,
+            patch.object(
+                self.controller, "configure_rp_boot_snapd", new_callable=AsyncMock
+            ) as m_snapd,
+        ):
+            await self.controller.configure_rp_boot(
+                context=MagicMock(), rp=self.part, casper_uuid="ignored"
+            )
+        m_snapd.assert_awaited_once()
+        m_grub.assert_not_called()
+
+    async def test_configure_rp_boot_routes_grub(self):
+        # For a classic (non core boot classic) install, the grub path is
+        # still used.
+        self.setup_rp_test()
+        storage_ctrler = self.controller.app.controllers.Storage
+        storage_ctrler.use_snapd_install_api = Mock(return_value=False)
+        with (
+            patch.object(
+                self.controller, "configure_rp_boot_grub", new_callable=AsyncMock
+            ) as m_grub,
+            patch.object(self.controller, "configure_rp_boot_snapd") as m_snapd,
+        ):
+            await self.controller.configure_rp_boot(
+                context=MagicMock(), rp=self.part, casper_uuid="ignored"
+            )
+        m_grub.assert_awaited_once()
+        m_snapd.assert_not_called()
 
     @parameterized.expand(
         (
