@@ -702,8 +702,6 @@ Reset Partition
 
 By default, the size of a Reset Partition is roughly 1.1x the used file system size of the installation media.
 
-``reset-partition`` is supported by every layout (``direct``, ``lvm``, ``zfs``, ``dd`` and ``hybrid``). For the ``hybrid`` (TPM/FDE) layout, the Reset Partition is carved out of the space that would otherwise be allocated to the system data partition and is placed right after it; it is a plain FAT32 partition that snapd does not manage.
-
 An example to enable Reset Partition:
 
 .. code-block:: yaml

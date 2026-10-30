@@ -7,7 +7,6 @@ EFI
 Esc
 ESP
 ESPs
-FDE
 GPT
 GUID
 GiB

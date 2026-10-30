@@ -1001,9 +1001,7 @@ class StorageController(SubiquityController, StorageManipulator):
                 )
             assert isinstance(choice.target, allowed_guided_types)
             self.use_tpm = choice.capability.is_tpm_backed()
-            await self.guided_core_boot(
-                disk, choice, reset_partition_only=reset_partition_only
-            )
+            await self.guided_core_boot(disk, choice)
             return
 
         gap = self.start_guided(choice.target, disk)
@@ -1017,7 +1015,15 @@ class StorageController(SubiquityController, StorageManipulator):
             )
 
         if choice.reset_partition:
-            reset_size = await self._compute_reset_partition_size(choice, disk)
+            if choice.reset_partition_size is not None:
+                part_align = disk.alignment_data().part_align
+                reset_size = align_up(choice.reset_partition_size, part_align)
+            elif self.app.opts.dry_run:
+                reset_size = DRY_RUN_RESET_SIZE
+            else:
+                cp = await arun_command(["du", "-sb", "/cdrom"])
+                reset_size = int(cp.stdout.strip().split()[0])
+                reset_size = align_up(int(reset_size * 1.10), 256 * MiB)
             reset_gap, gap = gap.split(reset_size)
             self.model.reset_partition = self.create_partition(
                 device=reset_gap.device,
@@ -1025,8 +1031,11 @@ class StorageController(SubiquityController, StorageManipulator):
                 spec={"fstype": "fat32"},
                 flag="msftres",
             )
-            self._apply_reset_partition_only(reset_partition_only)
+            self.reset_partition_only = reset_partition_only
             if reset_partition_only:
+                for mount in self.model._all(type="mount"):
+                    self.delete_mount(mount)
+                self.model.target = self.app.base_model.target = None
                 return
 
         if choice.capability.is_lvm():
@@ -1039,33 +1048,6 @@ class StorageController(SubiquityController, StorageManipulator):
             self.guided_dd(disk)
         else:
             raise StorageInvalidUsageError("cannot process capability")
-
-    async def _compute_reset_partition_size(
-        self, choice: GuidedChoiceV2, disk: ModelDisk
-    ) -> int:
-        """Return the size to use for the reset partition requested by
-        ``choice``. If ``choice.reset_partition_size`` is set, the size is
-        taken from it (and aligned up to the disk's partition alignment).
-        Otherwise the size is roughly 1.1x the size of the installation
-        media (or a fixed value in dry-run mode)."""
-        if choice.reset_partition_size is not None:
-            part_align = disk.alignment_data().part_align
-            return align_up(choice.reset_partition_size, part_align)
-        elif self.app.opts.dry_run:
-            return DRY_RUN_RESET_SIZE
-        else:
-            cp = await arun_command(["du", "-sb", "/cdrom"])
-            reset_size = int(cp.stdout.strip().split()[0])
-            return align_up(int(reset_size * 1.10), 256 * MiB)
-
-    def _apply_reset_partition_only(self, reset_partition_only: bool) -> None:
-        """Drop everything but the reset partition from the configured
-        install, when ``reset_partition_only`` is requested."""
-        self.reset_partition_only = reset_partition_only
-        if reset_partition_only:
-            for mount in self.model._all(type="mount"):
-                self.delete_mount(mount)
-            self.model.target = self.app.base_model.target = None
 
     async def _probe_response(self, wait, resp_cls):
         # Wait for both probing tasks to be finished.
@@ -1152,12 +1134,7 @@ class StorageController(SubiquityController, StorageManipulator):
             disks.append(disk)
         return [d for d in disks]
 
-    async def guided_core_boot(
-        self,
-        disk: ModelDisk,
-        choice: GuidedChoiceV2,
-        reset_partition_only: bool = False,
-    ):
+    async def guided_core_boot(self, disk: ModelDisk, choice: GuidedChoiceV2):
         if self._info.needs_systems_mount:
             await SystemsDirMounter(self.app, self._info.name).mount()
         # Formatting for a core boot classic system relies on some curtin
@@ -1200,29 +1177,13 @@ class StorageController(SubiquityController, StorageManipulator):
                 "only reformat (and experimental use-gap) are supported for TPM/FDE"
             )
 
-        # The reset partition (if requested) is carved out of the space that
-        # would otherwise be occupied by the SYSTEM_DATA partition, which is
-        # the last structure and normally takes all the remaining room on the
-        # disk. It is placed right after SYSTEM_DATA, so its size is subtracted
-        # from the latter below.
-        reset_size = 0
-        if choice.reset_partition:
-            reset_size = await self._compute_reset_partition_size(choice, disk)
-
-        system_data_part: Optional[Partition] = None
         for structure, offset, size in on_volume.offsets_and_sizes():
-            is_system_data = (
+            if (
                 structure.role == snapdtypes.Role.SYSTEM_DATA
                 and structure == on_volume.structure[-1]
-            )
-            if is_system_data:
+            ):
                 gap = gaps.at_offset(disk, offset)
-                size = gap.size - reset_size
-                if size <= 0:
-                    raise StorageConstraintViolationError(
-                        "not enough space on the target disk to install a "
-                        "reset partition alongside the system"
-                    )
+                size = gap.size
             part = self.model.add_partition(
                 disk, offset=offset, size=size, check_alignment=False
             )
@@ -1249,31 +1210,8 @@ class StorageController(SubiquityController, StorageManipulator):
             if structure.role != snapdtypes.Role.NONE:
                 self._role_to_device[structure.role] = part
             self._device_to_structure[part] = structure
-            if is_system_data:
-                system_data_part = part
 
         disk._partitions.sort(key=lambda p: p.number)
-
-        if choice.reset_partition:
-            # Create the reset partition right after the SYSTEM_DATA
-            # partition, in the space that was reserved for it above. It is a
-            # plain FAT32 partition (with the msftres flag) that snapd does not
-            # manage, so it is intentionally not part of on_volume.
-            assert system_data_part is not None
-            rp_offset = system_data_part.offset + system_data_part.size
-            rp_part = self.model.add_partition(
-                disk,
-                offset=rp_offset,
-                size=reset_size,
-                flag="msftres",
-                check_alignment=False,
-            )
-            rp_part.wipe = "superblock"
-            self.model.add_filesystem(rp_part, "fat32")
-            self.model.reset_partition = rp_part
-            self._apply_reset_partition_only(reset_partition_only)
-            if reset_partition_only:
-                return
 
     def apply_encrypted_devices(
         self, encrypted_devices: dict[str | snapdtypes.Role, str]
