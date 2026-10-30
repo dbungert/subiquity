@@ -574,17 +574,8 @@ class InstallController(SubiquityController):
         )
 
     async def configure_rp_boot(self, context, rp: Partition, casper_uuid: str):
-        if self.model.target is None or self.opts.dry_run:
-            return
-        storage_controller = self.app.controllers.Storage
-        if storage_controller.use_snapd_install_api():
-            # A core boot classic (TPM/FDE) target has no grub, so the
-            # factory-reset boot entry cannot be added via a grub menu
-            # entry.  The reset partition is declared as a structure in
-            # the snapd gadget volume (on_volume), so snapd manages its
-            # boot entry.  Nothing to do here.
-            return
-        await self.configure_rp_boot_grub(context=context, rp=rp)
+        if self.model.target is not None and not self.opts.dry_run:
+            await self.configure_rp_boot_grub(context=context, rp=rp)
 
     async def maybe_configure_existing_rp_boot(self, context):
         # We are not creating a reset partition here if we are running

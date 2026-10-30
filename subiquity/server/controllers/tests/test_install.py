@@ -20,7 +20,7 @@ import tempfile
 import unittest
 import uuid
 from pathlib import Path
-from unittest.mock import ANY, AsyncMock, MagicMock, Mock, call, mock_open, patch
+from unittest.mock import ANY, AsyncMock, Mock, call, mock_open, patch
 
 from curtin.util import EFIBootEntry, EFIBootState
 
@@ -321,34 +321,6 @@ class TestInstallController(unittest.IsolatedAsyncioTestCase):
         with open(self.controller.tpath("etc/grub.d/99_reset")) as fp:
             cfg = fp.read()
         self.assertIn("--fs-uuid fsuuid", cfg)
-
-    async def test_configure_rp_boot_skips_grub_for_snapd(self):
-        # For core boot classic (TPM/FDE), the reset partition is declared
-        # in on_volume and snapd manages its boot entry, so configure_rp_boot
-        # must not write a grub menu entry.
-        self.setup_rp_test()
-        storage_ctrler = self.controller.app.controllers.Storage
-        storage_ctrler.use_snapd_install_api = Mock(return_value=True)
-        with patch.object(
-            self.controller, "configure_rp_boot_grub", new_callable=AsyncMock
-        ) as m_grub:
-            await self.controller.configure_rp_boot(
-                context=MagicMock(), rp=self.part, casper_uuid="ignored"
-            )
-        m_grub.assert_not_awaited()
-
-    async def test_configure_rp_boot_uses_grub_for_classic(self):
-        # For a classic install, the grub menu entry path is still used.
-        self.setup_rp_test()
-        storage_ctrler = self.controller.app.controllers.Storage
-        storage_ctrler.use_snapd_install_api = Mock(return_value=False)
-        with patch.object(
-            self.controller, "configure_rp_boot_grub", new_callable=AsyncMock
-        ) as m_grub:
-            await self.controller.configure_rp_boot(
-                context=MagicMock(), rp=self.part, casper_uuid="ignored"
-            )
-        m_grub.assert_awaited_once()
 
     @parameterized.expand(
         (
